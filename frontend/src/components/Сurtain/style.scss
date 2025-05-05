@@ -1,0 +1,16 @@
+#curtain {
+    background-color: var(--color-curtain);
+    position: absolute;
+    inset: 0;
+    z-index: 9;
+    backdrop-filter: blur(2px);
+    transition:
+        opacity 300ms ease-in-out,
+        backdrop-filter 300ms ease-in-out
+    ;
+
+    &.hide {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+}

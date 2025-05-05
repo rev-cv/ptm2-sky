@@ -1,0 +1,16 @@
+
+:root {
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f5f5f5;
+    
+    --color-text-primary: #333333;
+    --color-curtain: #{rgba(#333333, .2)};
+
+    --color-border-active: #3c76f1;
+    --color-icon-inactive: #afafaf;
+
+    --color-button-default: #3c76f1;
+    --color-button-hover: #2f5ac0;
+    --color-button-active: #1a3a8a;
+    --color-button-disabled: #d8e4fc;
+}
