@@ -1,0 +1,19 @@
+
+.frame-setting {
+    font-size: 1rem;
+    padding: 1em;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1em;
+
+    &__title {
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+
+    &__title2 {
+        font-size: 1em;
+        font-weight: 600;
+    }
+}

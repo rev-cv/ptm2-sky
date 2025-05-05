@@ -3,6 +3,7 @@ import CentralArea from '@frames/CentralArea/CentralArea'
 import RightPanel from '@frames/RightPanel/RightPanel'
 import LeftPanel from '@frames/LeftPanel/LeftPanel'
 import Сurtain from '@comps/Сurtain/Сurtain'
+import SettingPanel from '@frames/SettingPanel/SettingPanel'
 
 function PageApp() {
     return (
@@ -10,6 +11,7 @@ function PageApp() {
             <LeftPanel />
             <CentralArea />
             <RightPanel />
+            <SettingPanel />
             <Сurtain />
         </>
     )

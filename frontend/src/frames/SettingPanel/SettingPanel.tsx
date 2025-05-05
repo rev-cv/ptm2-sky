@@ -1,0 +1,16 @@
+import { useAtomValue } from 'jotai'
+import { openSidePanel } from '@utils/jotai.store'
+import ThemeToggle from '@comps/ThemeToggle/ThemeToggle'
+import './style.scss'
+
+function SettingPanel() {
+    const currentOpenPanel = useAtomValue(openSidePanel)
+
+    return (<div className={`frame-setting${currentOpenPanel !== "setting" ? " hide" : ""}`}>
+        <div className="frame-setting__title">Setting</div>
+        <div className="frame-setting__title2">Theme</div>
+        <ThemeToggle />
+    </div>)
+}
+
+export default SettingPanel
