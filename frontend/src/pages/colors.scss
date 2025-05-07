@@ -1,5 +1,4 @@
 
-
 :root {
     --color-bg-primary: #fff;
     --color-bg-secondary: #f5f5f5;
@@ -8,10 +7,11 @@
     --color-curtain: #{rgba(#333, .2)};
 
     --color-border-active: #3c76f1;
-    --color-icon-inactive: #afafaf;
+    --color-border-inactive: #afafaf;
 
     --color-button-default: #3c76f1;
     --color-button-text: #fff;
+    --color-button-icon: #{rgba(#fff, .8)};
     --color-button-hover: #2f5ac0;
     --color-button-active: #1a3a8a;
     --color-button-disabled: #d8e4fc;
@@ -25,10 +25,11 @@
     --color-curtain: #{rgba(#000, 0.2)};
 
     --color-border-active: #4a8cff;
-    --color-icon-inactive: #8a8a8a;
+    --color-border-inactive: #484848;
 
     --color-button-default: #4a8cff;
     --color-button-text: #d8e4fc;
+    --color-button-icon: #{rgba(#d8e4fc, .8)};
     --color-button-hover: #3b6fd6;
     --color-button-active: #2a4f9e;
     --color-button-disabled: #4a4a4a;

@@ -6,7 +6,7 @@ export const openSidePanel = atom<'none' | 'right' | 'left' | 'setting'>("none")
 // атом для хранения текущей темы
 export const themeAtom = atom<'light' | 'dark' | 'auto'>(
     (typeof window !== 'undefined' && localStorage.getItem('theme') as 'light' | 'dark' | 'auto') || 'auto'
-  );
+);
   
 // сохранение темы в localStorage
 export const themeWithStorageAtom = atom(

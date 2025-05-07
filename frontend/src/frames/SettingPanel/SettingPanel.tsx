@@ -7,8 +7,8 @@ function SettingPanel() {
     const currentOpenPanel = useAtomValue(openSidePanel)
 
     return (<div className={`frame-setting${currentOpenPanel !== "setting" ? " hide" : ""}`}>
-        <div className="frame-setting__title">Setting</div>
-        <div className="frame-setting__title2">Theme</div>
+        <div className="frame-setting__h2">Setting</div>
+        <div className="frame-setting__h3">Theme</div>
         <ThemeToggle />
     </div>)
 }

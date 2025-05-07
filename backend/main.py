@@ -1,0 +1,30 @@
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from routers.api_router import router as ApiRouter
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+# Настройка CORS
+origins = [
+    "http://localhost:5173",  # Разрешённый источник (ваш React-клиент)
+    # Можно добавить другие источники, например:
+    # "http://127.0.0.1:5173",
+    # "*"  # Разрешить все источники (не рекомендуется для продакшена)
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Разрешённые источники
+    allow_credentials=True,  # Разрешить отправку куки и заголовков авторизации
+    allow_methods=["*"],  # Разрешить все методы (GET, POST, OPTIONS и т.д.)
+    allow_headers=["*"],  # Разрешить все заголовки
+)
+
+app.include_router(ApiRouter)
+
+@app.get("/hello", response_class=HTMLResponse)
+async def read_hello(request: Request):
+    return HTMLResponse("Hollo World!")
+

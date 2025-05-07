@@ -1,7 +1,6 @@
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
 import { themeWithStorageAtom } from '@utils/jotai.store';
-import './style.scss';
 
 function ThemeToggle() {
     const [theme, setTheme] = useAtom(themeWithStorageAtom);
@@ -32,7 +31,6 @@ function ThemeToggle() {
                 role="radio"
                 aria-checked={theme === 'light'}
                 tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && handleThemeChange('light')}
                 >
                 <span>Light</span>
             </div>
@@ -43,7 +41,6 @@ function ThemeToggle() {
                 role="radio"
                 aria-checked={theme === 'auto'}
                 tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && handleThemeChange('auto')}
                 >
                 <span>Auto</span>
             </div>
@@ -54,12 +51,9 @@ function ThemeToggle() {
                 role="radio"
                 aria-checked={theme === 'dark'}
                 tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && handleThemeChange('dark')}
                 >
                 <span>Dark</span>
             </div>
-
-            <div className="theme-toggle__indicator" data-theme={theme}><span>{theme.charAt(0).toUpperCase() + theme.slice(1)}</span></div>
         </div>
     );
 }

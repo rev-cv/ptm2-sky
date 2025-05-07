@@ -1,0 +1,31 @@
+
+.custom-button {
+    background-color: var(--color-button-default);
+    transition: background-color 300ms ease-in-out;
+    font-size: .8em;
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: .6em;
+    padding: .3em .8em .3em .6em;
+    border-radius: calc(.3em * 2 + 1em);
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--color-button-hover);
+    }
+
+    &:active {
+        background-color: var(--color-button-active);
+    }
+
+    span {
+        color: var(--color-button-text)
+    }
+
+    svg {
+        width: 1.2em;
+        height: 1.2em;
+    }
+}

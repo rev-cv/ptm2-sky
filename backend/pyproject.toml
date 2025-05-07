@@ -1,0 +1,12 @@
+[project]
+name = "ptm2-sky-backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115.12",
+    "llama-cpp-python>=0.3.8",
+    "uvicorn>=0.34.2",
+    "websockets>=15.0.1",
+]
