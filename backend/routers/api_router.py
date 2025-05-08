@@ -4,6 +4,7 @@ import asyncio
 import uuid
 import json
 from llama_cpp import Llama
+from openai import OpenAI
 from pydantic import BaseModel
 from typing import Optional
 
@@ -13,7 +14,15 @@ websockets = {}  # Храним активные WebSocket-соединения 
 
 
 router = APIRouter(prefix="/api", tags=["api"])
-modelAI = "./gguf/google_gemma-3-12b-it-Q5_K_L.gguf"
+
+with open("./routers/APIKEY", "r") as f:
+    APIKEY = f.read()
+
+with open("./routers/APIURL", "r") as f:
+    APIURL = f.read()
+
+with open("./routers/mok_subtasks.md", "r") as f:
+    promtsubtask = f.read()
 
 
 class TaskRequest(BaseModel):
@@ -21,6 +30,7 @@ class TaskRequest(BaseModel):
     description: Optional[str] = ""
 
 
+modelAI = "./gguf/google_gemma-3-12b-it-Q5_K_L.gguf"
 def run_llama(prompt, result_queue, task_id):
     try:
         llm = Llama(model_path=modelAI, n_ctx=2000, verbose=False)
@@ -30,31 +40,50 @@ def run_llama(prompt, result_queue, task_id):
         result_queue.put((task_id, {"error": str(e)}))
 
 
-with open("./routers/mok_subtasks.md", "r") as f:
-    promtsubtask = f.read()
+def run_open_ai(system_prompt, message, result_queue, task_id):
+    try:
+        client = OpenAI(api_key=APIKEY, base_url=APIURL)
+        response = client.chat.completions.create(
+            model="google/gemma-3-27b-it:free",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": message},
+            ],
+            stream=False
+        )
+        result_queue.put((task_id, response.choices[0].message.content))
+        print(response.choices[0].message.content)
+    except Exception as e:
+        result_queue.put((task_id, {"error": str(e)}))
+
+
+def mok_run_open_ai(system_prompt, message, result_queue, task_id):
+    with open("./routers/mok_result.json", "r") as f:
+        mok = f'```json\n{f.read()}\n```'
+    result_queue.put((task_id, mok))
 
 
 @router.post("/generate_subtasks")
 async def create_project(request: Request, task_data: TaskRequest = Body(...)):
     task_id = str(uuid.uuid4())
     
-    # Используем данные из запроса
-    text_task = task_data.text or "Прочитать книгу - Кристен Эллотт, Наташа Дуартен. «Не корми свою тревогу."
+    # данные из запроса
+    text_task = task_data.text
     description = task_data.description
     
-    # Добавляем описание к промпту, если оно есть
-    full_task = f"{text_task}\n{description}" if description else text_task
-    prompt = promtsubtask.replace("%%TEXTTASK%%", full_task)
+    # добавить описание к промпту, если оно есть
+    message = f"{text_task}\n{description}" if description else text_task
 
-    # Инициализируем задачу
+    # инициализация задачи
     tasks[task_id] = {"status": "running", "result": None}
 
-    # Запускаем процесс обработки
+    # запуск процесса обработки
     result_queue = Queue()
-    process = Process(target=run_llama, args=(prompt, result_queue, task_id))
+    # process = Process(target=run_llama, args=(prompt, result_queue, task_id))
+    process = Process(target=mok_run_open_ai, args=(promtsubtask, message, result_queue, task_id))
     process.start()
 
-    # Запускаем фоновую задачу для мониторинга процесса
+    # запуск фоновой задачи для мониторинга процесса
     asyncio.create_task(monitor_task(task_id, process, result_queue, request))
 
     return {"task_id": task_id, "status": "running"}
@@ -62,9 +91,9 @@ async def create_project(request: Request, task_data: TaskRequest = Body(...)):
 
 async def monitor_task(task_id, process, result_queue, request):
     try:
-        # Проверяем отключение клиента и отправляем статус через WebSocket
+        # проверка статуса подключения клиента и отправка статуса через WebSocket
         while process.is_alive():
-            print(f"Monitoring task: {task_id}")
+            # print(f"Monitoring task: {task_id}")
             await asyncio.sleep(1)
             
             if task_id not in websockets or websockets[task_id].client_state.name != "CONNECTED":
@@ -73,31 +102,29 @@ async def monitor_task(task_id, process, result_queue, request):
                 await send_websocket_update(task_id)
                 return
 
-            # Отправляем промежуточный статус через WebSocket
+            # отправка промежуточного статуса через WebSocket
             await send_websocket_update(task_id)
 
-        # Получаем результат после завершения процесса
+        # получение результата после завершения процесса
         if not result_queue.empty():
             task_id, output = result_queue.get()
             
-            # Проверяем наличие ошибки
+            # проверка на наличие ошибки
             if isinstance(output, dict) and "error" in output:
-                tasks[task_id] = {"status": "error", "result": {"message": f"Error: {output['error']}", "agent": modelAI}}
+                tasks[task_id] = {"status": "error", "result": {"message": f"Error: {output['error']}"}}
             else:
                 try:
-                    result = json.loads(output["choices"][0]["text"].replace("```json", "").replace("```", "").strip())
-                    result["agent"] = modelAI
+                    result = json.loads(output.replace("```json", "").replace("```", "").strip())
                     tasks[task_id] = {"status": "completed", "result": result}
                 except Exception as e:
-                    error_msg = output["choices"][0]["text"] if "choices" in output else str(e)
-                    result = {"message": f'error {error_msg}', "agent": modelAI}
+                    result = {"message": f'error {str(e)}'}
                     tasks[task_id] = {"status": "error", "result": result}
 
-            # Отправляем финальный статус через WebSocket
+            # отправка финального статуса через WebSocket
             await send_websocket_update(task_id)
     except Exception as e:
         print(f"Error monitoring task {task_id}: {e}")
-        tasks[task_id] = {"status": "error", "result": {"message": f"Server error: {str(e)}", "agent": modelAI}}
+        tasks[task_id] = {"status": "error", "result": {"message": f"Server error: {str(e)}"}}
         await send_websocket_update(task_id)
 
 
@@ -119,10 +146,10 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
     await websocket.accept()
     print(f"WebSocket connection established for task {task_id}")
     
-    # Сохраняем соединение
+    # запомнить соединение
     websockets[task_id] = websocket
     
-    # Если задача уже существует, отправляем текущее состояние
+    # если задача уже существует, отправить текущее состояние
     if task_id in tasks:
         await websocket.send_json({
             "task_id": task_id,
@@ -131,7 +158,7 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
         })
     
     try:
-        # Держим соединение открытым и отвечаем на пинги
+        # держать соединение открытым и отвечать на пинги
         while True:
             message = await websocket.receive_text()
             print(f"Received message from client for task {task_id}: {message}")
@@ -139,7 +166,7 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
     except Exception as e:
         print(f"WebSocket disconnected for task {task_id}: {e}")
     finally:
-        # Удаляем соединение при закрытии
+        # удалить соединение при закрытии
         if task_id in websockets:
             del websockets[task_id]
         await websocket.close()

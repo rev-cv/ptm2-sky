@@ -19,9 +19,9 @@ function NewTask() {
     // Соединяемся с WebSocket только когда у нас есть taskId
     const wsUrl = taskId ? `ws://localhost:3000/api/ws/${taskId}` : null;
     
-    // Настройка WebSocket с правильной проверкой соединения
+    // настройка WebSocket с проверкой соединения
     const { lastMessage, readyState } = useWebSocket(wsUrl, {
-        shouldReconnect: (closeEvent) => status === 'running',
+        shouldReconnect: () => status === 'running',
         reconnectAttempts: 10,
         reconnectInterval: 3000,
         onError: (event) => {
@@ -31,9 +31,9 @@ function NewTask() {
         },
         onOpen: () => console.log('WebSocket connected successfully'),
         onClose: (event) => console.log('WebSocket closed:', event),
-    }, !!taskId); // Важно! Третий параметр указывает, что соединение должно быть активно только при наличии taskId
+    }, !!taskId); // !!taskId указывает, что соединение должно быть активно только при наличии taskId
 
-    // Логирование состояния WebSocket
+    // логирование состояния WebSocket
     useEffect(() => {
         console.log('WebSocket readyState:', readyState, 'taskId:', taskId);
         if (readyState === 3 && status === 'running') {
@@ -42,7 +42,7 @@ function NewTask() {
         }
     }, [readyState, status]);
 
-    // Обработка сообщений WebSocket
+    // обработка сообщений WebSocket
     useEffect(() => {
         if (lastMessage !== null) {
             console.log('Raw message:', lastMessage.data);
@@ -61,7 +61,7 @@ function NewTask() {
         }
     }, [lastMessage]);
 
-    // Запуск задачи
+    // запуск задачи
     const startTask = async () => {
         setStatus('starting');
         setResult(null);
