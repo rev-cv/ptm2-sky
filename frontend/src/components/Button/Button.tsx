@@ -1,15 +1,7 @@
 import './style.scss'
+import {TypeButtonProps} from '@mytype/typeButton'
 
-interface ButtonProps {
-    label?: string
-    disabled?: boolean
-    variant?: 'icolabel' | 'ico' | 'label' | 'icolabel-s' | 'ico-s' | 'label-s'
-    onClick?: React.MouseEventHandler<HTMLButtonElement>
-    children?: React.ReactNode
-    className?: string
-}
-
-function Button({ label = "Click me", disabled = false, variant = "icolabel", onClick, children, className }: ButtonProps) {
+function Button({ label = "Click me", disabled = false, variant = "icolabel", onClick, children, className }: TypeButtonProps) {
     // const currentOpenPanel = useAtomValue(openSidePanel)
 
     const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {

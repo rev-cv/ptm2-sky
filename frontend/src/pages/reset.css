@@ -4,6 +4,8 @@
 	box-sizing: border-box;
 	/* Все элементы, включая псевдоэлементы ::before и ::after, используют box-sizing: border-box, чтобы учитывать паддинги и бордеры в размерах элемента. */
     color: var(--color-text-primary);
+	
+	font-family: "Nunito", sans-serif;
 }
 
 /* Remove default margin */
@@ -76,6 +78,11 @@ select {
 }
 
 *::-webkit-scrollbar-thumb {
-	background-color: rgba(0, 0, 0, .2);
+	background-color: var(--color-scrollbar-thumb);
 	border-radius: 8px;
+}
+
+*::selection {
+	background-color: var(--color-text-selection-bg);
+	color: var(--color-text-selection);
 }

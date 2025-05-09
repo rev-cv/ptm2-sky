@@ -1,62 +1,64 @@
 import { useState, useEffect } from 'react'
-import { useAtomValue } from 'jotai'
-import { openSidePanel } from '@utils/jotai.store'
+import { useAtom } from 'jotai'
+import { openSidePanel, currentNewTask } from '@utils/jotai.store'
 import useWebSocket from 'react-use-websocket'
 import Button from '@comps/Button/Button'
+import Loader from '@comps/Loader/Loader'
+import SubTask from '@comps/NewTask/SubTaskElement'
+import ThemeElement from '@comps/NewTask/ThemeElement'
 import './style.scss'
-import Logo from '@asset/cactus.svg'
+import '@comps/Accordion/Accordion.scss'
+import IcoLogo from '@asset/cactus.svg'
 import IcoMagic from '@asset/magic.svg'
+import IcoPoint from '@asset/point.svg'
 
-function NewTask() {
-    const currentOpenPanel = useAtomValue(openSidePanel)
+function NewTask () {
+    const [currentOpenPanel] = useAtom(openSidePanel)
+    const [fillingNewTask, updateNewTask] = useAtom(currentNewTask)
 
+    // основной текст задачи
+    const [taskTitle, setTitle] = useState('');
+    const [taskDescr, setDescr] = useState('');
+
+    // разворот аккардеонов
+    const [isOpenSubTasks, setStatusSubTasks] = useState(true);
+    const [isOpenThemes, setStatusThemes] = useState(true);
+
+    // реактивы отвечающие за магический запрос
     const [taskId, setTaskId] = useState<string | null>(null)
     const [status, setStatus] = useState('idle')
-    const [result, setResult] = useState<null|object>(null)
-    const [taskText, setTaskText] = useState('')
-    const [taskDescription, setTaskDescription] = useState('')
-    
-    // Соединяемся с WebSocket только когда у нас есть taskId
-    const wsUrl = taskId ? `ws://localhost:3000/api/ws/${taskId}` : null;
     
     // настройка WebSocket с проверкой соединения
-    const { lastMessage, readyState } = useWebSocket(wsUrl, {
+    const { lastMessage } = useWebSocket(`ws://localhost:3000/api/ws/${taskId}`, {
         shouldReconnect: () => status === 'running',
         reconnectAttempts: 10,
         reconnectInterval: 3000,
         onError: (event) => {
             console.error('WebSocket error:', event);
             setStatus('error');
-            setResult({ message: 'WebSocket connection failed' });
+            // setResult({ "message": 'WebSocket connection failed' });
         },
         onOpen: () => console.log('WebSocket connected successfully'),
         onClose: (event) => console.log('WebSocket closed:', event),
     }, !!taskId); // !!taskId указывает, что соединение должно быть активно только при наличии taskId
 
-    // логирование состояния WebSocket
-    useEffect(() => {
-        console.log('WebSocket readyState:', readyState, 'taskId:', taskId);
-        if (readyState === 3 && status === 'running') {
-            setStatus('disconnected');
-            setResult({ message: 'WebSocket connection lost' });
-        }
-    }, [readyState, status]);
-
     // обработка сообщений WebSocket
     useEffect(() => {
         if (lastMessage !== null) {
-            console.log('Raw message:', lastMessage.data);
+            // console.log('Raw message:', lastMessage.data);
             try {
                 const data = JSON.parse(lastMessage.data);
-                console.log('Parsed data:', data);
+                // console.log('Parsed data:', data);
                 setStatus(data.status);
                 if (data.result) {
-                    setResult(data.result);
+                    // setResult(data.result);
+                    updateNewTask({...fillingNewTask, ...data.result})
+                    console.log('Parsed result:', data.result);
                 }
             } catch (error) {
                 console.error('Parse error:', error);
                 setStatus('error');
-                setResult({ message: 'Failed to parse WebSocket message' });
+                // setResult({ "message": 'Failed to parse WebSocket message' });
             }
         }
     }, [lastMessage]);
@@ -64,14 +66,14 @@ function NewTask() {
     // запуск задачи
     const startTask = async () => {
         setStatus('starting');
-        setResult(null);
+        // setResult(null);
         try {
             const response = await fetch('http://localhost:3000/api/generate_subtasks', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    text: taskText,
-                    description: taskDescription
+                    text: taskTitle,
+                    description: taskDescr
                 })
             });
             
@@ -80,28 +82,40 @@ function NewTask() {
             const data = await response.json();
             console.log('Task started:', data);
             
-            // Сохраняем taskId для последующего подключения к WebSocket
+            // сохранить taskId для последующего подключения к WebSocket
             setTaskId(data.task_id);
             setStatus(data.status);
         } catch (error:any) {
             console.error('Start task error:', error);
             setStatus('error');
-            setResult({ message: error.message || 'Failed to start task' });
+            // setResult({ message: error.message || 'Failed to start task' });
         }
     };
+
+    // очистка формы ввода 
+    useEffect(() => {
+        // при открытии форма автоматически очищается если был очищен fillingNewTask
+        if (currentOpenPanel === 'left') {
+            setTitle(fillingNewTask.title);
+            setDescr(fillingNewTask.description);
+        }
+    }, [currentOpenPanel]);
 
     return (<>
         <div className="new-task__line">
             <div className='new-task__clater'>
-                <div><Logo /></div>
+                <div><IcoLogo/></div>
             </div>
             <input 
                 type="text"
                 id="new-task-title"
                 placeholder="Enter task..."
                 className="new-task__task"
-                value={taskText}
-                onChange={(e) => setTaskText(e.target.value)}
+                value={taskTitle}
+                onChange={(e) => {
+                    setTitle(e.target.value)
+                    updateNewTask({...fillingNewTask, title: e.target.value})
+                }}
             />
         </div>
 
@@ -110,26 +124,82 @@ function NewTask() {
             id="new-task-descr"
             className="new-task__descr"
             rows={5}
-            value={taskDescription}
-            onChange={(e) => setTaskDescription(e.target.value)}
+            value={taskDescr}
+            onChange={(e) => {
+                setDescr(e.target.value)
+                updateNewTask({...fillingNewTask, description: e.target.value})
+            }}
         />
+
+        {
+            fillingNewTask.motivation?.length &&
+            <div className="new-task__motivation">{fillingNewTask.motivation}</div>
+        }
+
+        <div className="new-task__options">
+            {
+                fillingNewTask.match_themes?.length &&
+
+                <div className={`accordion${isOpenSubTasks ? " view" : ""}`}>
+                    <div 
+                        className='new-task__h4 accordion__title' 
+                        onClick={() => setStatusSubTasks(!isOpenSubTasks)}
+                        >
+                        <div className="accordion__pointer"><IcoPoint /></div>
+                        <span>Подзадачи</span>
+                    </div>
+                    <div className="accordion__options">
+                        <div className="accordion__options-sub">
+                            { fillingNewTask.subtasks?.map(elem => <SubTask {...elem} /> ) }
+                        </div>
+                    </div>
+                </div>
+            }
+
+            {
+                (fillingNewTask.match_themes?.length || fillingNewTask.new_themes?.length) && 
+
+                <div className={`accordion${isOpenThemes ? " view" : ""}`}>
+                    <div 
+                        className='new-task__h4 accordion__title' 
+                        onClick={() => setStatusThemes(!isOpenThemes)}
+                        >
+                        <div className="accordion__pointer"><IcoPoint /></div>
+                        <span>Добавить в темы</span>
+                    </div>
+                    <div className="accordion__options">
+                        <div className="accordion__options-sub">
+                            {
+                                fillingNewTask.match_themes?.length && 
+                                    fillingNewTask.match_themes?.map(elem => <ThemeElement {...elem} /> )
+                            }
+                            {
+                                fillingNewTask.new_themes?.length && 
+                                    <>
+                                        <div className='new-task__theme-elem-add-new'>новые темы</div>
+                                        {
+                                            fillingNewTask.new_themes?.map(elem => <ThemeElement {...elem} /> )
+                                        }
+                                    </>
+                                    
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            
+        </div>
 
         <Button 
             className='new-task__btn-magic' 
             variant='ico' 
             onClick={startTask}
             disabled={status === 'running' || status === 'starting'}
-        >
-            <IcoMagic />
+            >
+            {status === 'running' || status === 'starting' ? <Loader /> : <IcoMagic />}
             <span>Magic</span>
-        </Button>
-
-        <p>Status: {status}</p>
-        
-        <div className="result-container">
-            {result && <pre>{JSON.stringify(result, null, 2)}</pre>}
-        </div>
-        
+        </Button>       
     </>)
 }
 

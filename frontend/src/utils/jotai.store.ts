@@ -1,4 +1,5 @@
 import { atom } from 'jotai';
+import { TypeNewTask } from '@mytype/typesNewTask'
 
 // открытая боковая панель
 export const openSidePanel = atom<'none' | 'right' | 'left' | 'setting'>("none");
@@ -16,3 +17,8 @@ export const themeWithStorageAtom = atom(
         localStorage.setItem('theme', newTheme);
     }
 );
+
+export const currentNewTask = atom<TypeNewTask>({
+    title: "",
+    description: ""
+});

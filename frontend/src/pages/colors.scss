@@ -4,6 +4,8 @@
     --color-bg-secondary: #f5f5f5;
 
     --color-text-primary: #333;
+    --color-text-secondary: #7B7B7B;
+
     --color-curtain: #{rgba(#333, .2)};
 
     --color-border-active: #3c76f1;
@@ -15,6 +17,11 @@
     --color-button-hover: #2f5ac0;
     --color-button-active: #1a3a8a;
     --color-button-disabled: #d8e4fc;
+
+    --color-scrollbar-thumb: #{rgba(#333, .1)};
+
+    --color-text-selection: #333;
+    --color-text-selection-bg: lightblue;
 }
 
 :root.dark-theme {
@@ -22,6 +29,8 @@
     --color-bg-secondary: #2c2c2c;
 
     --color-text-primary: #d1d1d1;
+    --color-text-secondary: #797979;
+
     --color-curtain: #{rgba(#000, 0.2)};
 
     --color-border-active: #4a8cff;
@@ -33,4 +42,6 @@
     --color-button-hover: #3b6fd6;
     --color-button-active: #2a4f9e;
     --color-button-disabled: #4a4a4a;
+
+    --color-scrollbar-thumb: #{rgba(#d1d1d1, .1)};
 }
