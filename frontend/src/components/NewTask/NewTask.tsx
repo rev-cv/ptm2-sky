@@ -2,15 +2,20 @@ import { useState, useEffect } from 'react'
 import { useAtom } from 'jotai'
 import { openSidePanel, currentNewTask } from '@utils/jotai.store'
 import useWebSocket from 'react-use-websocket'
+
 import Button from '@comps/Button/Button'
 import Loader from '@comps/Loader/Loader'
-import SubTask from '@comps/NewTask/SubTaskElement'
-import ThemeElement from '@comps/NewTask/ThemeElement'
+
+import BlockThemes from './BlockThemes'
+import BlockSubTasks from './BlockSubTasks'
+import BlockStates from './BlockStates'
+import BlockStress from './BlockStress'
+import BlockEnergy from './BlockEnergy'
+import BlockCriticality from './BlockCriticality'
+
 import './style.scss'
-import '@comps/Accordion/Accordion.scss'
 import IcoLogo from '@asset/cactus.svg'
 import IcoMagic from '@asset/magic.svg'
-import IcoPoint from '@asset/point.svg'
 
 function NewTask () {
     const [currentOpenPanel] = useAtom(openSidePanel)
@@ -19,10 +24,6 @@ function NewTask () {
     // основной текст задачи
     const [taskTitle, setTitle] = useState('');
     const [taskDescr, setDescr] = useState('');
-
-    // разворот аккардеонов
-    const [isOpenSubTasks, setStatusSubTasks] = useState(true);
-    const [isOpenThemes, setStatusThemes] = useState(true);
 
     // реактивы отвечающие за магический запрос
     const [taskId, setTaskId] = useState<string | null>(null)
@@ -63,7 +64,7 @@ function NewTask () {
         }
     }, [lastMessage]);
 
-    // запуск задачи
+    // запуск анализа задачи нейронкой
     const startTask = async () => {
         setStatus('starting');
         // setResult(null);
@@ -133,65 +134,19 @@ function NewTask () {
 
         {
             fillingNewTask.motivation?.length &&
-            <div className="new-task__motivation">{fillingNewTask.motivation}</div>
+                <div className="new-task__motivation">{fillingNewTask.motivation}</div>
         }
 
         <div className="new-task__options">
-            {
-                fillingNewTask.match_themes?.length &&
-
-                <div className={`accordion${isOpenSubTasks ? " view" : ""}`}>
-                    <div 
-                        className='new-task__h4 accordion__title' 
-                        onClick={() => setStatusSubTasks(!isOpenSubTasks)}
-                        >
-                        <div className="accordion__pointer"><IcoPoint /></div>
-                        <span>Подзадачи</span>
-                    </div>
-                    <div className="accordion__options">
-                        <div className="accordion__options-sub">
-                            { fillingNewTask.subtasks?.map(elem => <SubTask {...elem} /> ) }
-                        </div>
-                    </div>
-                </div>
-            }
-
-            {
-                (fillingNewTask.match_themes?.length || fillingNewTask.new_themes?.length) && 
-
-                <div className={`accordion${isOpenThemes ? " view" : ""}`}>
-                    <div 
-                        className='new-task__h4 accordion__title' 
-                        onClick={() => setStatusThemes(!isOpenThemes)}
-                        >
-                        <div className="accordion__pointer"><IcoPoint /></div>
-                        <span>Добавить в темы</span>
-                    </div>
-                    <div className="accordion__options">
-                        <div className="accordion__options-sub">
-                            {
-                                fillingNewTask.match_themes?.length && 
-                                    fillingNewTask.match_themes?.map(elem => <ThemeElement {...elem} /> )
-                            }
-                            {
-                                fillingNewTask.new_themes?.length && 
-                                    <>
-                                        <div className='new-task__theme-elem-add-new'>новые темы</div>
-                                        {
-                                            fillingNewTask.new_themes?.map(elem => <ThemeElement {...elem} /> )
-                                        }
-                                    </>
-                                    
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
-            
-            
+            <BlockSubTasks />
+            <BlockThemes />
+            <BlockStates />
+            <BlockStress />
+            <BlockEnergy />
+            <BlockCriticality />
         </div>
 
-        <Button 
+        <Button
             className='new-task__btn-magic' 
             variant='ico' 
             onClick={startTask}
@@ -199,7 +154,7 @@ function NewTask () {
             >
             {status === 'running' || status === 'starting' ? <Loader /> : <IcoMagic />}
             <span>Magic</span>
-        </Button>       
+        </Button>      
     </>)
 }
 

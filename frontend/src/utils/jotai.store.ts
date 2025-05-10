@@ -20,5 +20,6 @@ export const themeWithStorageAtom = atom(
 
 export const currentNewTask = atom<TypeNewTask>({
     title: "",
-    description: ""
+    description: "",
+    impact: 0
 });

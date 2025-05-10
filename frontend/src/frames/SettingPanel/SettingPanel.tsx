@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai'
 import { openSidePanel } from '@utils/jotai.store'
-import ThemeToggle from '@comps/ThemeToggle/ThemeToggle'
+import ThemeToggle from '@comps/Toggles/ThemeToggle'
 import './style.scss'
 
 function SettingPanel() {

@@ -1,4 +1,3 @@
-import './style.scss'
 import { TypeSubTask } from '@mytype/typesNewTask'
 import IcoSubTaskPoint from '@asset/task_point.svg'
 

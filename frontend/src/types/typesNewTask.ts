@@ -14,7 +14,7 @@ export type TypeSubTask = {
     motivation: string
 }
 
-type TypeAssociation = {
+export type TypeAssociation = {
     title: string
     description: string
     reason:string
@@ -27,11 +27,12 @@ export type TypeNewTask = {
 	match_themes?: TypeThemes[]
     new_themes?: TypeThemes[]
     subtasks?: TypeSubTask[]
-    risks?: {
-        risk: 0 | 1 | 2 | 3
+    risk?: 0 | 1 | 2 | 3
+    risk_explanation?: {
         reason: string
         proposals: string
     }
+    impact?: 0 | 1 | 2 | 3
     states?: {
         physical: TypeAssociation[]
         intellectual: TypeAssociation[]
