@@ -9,7 +9,7 @@ function SubTask ({title="", description="", instruction="", continuance=0, moti
             <div className='new-task__subtask-motiv'>{motivation}</div>
             <div className='new-task__subtask-descr'>{description}</div>
             <div className='new-task__subtask-instr'>{instruction}</div>
-            <div className='new-task__subtask-hours'>Время выполнения: {continuance}h</div>
+            <div className='new-task__subtask-hours'>Время выполнения: ~{continuance}h</div>
         </div>
         
     )

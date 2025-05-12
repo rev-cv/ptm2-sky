@@ -18,8 +18,12 @@ export const themeWithStorageAtom = atom(
     }
 );
 
-export const currentNewTask = atom<TypeNewTask>({
+export const resetTask:TypeNewTask = {
     title: "",
     description: "",
-    impact: 0
-});
+    impact: 0,
+    deadline: null,
+    activation: '2025-05-12T14:30:00',
+    taskchecks: [],
+}
+export const currentNewTask = atom<TypeNewTask>({...resetTask});

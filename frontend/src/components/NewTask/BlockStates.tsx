@@ -81,15 +81,3 @@ function BlockStates() {
 }
 
 export default BlockStates
-
-
-{/* <div className="new-task__theme-elem">
-                                <div className='new-task__theme-elem-title'>
-                                    <IcoThemeElement />
-                                    {stateNames[key as keyof typeof stateNames]} состояние
-                                </div>
-                                <div className='new-task__subtask-motiv'>
-                                    
-                                    <b>{fillingNewTask.states[key].map((elem: any) => elem.title).join(', ')}</b>
-                                </div>
-                            </div> */}

@@ -1,0 +1,81 @@
+.react-calendar {
+    user-select: none;
+    // min-width: 320px;
+
+    &__navigation {
+
+        display: flex;
+        padding-bottom: 1em;
+        
+        > button {
+            margin: 0 !important;
+        }
+
+        * {
+            font-size: 1em;
+        }
+
+        &__label__labelText {
+            font-size: .7em;
+        }
+    }
+
+    &__month-view__weekdays > div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: .8em;
+        font-weight: 600;
+        color: #4b5563;
+
+        abbr {
+            padding-bottom: 2px;
+            text-decoration: none;
+            border-bottom: 1px solid var(--color-border-inactive);
+        }
+    }
+
+    &__month-view__days {
+        padding-top: 1em;
+        gap: 0.5em 0;
+
+        button {
+            border: 1px solid transparent;
+            border-radius: 5px !important;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            abbr {
+                transform: translateY(1px);
+            }
+        }        
+    }
+
+    &__month-view__days > button {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+.react-calendar__month-view__weekdays__weekday--current abbr {
+    color: var(--color-border-active);
+}
+
+.react-calendar__tile--active {
+    border-color: var(--color-border-active) !important;
+
+    abbr {
+        color: var(--color-border-active);
+    }
+}
+
+.react-calendar__tile--now abbr {
+    color: var(--color-border-active);
+    opacity: 1 !important;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth abbr {
+    opacity: 0.2;
+}

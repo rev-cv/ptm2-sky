@@ -10,7 +10,6 @@ import Toggle from '@comps/Toggles/Toggle'
 
 import values_component from '@comps/NewTask/BlockCriticalityValues.json'
 
-
 function BlockEnergy() {
     const [fillingNewTask, updateNewTask] = useAtom(currentNewTask)
     const [isExpanded, setIsExpanded] = useState(false)

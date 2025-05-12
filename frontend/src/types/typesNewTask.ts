@@ -1,5 +1,6 @@
 
 export type TypeThemes = {
+    id: number | null
     name: string
     description?: string
     match_percentage: number
@@ -15,6 +16,7 @@ export type TypeSubTask = {
 }
 
 export type TypeAssociation = {
+    id: number
     title: string
     description: string
     reason:string
@@ -40,6 +42,10 @@ export type TypeNewTask = {
         motivational: TypeAssociation[]
         social: TypeAssociation[]
     }
+    action_type?: TypeAssociation[]
     stress?: TypeAssociation[]
     energy_level?: TypeAssociation[]
+    deadline?: string | null     // время дедлайна
+    activation?: string | null   // время активации задачи
+    taskchecks?: string[]        // даты проверки задачи
 }

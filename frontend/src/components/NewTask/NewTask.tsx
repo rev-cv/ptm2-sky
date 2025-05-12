@@ -12,6 +12,7 @@ import BlockStates from './BlockStates'
 import BlockStress from './BlockStress'
 import BlockEnergy from './BlockEnergy'
 import BlockCriticality from './BlockCriticality'
+import BlockTiming from './BlockTiming'
 
 import './style.scss'
 import IcoLogo from '@asset/cactus.svg'
@@ -37,7 +38,6 @@ function NewTask () {
         onError: (event) => {
             console.error('WebSocket error:', event);
             setStatus('error');
-            // setResult({ "message": 'WebSocket connection failed' });
         },
         onOpen: () => console.log('WebSocket connected successfully'),
         onClose: (event) => console.log('WebSocket closed:', event),
@@ -144,6 +144,7 @@ function NewTask () {
             <BlockStress />
             <BlockEnergy />
             <BlockCriticality />
+            <BlockTiming />
         </div>
 
         <Button
