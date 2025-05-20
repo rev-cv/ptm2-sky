@@ -1,7 +1,8 @@
+import { match } from 'assert'
 import './style.scss'
 import {TypeButtonProps} from '@mytype/typeButton'
 
-function Button({ label = "Click me", disabled = false, variant = "icolabel", onClick, children, className }: TypeButtonProps) {
+function Button({ text=null, IconComponent=null, className, onClick, disabled=false, variant="first" }: TypeButtonProps) {
     // const currentOpenPanel = useAtomValue(openSidePanel)
 
     const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
@@ -10,13 +11,34 @@ function Button({ label = "Click me", disabled = false, variant = "icolabel", on
         }
     }
 
+    function getVariantButton() {
+        let result = className? className + " " : ""
+
+        if (variant === "first") {
+            result += "custom-button-first"
+        } else if (variant === "second") {
+            result += "custom-button-second"
+        }
+
+        if (text && IconComponent) {
+            result += " custom-button-ico-text"
+        } else if (text) {
+            result += " custom-button-text"
+        } else if (IconComponent) {
+            result += " custom-button-ico"
+        }
+
+        return result
+    }
+
     return (
         <button
-            className={`${className? className + " " : ""}custom-button custom-button__${variant}`}
+            className={getVariantButton()}
             onClick={handleClick}
             disabled={disabled}
-            aria-label={label}
-            >{children || label}
+            >
+            {IconComponent && <IconComponent />}
+            {text && <span>{text}</span>}
         </button>
     )
 }

@@ -96,7 +96,8 @@
     &__states,
     &__energy,
     &__activate,
-    &__deadline {
+    &__deadline,
+    &__taskchecks {
         display: flex;
         flex-direction: column;
         font-size: 1em;
@@ -147,6 +148,13 @@
                 font-size: 1.4em;
                 margin-left: 10px;
             }
+
+            &_diff {
+                font-size: .7em;
+                padding-left: 1em;
+                line-height: 1.2em;
+                color: var(--color-text-secondary);
+            }
         }
 
         & .toggle {
@@ -169,6 +177,8 @@
         &:first-child {
             padding-top: .7em;
         }
+
+        
     }
 
     &__theme-elem-title span {
@@ -213,11 +223,9 @@
         transition: opacity 300ms ease-in-out;
     }
 
-    &__edit-block button,
-    &__deadline-time button,
-    &__activate-time button {
+    &__edit-block > button,
+    &__taskchecks > button {
         padding: .2em;
-        aspect-ratio: 1/1;
         height: 1.4em;
         border-radius: .1em;
         
@@ -229,7 +237,6 @@
         }
 
         &:hover {
-            background-color: var(--color-button-hover);
             background-color: var(--color-button-transparent-hover);
         }
 
@@ -240,5 +247,15 @@
 
     &__h4:hover > .new-task__edit-block {
         opacity: 1;
+    }
+
+    &__btns {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        &-clean {
+            order: -1;
+        }
     }
 }

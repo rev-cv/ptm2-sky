@@ -23,7 +23,7 @@ export const resetTask:TypeNewTask = {
     description: "",
     impact: 0,
     deadline: null,
-    activation: '2025-05-12T14:30:00',
+    activation: null,
     taskchecks: [],
 }
 export const currentNewTask = atom<TypeNewTask>({...resetTask});

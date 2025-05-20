@@ -1,24 +1,33 @@
 import { useState } from 'react'
-import { useAtomValue } from 'jotai'
+import { useAtom } from 'jotai'
 import { currentNewTask } from '@utils/jotai.store'
 import IcoPoint from '@asset/point.svg'
-import IcoEnergyElement from '@asset/energy-element.svg'
+// import IcoEnergyElement from '@asset/energy-element.svg'
 import IcoEdit from '@asset/edit.svg'
 import IcoStart from '@asset/start.svg'
 import IcoCheck from '@asset/check.svg'
 import IcoCalendar from '@asset/calendar.svg'
 import '@comps/Accordion/Accordion.scss'
-import { formatDateString } from '@utils/date-funcs'
-import ButtonWithContext from '@comps/ButtonWithContext/ButtonWithContext'
-import '@comps/Calendar/CalendarReact.scss'
-
-import { Calendar } from 'react-calendar'
+import { formatDateString, getDaysDifference, sortDates } from '@utils/date-funcs'
+import ButtonCalendar from '@comps/ButtonCalendar/ButtonCalendar'
 
 function BlockEnergy() {
-    const fillingNewTask = useAtomValue(currentNewTask)
+    const [fillingNewTask, updateNewTask] = useAtom(currentNewTask)
     const [isExpanded, setIsExpanded] = useState(false)
 
     if (!fillingNewTask.energy_level?.length) return null
+
+    function updateChecksDates(value:string, index: number) {
+        let newTaskchecks: string[] = []
+        if (!fillingNewTask.taskchecks) return null
+
+        newTaskchecks = [...fillingNewTask.taskchecks]
+        newTaskchecks[index] = value
+
+        const dates = sortDates(newTaskchecks)
+
+        updateNewTask({...fillingNewTask, taskchecks: dates})
+    }
 
     return (
         <div className={`accordion${isExpanded ? " view" : ""}`}>
@@ -52,11 +61,18 @@ function BlockEnergy() {
                                     : 
                                     "Activation at creation time"
                             }
-                            <ButtonWithContext IcoForButton={IcoStart} >
-                                <Calendar onClickDay={(value, event) => 
-                                    console.log('Clicked day: ', value)} 
-                                />
-                            </ButtonWithContext>
+                            <ButtonCalendar 
+                                IcoForButton={IcoCalendar} 
+                                onClickDay={
+                                    (value) => updateNewTask({...fillingNewTask, activation: value})
+                                }
+                            />
+                            {
+                                fillingNewTask.activation && 
+                                    <span className='new-task__activate-time_diff'>
+                                        {getDaysDifference(fillingNewTask.activation)} days
+                                    </span>
+                            }
                         </div>
                         <div className='new-task__deadline-motiv'>
                             Дата, когда задача становится доступной для выполнения.
@@ -68,17 +84,62 @@ function BlockEnergy() {
                             <IcoStart />
                             Дата дедлайна задачи
                         </div>
-                        <div className='new-task__deadline-descr'>123</div>
-                        <div className='new-task__deadline-motiv'>144</div>
+                        <div className='new-task__deadline-time'>
+                            {
+                                fillingNewTask.deadline ? 
+                                    formatDateString(fillingNewTask.deadline)
+                                    : 
+                                    "No deadline"
+                            }
+                            <ButtonCalendar 
+                                IcoForButton={IcoCalendar} 
+                                onClickDay={
+                                    (value) => updateNewTask({...fillingNewTask, deadline: value})
+                                }
+                            />
+                            {
+                                fillingNewTask.deadline && 
+                                    <span className='new-task__deadline-time_diff'>
+                                        {getDaysDifference(fillingNewTask.deadline)} days
+                                    </span>
+                            }
+                        </div>
                     </div>
 
-                    <div className="new-task__energy">
-                        <div className='new-task__energy-title'>
+                    <div className="new-task__taskchecks">
+                        <div className='new-task__taskchecks-title'>
                             <IcoCheck />
                             Даты проверок задачи
                         </div>
-                        <div className='new-task__energy-descr'>123</div>
-                        <div className='new-task__energy-motiv'>144</div>
+                        {
+                            fillingNewTask.taskchecks && fillingNewTask.taskchecks.map((datestr, index) => (
+                                <div className='new-task__taskchecks-time' key={`data-check-${index}`}>
+                                        {
+                                            datestr ? formatDateString(datestr) : "Date not set"
+                                        }
+                                        <ButtonCalendar 
+                                            IcoForButton={IcoCalendar} 
+                                            onClickDay={value => updateChecksDates(value, index)}
+                                        />
+                                        {
+                                            datestr && 
+                                                <span className='new-task__taskchecks-time_diff'>
+                                                    {getDaysDifference(datestr)} days
+                                                </span>
+                                        }
+                                </div>
+                            ))
+                        }
+                        <button 
+                            onClick={
+                                () => updateNewTask({
+                                    ...fillingNewTask, 
+                                    taskchecks: [
+                                        ...(fillingNewTask.taskchecks ? fillingNewTask.taskchecks : []), ""
+                                    ]
+                                })}
+                            >Add check time
+                        </button>
                     </div>
 
                 </div>

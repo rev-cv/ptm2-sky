@@ -5,8 +5,8 @@ import uuid
 import json
 from llama_cpp import Llama
 from openai import OpenAI
-from pydantic import BaseModel
-from typing import Optional
+
+from schemas.types_new_task import TaskGenerateRequest, NewTaskRequest
 
 
 tasks = {}       # Хранилище задач
@@ -23,12 +23,6 @@ with open("./routers/APIURL", "r") as f:
 
 with open("./routers/mok_subtasks.md", "r") as f:
     promtsubtask = f.read()
-
-
-class TaskRequest(BaseModel):
-    text: str
-    description: Optional[str] = ""
-
 
 modelAI = "./gguf/google_gemma-3-12b-it-Q5_K_L.gguf"
 def run_llama(prompt, result_queue, task_id):
@@ -63,8 +57,11 @@ def mok_run_open_ai(system_prompt, message, result_queue, task_id):
     result_queue.put((task_id, mok))
 
 
-@router.post("/generate_subtasks")
-async def create_project(request: Request, task_data: TaskRequest = Body(...)):
+
+
+
+@router.post("/generate_options_for_task")
+async def generate_options_for_task(request: Request, task_data: TaskGenerateRequest = Body(...)):
     task_id = str(uuid.uuid4())
     
     # данные из запроса
@@ -80,7 +77,10 @@ async def create_project(request: Request, task_data: TaskRequest = Body(...)):
     # запуск процесса обработки
     result_queue = Queue()
     # process = Process(target=run_llama, args=(prompt, result_queue, task_id))
-    process = Process(target=mok_run_open_ai, args=(promtsubtask, message, result_queue, task_id))
+    process = Process(
+        target=mok_run_open_ai, 
+        args=(promtsubtask, message, result_queue, task_id)
+    )
     process.start()
 
     # запуск фоновой задачи для мониторинга процесса
@@ -98,7 +98,12 @@ async def monitor_task(task_id, process, result_queue, request):
             
             if task_id not in websockets or websockets[task_id].client_state.name != "CONNECTED":
                 process.terminate()
-                tasks[task_id] = {"status": "cancelled", "result": {"message": "Request cancelled due to client disconnection"}}
+                tasks[task_id] = {
+                    "status": "cancelled", 
+                    "result": {
+                        "message": "Request cancelled due to client disconnection"
+                    }
+                }
                 await send_websocket_update(task_id)
                 return
 
@@ -170,3 +175,13 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
         if task_id in websockets:
             del websockets[task_id]
         await websocket.close()
+
+
+
+
+
+
+@router.post("/create_new_task")
+async def create_new_task(request: Request, task_data: NewTaskRequest = Body(...)):
+    print(task_data)
+    return {"task_id": 12, "status": "created"}

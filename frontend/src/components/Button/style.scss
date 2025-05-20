@@ -1,16 +1,28 @@
 
-.custom-button {
-    background-color: var(--color-button-default);
-    transition: background-color 300ms ease-in-out;
+%custom-button {
     font-size: .8em;
 
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: .6em;
-    padding: .3em .8em .3em .6em;
     border-radius: calc(.3em * 2 + 1em);
+    transition: background-color 300ms ease-in-out;
+
     cursor: pointer;
+    
+    span {
+        color: var(--color-button-text);
+        padding-top: .15em;
+    }
+
+    svg, .loader {
+        width: 1.2em;
+        height: 1.2em;
+    }
+}
+
+.custom-button-first {
+    background-color: var(--color-button-default);
 
     &:hover {
         background-color: var(--color-button-hover);
@@ -19,13 +31,34 @@
     &:active {
         background-color: var(--color-button-active);
     }
+}
 
-    span {
-        color: var(--color-button-text)
+.custom-button-second {
+    background-color: transparent;
+
+    &:hover {
+        background-color: var(--color-button-transparent-hover);
     }
 
-    svg, .loader {
-        width: 1.2em;
-        height: 1.2em;
+    &:active {
+        background-color: var(--color-button-transparent-active);
     }
+}
+
+.custom-button-ico-text {
+    @extend %custom-button;
+    gap: .6em;
+    padding: .3em 1.4em .3em .6em;
+}
+
+.custom-button-ico {
+    @extend %custom-button;
+    padding: .55em;
+    height: calc(1em + .15em + .55em * 2);
+    width: calc(1em + .15em + .55em * 2);
+}
+
+.custom-button-text {
+    @extend %custom-button;
+    padding: 0 1.4em;
 }

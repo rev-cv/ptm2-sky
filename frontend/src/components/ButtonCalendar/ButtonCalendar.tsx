@@ -1,21 +1,20 @@
-import { useState, useRef, useEffect, FC, MouseEvent } from 'react';
+import { useState, useRef, useEffect, FC, MouseEvent } from 'react'
+import { Calendar } from 'react-calendar'
 import './style.scss'
 
-// Определяем интерфейсы для типизации
-interface PositionState {
-        top: number
-        left: number
+type TypePositionState = {
+    top: number
+    left: number
 }
 
-interface ContextButtonProps {
-    contextData?: string
+type TypeButtonCalendar = {
     IcoForButton: string
-    children?: React.ReactNode | string
+    onClickDay?: (value: string, event: MouseEvent) => void
 }
 
-const ContextButton: FC<ContextButtonProps> = ({ IcoForButton, children }) => {
+const ButtonCalendar: FC<TypeButtonCalendar> = ({ IcoForButton, onClickDay }) => {
     const [showContext, setShowContext] = useState<boolean>(false);
-    const [position, setPosition] = useState<PositionState>({ top: 0, left: 0   });
+    const [position, setPosition] = useState<TypePositionState>({ top: 0, left: 0   });
 
     const buttonRef = useRef<HTMLButtonElement>(null);
     const contextRef = useRef<HTMLDivElement>(null);
@@ -105,6 +104,14 @@ const ContextButton: FC<ContextButtonProps> = ({ IcoForButton, children }) => {
         setShowContext(!showContext);
     }
 
+    const handleSelectDate = (value: Date | null, event: MouseEvent): void => {
+        setShowContext(false);
+        if (onClickDay) {
+            if (value === null) return onClickDay("", event);
+            onClickDay(value.toString(), event);
+        }
+    }
+
     return (
         <div className='context-button-container'>
             <button
@@ -125,11 +132,19 @@ const ContextButton: FC<ContextButtonProps> = ({ IcoForButton, children }) => {
                         zIndex: 10
                     }}
                     >
-                    {children}
+                    <Calendar onClickDay={handleSelectDate} />
+                    <div className="context-panel__clear">
+                        <button
+                            onClick={(event) => handleSelectDate(null, event)}
+                            className="context-panel__close-button"
+                        >
+                            clear
+                        </button>
+                    </div>
                 </div>
             )}
         </div>
     );
 };
 
-export default ContextButton;
+export default ButtonCalendar;

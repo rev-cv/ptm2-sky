@@ -17,11 +17,9 @@
     --color-button-active: #1a3a8a;
     --color-button-disabled: #d8e4fc;
 
-    --color-button-transparent-text: #3c76f1;
-    --color-button-transparent-icon: #{rgba(#3c76f1, .8)};
-    --color-button-transparent-hover: #{rgba(#3c76f1, .1)};
-    --color-button-transparent-active: #{rgba(#3c76f1, .2)};
-    --color-button-transparent-disabled: #{rgba(#3c76f1, .4)};
+    --color-button-transparent-hover: #{rgba(#333, .05)};
+    --color-button-transparent-active: #{rgba(#333, .08)};
+    --color-button-transparent-disabled: #{rgba(#333, .02)};
 
     --color-scrollbar-thumb: #{rgba(#333, .1)};
 
@@ -48,11 +46,9 @@
     --color-button-active: #2a4f9e;
     --color-button-disabled: #4a4a4a;
 
-    --color-button-transparent-text: #4a8cff;
-    --color-button-transparent-icon: #{rgba(#4a8cff, .8)};
-    --color-button-transparent-hover: #{rgba(#4a8cff, .1)};
-    --color-button-transparent-active: #{rgba(#4a8cff, .2)};
-    --color-button-transparent-disabled: #{rgba(#4a8cff, .4)};
+    --color-button-transparent-hover: #{rgba(#d1d1d1, .1)};
+    --color-button-transparent-active: #{rgba(#d1d1d1, .15)};
+    --color-button-transparent-disabled: #{rgba(#d1d1d1, .05)};
 
     --color-scrollbar-thumb: #{rgba(#d1d1d1, .1)};
 }
