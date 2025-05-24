@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import { useAtom } from 'jotai'
 import { currentNewTask } from '@utils/jotai.store'
+import { formatDateString, getDaysDifference, sortDates } from '@utils/date-funcs'
+
+import ButtonCalendar from '@comps/ButtonCalendar/ButtonCalendar'
+
 import IcoPoint from '@asset/point.svg'
-// import IcoEnergyElement from '@asset/energy-element.svg'
-import IcoEdit from '@asset/edit.svg'
 import IcoStart from '@asset/start.svg'
 import IcoCheck from '@asset/check.svg'
 import IcoCalendar from '@asset/calendar.svg'
 import '@comps/Accordion/Accordion.scss'
-import { formatDateString, getDaysDifference, sortDates } from '@utils/date-funcs'
-import ButtonCalendar from '@comps/ButtonCalendar/ButtonCalendar'
+
 
 function BlockEnergy() {
     const [fillingNewTask, updateNewTask] = useAtom(currentNewTask)
@@ -37,14 +38,6 @@ function BlockEnergy() {
                 >
                 <div className="accordion__pointer"><IcoPoint /></div>
                 <span>Тайминг сроков</span>
-                <div className="new-task__edit-block">
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation()
-                        }}  
-                        ><IcoEdit />
-                    </button>
-                </div>
             </div>
             <div className="accordion__options">
                 <div className="accordion__options-sub">

@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Request, WebSocket, Body
+from fastapi import APIRouter, Request, WebSocket, Body, Depends
 from multiprocessing import Process, Queue
 import asyncio
 import uuid
 import json
 from llama_cpp import Llama
 from openai import OpenAI
+from database.sqlalchemy_tables import get_db
+from sqlalchemy.orm import Session
+from database.create_tasl import write_new_task_to_database
 
 from schemas.types_new_task import TaskGenerateRequest, NewTaskRequest
 
@@ -57,9 +60,6 @@ def mok_run_open_ai(system_prompt, message, result_queue, task_id):
     result_queue.put((task_id, mok))
 
 
-
-
-
 @router.post("/generate_options_for_task")
 async def generate_options_for_task(request: Request, task_data: TaskGenerateRequest = Body(...)):
     task_id = str(uuid.uuid4())
@@ -68,7 +68,6 @@ async def generate_options_for_task(request: Request, task_data: TaskGenerateReq
     text_task = task_data.text
     description = task_data.description
     
-    # добавить описание к промпту, если оно есть
     message = f"{text_task}\n{description}" if description else text_task
 
     # инициализация задачи
@@ -145,43 +144,35 @@ async def send_websocket_update(task_id):
         except Exception as e:
             print(f"Error sending to websocket for task {task_id}: {e}")
 
-
 @router.websocket("/ws/{task_id}")
 async def websocket_endpoint(websocket: WebSocket, task_id: str):
     await websocket.accept()
     print(f"WebSocket connection established for task {task_id}")
-    
-    # запомнить соединение
     websockets[task_id] = websocket
-    
-    # если задача уже существует, отправить текущее состояние
+
     if task_id in tasks:
         await websocket.send_json({
             "task_id": task_id,
             "status": tasks[task_id]["status"],
             "result": tasks[task_id]["result"]
         })
-    
+
     try:
-        # держать соединение открытым и отвечать на пинги
         while True:
             message = await websocket.receive_text()
             print(f"Received message from client for task {task_id}: {message}")
-            # Можно обрабатывать сообщения от клиента, если нужно
     except Exception as e:
         print(f"WebSocket disconnected for task {task_id}: {e}")
     finally:
-        # удалить соединение при закрытии
         if task_id in websockets:
             del websockets[task_id]
-        await websocket.close()
-
-
-
-
+        # НЕ вызывайте await websocket.close() здесь!
 
 
 @router.post("/create_new_task")
-async def create_new_task(request: Request, task_data: NewTaskRequest = Body(...)):
+async def create_new_task(request: Request, task_data: NewTaskRequest = Body(...), db: Session = Depends(get_db)):
     print(task_data)
-    return {"task_id": 12, "status": "created"}
+
+    task = write_new_task_to_database(task_data, db)
+
+    return {"task_id": task.id, "status": "created"}

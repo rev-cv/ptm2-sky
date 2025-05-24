@@ -17,7 +17,7 @@ export type TypeSubTask = {
 
 export type TypeAssociation = {
     id: number
-    title: string
+    name: string
     description: string
     reason:string
 }

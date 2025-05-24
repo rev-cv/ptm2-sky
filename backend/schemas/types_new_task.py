@@ -16,12 +16,12 @@ class TypeSubTask(BaseModel):
     title: str
     description: str
     instruction: str
-    continuance: int
+    continuance: float
     motivation: str
 
 class TypeAssociation(BaseModel):
     id: int
-    title: str
+    name: str
     description: str
     reason: str
 

@@ -3,6 +3,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from routers.api_router import router as ApiRouter
 from fastapi.middleware.cors import CORSMiddleware
+from database.sqlalchemy_tables import init_db
+
+init_db()
 
 app = FastAPI()
 

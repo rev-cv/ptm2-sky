@@ -14,11 +14,11 @@ import BlockEnergy from './BlockEnergy'
 import BlockCriticality from './BlockCriticality'
 import BlockTiming from './BlockTiming'
 
-import './style.scss'
 import IcoLogo from '@asset/cactus.svg'
 import IcoMagic from '@asset/magic.svg'
 import IcoAdd from '@asset/add.svg'
 import IcoClean from '@asset/clean.svg'
+import './style.scss'
 
 
 function NewTask () {
@@ -64,6 +64,7 @@ function NewTask () {
                     updateNewTask({...fillingNewTask, ...data.result})
                     console.log('Parsed result:', data.result);
                     setIsDoneMagic(true);
+                    setTaskId(null); // сброс websocket соединения
                 }
             } catch (error) {
                 console.error('Parse error:', error);

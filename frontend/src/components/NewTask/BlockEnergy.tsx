@@ -36,7 +36,7 @@ function BlockEnergy() {
                             <div className="new-task__energy" key={`task-new--stress-${index}`}>
                                 <div className='new-task__energy-title'>
                                     <IcoEnergyElement />
-                                    {elem.title}
+                                    {elem.name}
                                 </div>
                                 <div className='new-task__energy-descr'>{elem.description}</div>
                                 <div className='new-task__energy-motiv'>{elem.reason}</div>

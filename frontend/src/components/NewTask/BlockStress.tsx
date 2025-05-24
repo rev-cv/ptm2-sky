@@ -35,7 +35,7 @@ function BlockStress() {
                             <div className="new-task__theme-elem" key={`task-new--stress-${index}`}>
                                 <div className='new-task__theme-elem-title'>
                                     <IcoStressElement />
-                                    {elem.title}
+                                    {elem.name}
                                 </div>
                                 <div className='new-task__subtask-descr'>{elem.description}</div>
                                 <div className='new-task__subtask-motiv'>{elem.reason}</div>

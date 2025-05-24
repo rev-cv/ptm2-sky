@@ -59,7 +59,7 @@ function BlockStates() {
                                                     <React.Fragment key={`${key}-${index}-${i}`}>
                                                         <div 
                                                             className='new-task__states-name' 
-                                                            >{elem.title}
+                                                            >{elem.name}
                                                         </div>
                                                         <div 
                                                             className='new-task__states-motiv'

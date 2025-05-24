@@ -31,6 +31,10 @@
     &:active {
         background-color: var(--color-button-active);
     }
+
+    svg * {
+        color: var(--color-button-text);
+    }
 }
 
 .custom-button-second {
