@@ -1,5 +1,6 @@
 import { atom } from 'jotai';
 import { TypeNewTask } from '@mytype/typesNewTask'
+import { TypeSearchPanel } from '@mytype/typeSearchAndFilter'
 
 // открытая боковая панель
 export const openSidePanel = atom<'none' | 'right' | 'left' | 'setting'>("none");
@@ -27,3 +28,41 @@ export const resetTask:TypeNewTask = {
     taskchecks: [],
 }
 export const currentNewTask = atom<TypeNewTask>({...resetTask});
+
+// атом для хранения запроса для получения задач
+export const searchRequest = atom<TypeSearchPanel>({
+    text: "",
+    filters: [
+        {
+            type: "энергия",
+            id: 24,
+            value: "Аналитические задачи"
+        },
+
+        {
+            type: "энергия",
+            id: 24,
+            value: "Стратегические задачи"
+        },
+
+        {
+            type: "энергия",
+            id: 24,
+            value: "Энергия"
+        },
+
+        {
+            type: "энергия",
+            id: 24,
+            value: "Мотивация"
+        },
+
+        {
+            type: "энергия",
+            id: 24,
+            value: "Здравоохранение"
+        },
+    ],
+    lastOpenedPage: 1,
+    sorted: ""
+})

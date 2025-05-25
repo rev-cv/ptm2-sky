@@ -6,11 +6,13 @@ body {
     flex-grow: 1;
     position: relative;
     overflow: hidden;
+    height: 100vh;
     display: flex;
 
     .frame-central {
         background-color: var(--color-bg-primary);
         flex-grow: 1;
+        overflow: auto;
     }
 
     .frame-left {

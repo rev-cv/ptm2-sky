@@ -37,8 +37,8 @@
     }
 }
 
-.custom-button-second {
-    background-color: transparent;
+.custom-button-second, .custom-button-transparent {
+    background-color: var(--color-bg-primary);
 
     &:hover {
         background-color: var(--color-button-transparent-hover);
@@ -47,6 +47,10 @@
     &:active {
         background-color: var(--color-button-transparent-active);
     }
+}
+
+.custom-button-transparent {
+    background-color: red
 }
 
 .custom-button-ico-text {
