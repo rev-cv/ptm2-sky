@@ -119,10 +119,22 @@ function NewTask () {
         
         try {
             console.log(JSON.stringify({...fillingNewTask}))
+            
+            const activation = fillingNewTask.activation && new Date(fillingNewTask.activation).toISOString() 
+            const deadline = fillingNewTask.deadline && new Date(fillingNewTask.deadline).toISOString() 
+            const taskchecks = fillingNewTask.taskchecks?.map(strdate => (
+                new Date(strdate).toISOString()
+            ))
+
             const response = await fetch('http://localhost:3000/api/create_new_task', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({...fillingNewTask})
+                body: JSON.stringify({
+                    ...fillingNewTask,
+                    activation,
+                    deadline,
+                    taskchecks
+                })
             });
             
             if (!response.ok) throw new Error('Failed to create task');

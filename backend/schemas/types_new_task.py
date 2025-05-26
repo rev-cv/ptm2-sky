@@ -44,7 +44,8 @@ class NewTaskRequest(BaseModel):
     new_themes: Optional[List[TypeThemes]] = None
     subtasks: Optional[List[TypeSubTask]] = None
     risk: Optional[Literal[0, 1, 2, 3]] = None
-    risk_explanation: Optional[RiskExplanation] = None
+    risk_explanation: Optional[str] = None
+    risk_proposals: Optional[str] = None
     impact: Optional[Literal[0, 1, 2, 3]] = None
     states: Optional[States] = None
     action_type: Optional[List[TypeAssociation]] = None

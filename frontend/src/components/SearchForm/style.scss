@@ -54,14 +54,18 @@
         padding: .2em .2em .2em .8em;
         border-radius: calc(.2em * 2 + 1em);
 
-        max-height: 1.6em;
+        // max-height: 1.6em;
 
         user-select: none;
 
         cursor: default;
 
-        button {
+        > button {
             font-size: .6em;
+        }
+
+        > div {
+            font-size: .82em;
         }
     }
 }

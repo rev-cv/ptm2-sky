@@ -7,7 +7,7 @@ from llama_cpp import Llama
 from openai import OpenAI
 from database.sqlalchemy_tables import get_db
 from sqlalchemy.orm import Session
-from database.create_tasl import write_new_task_to_database
+from database.create_task import write_new_task_to_database
 
 from schemas.types_new_task import TaskGenerateRequest, NewTaskRequest
 
@@ -77,7 +77,7 @@ async def generate_options_for_task(request: Request, task_data: TaskGenerateReq
     result_queue = Queue()
     # process = Process(target=run_llama, args=(prompt, result_queue, task_id))
     process = Process(
-        target=mok_run_open_ai, 
+        target=run_open_ai, 
         args=(promtsubtask, message, result_queue, task_id)
     )
     process.start()

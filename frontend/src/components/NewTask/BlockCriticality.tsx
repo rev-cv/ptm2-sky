@@ -44,8 +44,8 @@ function BlockEnergy() {
                         <div className="new-task__energy-descr">
                             { values_component.risk.find(item => item.value === fillingNewTask.risk)?.description }
                         </div>
-                        <div className="new-task__energy-motiv">{fillingNewTask.risk_explanation?.reason}</div>
-                        <div className="new-task__energy-motiv">{fillingNewTask.risk_explanation?.proposals}</div>
+                        <div className="new-task__energy-motiv">{fillingNewTask.risk_explanation}</div>
+                        <div className="new-task__energy-motiv">{fillingNewTask.risk_proposals}</div>
                     </div>
 
                     <div className="new-task__energy">

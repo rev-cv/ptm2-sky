@@ -30,10 +30,8 @@ export type TypeNewTask = {
     new_themes?: TypeThemes[]
     subtasks?: TypeSubTask[]
     risk?: 0 | 1 | 2 | 3
-    risk_explanation?: {
-        reason: string
-        proposals: string
-    }
+    risk_explanation?: string
+    risk_proposals?: string
     impact?: 0 | 1 | 2 | 3
     states?: {
         physical: TypeAssociation[]

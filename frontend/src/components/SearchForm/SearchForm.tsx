@@ -32,12 +32,11 @@ function SearchForm() {
         return () => window.removeEventListener('resize', recalcWidth)
     }, [])
 
-    function deleteFilter (index:number, event:React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    function deleteFilter (index:number) {
         updateRequest({
             ...fillingRequest,
             filters: fillingRequest.filters.filter((_, i) => (i != index))
         })
-        event.stopPropagation()
     }
 
     return <div className='panel'>
@@ -56,11 +55,13 @@ function SearchForm() {
                         <div 
                             className='search-panel__filter' 
                             onClick={e => e.stopPropagation()
-                            }>
-                            <div>{elem.value}</div>
+                            }><div>{elem.value}</div>
                             <Button 
                                 IconComponent={IcoClose} 
-                                onClick={(e) => deleteFilter(index, e)}
+                                onClick={(e) => {
+                                    deleteFilter(index)
+                                    e.stopPropagation()
+                                }}
                             />
                         </div>
                     ))
@@ -68,12 +69,18 @@ function SearchForm() {
                 <input
                     type="text"
                     ref={inputRef}
+                    className="search-panel__input"
                     value={fillingRequest.text}
                     onChange={e => updateRequest({
                         ...fillingRequest, 
                         text: e.target.value
                     })}
-                    className="search-panel__input"
+                    onKeyDown={e => {
+                        if (e.key != "Backspace") return
+                        if (fillingRequest.filters.length <= 0) return
+                        if (0 < fillingRequest.text.length) return
+                        deleteFilter(fillingRequest.filters.length - 1)
+                    }}
                 />
                 <span
                     ref={spanRef}
