@@ -77,7 +77,7 @@ def write_new_task_to_database(task_data, db):
         for state_category in ["physical", "intellectual", "emotional", "motivational", "social"]:
             assoc_list = getattr(task_data.states, state_category, [])
             for assoc_data in assoc_list:
-                db_filter = get_or_create_filter(db, assoc_data, f"state_{state_category}")
+                db_filter = get_or_create_filter(db, assoc_data, f"state__{state_category}")
                 assoc = Association(
                     filter_id=db_filter.id,
                     reason=assoc_data.reason

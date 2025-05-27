@@ -9,11 +9,11 @@ Base = declarative_base()
 DATABASE_URL = "sqlite:///example2.db"
 engine = create_engine(DATABASE_URL, echo=True)  # echo=True для отладки
 
-# фабрика сессий
+# --- фабрика сессий ---
+
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-
-# --- Вспомогательные таблицы для ManyToMany ---
+# --- вспомогательные таблицы для ManyToMany ---
 
 task_associations = Table(
     'task_associations', Base.metadata,
@@ -21,15 +21,15 @@ task_associations = Table(
     Column('association_id', Integer, ForeignKey('associations.id'))
 )
 
-# --- Основные таблицы ---
+# --- основные таблицы ---
 
 class Filter(Base):
     __tablename__ = 'filters'
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    filter_type = Column(String, nullable=False)  # theme, state_physical, state_intellectual, stress, energy_level, risk_explanation и т.д.
+    filter_type = Column(String, nullable=False)  # theme, state__physical, state__intellectual, stress, energy_level и т.д.
     description = Column(Text)
-# --- Возможные варианты filter_type ---
+    is_user_defined = Column(Boolean, default=False)  # флаг для пользовательских фильтров
 
 class Association(Base):
     __tablename__ = 'associations'
@@ -75,16 +75,26 @@ class Task(Base):
 
     created_at = Column(DateTime, nullable=False, default=datetime.datetime.now(datetime.timezone.utc))
 
-    # --- Relationships ---
+    # --- relationships ---
+    
     subtasks = relationship("SubTask", backref="task")
     filters = relationship("Association", secondary=task_associations)
     taskchecks = relationship("TaskCheck", backref="task")
     
+# --- инициализация базы данных ---
 
 def init_db():
     Base.metadata.create_all(bind=engine)
 
-# функция получения сессии (для dependency injection)
+    # --- инициализация фильтров ---
+
+    from database.initial__db import initialize_filters_from_json
+    with SessionLocal() as db:
+        initialize_filters_from_json(db)
+
+
+# --- функция получения сессии (для dependency injection) ---
+
 def get_db():
     '''
     get_db — это dependency, которая подключается к каждому endpoint через Depends.

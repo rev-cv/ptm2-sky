@@ -1,0 +1,19 @@
+.frame-right {
+    font-size: 1rem;
+    padding: 1em;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    gap: 1em;
+    overflow-y: auto !important;
+
+    &__h2 {
+        font-size: 1.5em;
+        font-weight: 600;
+    }
+
+    &__h3 {
+        font-size: 1em;
+        font-weight: 600;
+    }
+}

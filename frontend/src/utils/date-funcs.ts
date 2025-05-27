@@ -1,5 +1,5 @@
 
-export function formatDateString(isoDate: string): string {
+export function formatDateString(isoDate: string | Date): string {
     const date = new Date(isoDate);
 
     const year = date.getFullYear();

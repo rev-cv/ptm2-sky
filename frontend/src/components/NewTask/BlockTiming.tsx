@@ -8,7 +8,6 @@ import ButtonCalendar from '@comps/ButtonCalendar/ButtonCalendar'
 import IcoPoint from '@asset/point.svg'
 import IcoStart from '@asset/start.svg'
 import IcoCheck from '@asset/check.svg'
-import IcoCalendar from '@asset/calendar.svg'
 import '@comps/Accordion/Accordion.scss'
 
 
@@ -54,8 +53,7 @@ function BlockEnergy() {
                                     : 
                                     "Activation at creation time"
                             }
-                            <ButtonCalendar 
-                                IcoForButton={IcoCalendar} 
+                            <ButtonCalendar
                                 onClickDay={
                                     (value) => updateNewTask({...fillingNewTask, activation: value})
                                 }
@@ -84,8 +82,7 @@ function BlockEnergy() {
                                     : 
                                     "No deadline"
                             }
-                            <ButtonCalendar 
-                                IcoForButton={IcoCalendar} 
+                            <ButtonCalendar
                                 onClickDay={
                                     (value) => updateNewTask({...fillingNewTask, deadline: value})
                                 }
@@ -110,8 +107,7 @@ function BlockEnergy() {
                                         {
                                             datestr ? formatDateString(datestr) : "Date not set"
                                         }
-                                        <ButtonCalendar 
-                                            IcoForButton={IcoCalendar} 
+                                        <ButtonCalendar
                                             onClickDay={value => updateChecksDates(value, index)}
                                         />
                                         {

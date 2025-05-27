@@ -8,7 +8,7 @@ from openai import OpenAI
 from database.sqlalchemy_tables import get_db
 from sqlalchemy.orm import Session
 from database.create_task import write_new_task_to_database
-
+from database.get_filters import get_all_filters_dict, get_completed_promt
 from schemas.types_new_task import TaskGenerateRequest, NewTaskRequest
 
 
@@ -18,19 +18,20 @@ websockets = {}  # Храним активные WebSocket-соединения 
 
 router = APIRouter(prefix="/api", tags=["api"])
 
-with open("./routers/APIKEY", "r") as f:
+
+with open("./ai_promts/APIKEY", "r") as f:
     APIKEY = f.read()
 
-with open("./routers/APIURL", "r") as f:
+with open("./ai_promts/APIURL", "r") as f:
     APIURL = f.read()
 
-with open("./routers/mok_subtasks.md", "r") as f:
-    promtsubtask = f.read()
+with open("./ai_promts/magic_task_promt.md", "r") as f:
+    magic_task_promt = f.read()
 
-modelAI = "./gguf/google_gemma-3-12b-it-Q5_K_L.gguf"
+
 def run_llama(prompt, result_queue, task_id):
     try:
-        llm = Llama(model_path=modelAI, n_ctx=2000, verbose=False)
+        llm = Llama(model_path="./gguf/google_gemma-3-12b-it-Q5_K_L.gguf", n_ctx=2000, verbose=False)
         output = llm(prompt, max_tokens=2000, temperature=0.7, top_p=0.9)
         result_queue.put((task_id, output))
     except Exception as e:
@@ -55,34 +56,41 @@ def run_open_ai(system_prompt, message, result_queue, task_id):
 
 
 def mok_run_open_ai(system_prompt, message, result_queue, task_id):
-    with open("./routers/mok_result.json", "r") as f:
+    with open("./ai_promts/mok_result.json", "r") as f:
         mok = f'```json\n{f.read()}\n```'
     result_queue.put((task_id, mok))
 
 
 @router.post("/generate_options_for_task")
-async def generate_options_for_task(request: Request, task_data: TaskGenerateRequest = Body(...)):
+async def generate_options_for_task(
+    request: Request, 
+    task_data: TaskGenerateRequest = Body(...),
+    db: Session = Depends(get_db)
+    ):
     task_id = str(uuid.uuid4())
     
-    # данные из запроса
+    # --- данные из запроса ---
     text_task = task_data.text
     description = task_data.description
     
     message = f"{text_task}\n{description}" if description else text_task
 
-    # инициализация задачи
+    # --- инициализация задачи ---
     tasks[task_id] = {"status": "running", "result": None}
 
-    # запуск процесса обработки
+    # --- заполнение промта фильтрами для AI ---
+    update_promt = get_completed_promt(magic_task_promt, db)
+
+    # --- запуск процесса обработки ---
     result_queue = Queue()
     # process = Process(target=run_llama, args=(prompt, result_queue, task_id))
     process = Process(
         target=run_open_ai, 
-        args=(promtsubtask, message, result_queue, task_id)
+        args=(update_promt, message, result_queue, task_id)
     )
     process.start()
 
-    # запуск фоновой задачи для мониторинга процесса
+    # --- запуск фоновой задачи для мониторинга процесса ---
     asyncio.create_task(monitor_task(task_id, process, result_queue, request))
 
     return {"task_id": task_id, "status": "running"}
@@ -144,6 +152,7 @@ async def send_websocket_update(task_id):
         except Exception as e:
             print(f"Error sending to websocket for task {task_id}: {e}")
 
+
 @router.websocket("/ws/{task_id}")
 async def websocket_endpoint(websocket: WebSocket, task_id: str):
     await websocket.accept()
@@ -166,13 +175,34 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
     finally:
         if task_id in websockets:
             del websockets[task_id]
-        # НЕ вызывайте await websocket.close() здесь!
 
 
 @router.post("/create_new_task")
-async def create_new_task(request: Request, task_data: NewTaskRequest = Body(...), db: Session = Depends(get_db)):
+async def create_new_task(
+    request: Request, 
+    task_data: NewTaskRequest = Body(...), 
+    db: Session = Depends(get_db)
+    ):
+
     print(task_data)
 
     task = write_new_task_to_database(task_data, db)
 
     return {"task_id": task.id, "status": "created"}
+
+
+@router.post("/get_filters")
+async def get_filters(request: Request, db: Session = Depends(get_db)):
+    """
+    Возвращает словарь фильтров, где ключи — filter_type.
+    Если filter_type содержит '__', то формируется вложенный словарь.
+    """
+    filters = get_all_filters_dict(db, True)
+    return filters
+
+
+# @router.post("/get_promt")
+# async def get_promt(request: Request, db: Session = Depends(get_db)):
+#     retsult = get_completed_promt(magic_task_promt, db)
+#     print(retsult)
+#     return retsult

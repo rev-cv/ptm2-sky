@@ -64,5 +64,10 @@ export const searchRequest = atom<TypeSearchPanel>({
         },
     ],
     lastOpenedPage: 1,
-    sorted: ""
+    sorted: "",
+    activation: [null, null],
+    deadline: [null, null],
+    taskchecks: [null, null],
+    risk: [],
+    impact: [],
 })
