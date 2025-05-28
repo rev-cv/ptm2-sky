@@ -135,28 +135,6 @@
             font-style: italic;
         }
 
-        &-time {
-            font-size: .8em;
-            font-weight: 600;
-            padding-left: 1.6em;
-            line-height: 1.2em;
-
-            display: flex;
-            align-items: center;
-
-            button {
-                font-size: 1.4em;
-                margin-left: 10px;
-            }
-
-            &_diff {
-                font-size: .7em;
-                padding-left: 1em;
-                line-height: 1.2em;
-                color: var(--color-text-secondary);
-            }
-        }
-
         & .toggle {
             margin-left: 1em;
         }
@@ -178,7 +156,10 @@
             padding-top: .7em;
         }
 
-        
+        .context-button-container {
+            max-width: 250px;
+            margin-left: 1em;
+        }
     }
 
     &__theme-elem-title span {
@@ -213,21 +194,14 @@
         color: var(--color-text-secondary);
     }
 
-    &__edit-block {
+    &__taskchecks__add {
+        margin-left: 1em;
+        font-size: 1em;
 
-        display: flex;
-        flex-grow: 1;
-        align-items: center;
-        justify-content: flex-end;
-        opacity: 0;
-        transition: opacity 300ms ease-in-out;
-    }
-
-    &__edit-block > button,
-    &__taskchecks > button {
-        padding: .2em;
+        width: 1.4em;
         height: 1.4em;
         border-radius: .1em;
+        padding: .2em;
         
         cursor: pointer;
 
@@ -243,10 +217,6 @@
         &:active {
             background-color: var(--color-button-transparent-active);
         }
-    }
-
-    &__h4:hover > .new-task__edit-block {
-        opacity: 1;
     }
 
     &__btns {

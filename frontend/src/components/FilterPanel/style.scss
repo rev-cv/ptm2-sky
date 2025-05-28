@@ -2,11 +2,6 @@
 .filter-panel {
     width: 100%;
 
-    &__h4 {
-        font-size: .8em;
-        font-weight: 700;
-    }
-
     &__period {
         display: grid;
         grid-template-columns: 1fr 2em 1fr;
@@ -21,5 +16,12 @@
     &__period-end {
         display: flex;
         justify-content: space-between;
+    }
+
+    &__assoc {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.2em;
+        margin: .6em 0 .6em .2em;
     }
 }

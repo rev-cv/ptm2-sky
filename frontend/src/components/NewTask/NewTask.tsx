@@ -1,3 +1,5 @@
+const APIURL = import.meta.env.VITE_API_URL;
+const WSURL = import.meta.env.VITE_WS_URL;
 import { useState, useEffect, useRef } from 'react'
 import { useAtom } from 'jotai'
 import { currentNewTask, resetTask } from '@utils/jotai.store'
@@ -34,7 +36,7 @@ function NewTask () {
     const [status, setStatus] = useState('idle')
     
     // настройка WebSocket с проверкой соединения
-    const { lastMessage } = useWebSocket(`ws://localhost:3000/api/ws/${taskId}`, {
+    const { lastMessage } = useWebSocket(`${WSURL}/api/ws/${taskId}`, {
         shouldReconnect: () => status === 'running',
         reconnectAttempts: 10,
         reconnectInterval: 3000,
@@ -79,7 +81,7 @@ function NewTask () {
         setStatus('starting');
         // setResult(null);
         try {
-            const response = await fetch('http://localhost:3000/api/generate_options_for_task', {
+            const response = await fetch(`${APIURL}/api/generate_options_for_task`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -126,7 +128,7 @@ function NewTask () {
                 new Date(strdate).toISOString()
             ))
 
-            const response = await fetch('http://localhost:3000/api/create_new_task', {
+            const response = await fetch(`${APIURL}/api/create_new_task`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

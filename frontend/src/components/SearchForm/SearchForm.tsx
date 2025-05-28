@@ -54,8 +54,9 @@ function SearchForm() {
                     fillingRequest.filters.map((elem, index) => (
                         <div 
                             className='search-panel__filter' 
-                            onClick={e => e.stopPropagation()
-                            }><div>{elem.value}</div>
+                            onClick={e => e.stopPropagation()}
+                            key={`spf-f${elem.id}`}
+                            ><div>{elem.value}</div>
                             <Button 
                                 IconComponent={IcoClose} 
                                 onClick={(e) => {

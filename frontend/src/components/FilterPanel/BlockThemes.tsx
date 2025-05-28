@@ -1,24 +1,58 @@
-import { useState } from 'react'
-import IcoPoint from '@asset/point.svg'
+import Expander from '@comps/Expander/Expander'
+import CheckBox from '@comps/CheckBox/CheckBox'
 
-function BlockThemes () {
+import { searchRequest, searchRequestID } from '@utils/jotai.store'
+import { useAtom, useAtomValue } from "jotai"
 
-    const [isExpanded, setIsExpanded] = useState(false)
+import { TypeFilterServer, TypeSearchPanel } from '@mytype/typeSearchAndFilter'
 
-    return <div className={`accordion${isExpanded ? " view" : ""}`}>
-        <div 
-            className='new-task__h4 accordion__title' 
-            onClick={() => setIsExpanded(!isExpanded)}
-            >
-            <div className="accordion__pointer"><IcoPoint /></div>
-            <span>Темы</span>
-        </div>
-        <div className="accordion__options">
-            <div className="accordion__options-sub">
-                123
-            </div>
-        </div>
-    </div>
+type TypeBlockThemesProps = {
+    theme_list: TypeFilterServer[]
+}
+
+function BlockThemes ({theme_list}:TypeBlockThemesProps) {
+
+    const [assocRequest, updateAssocRequest] = useAtom<TypeSearchPanel>(searchRequest)
+    const assocID = useAtomValue(searchRequestID)
+
+    const handleChangeStatus = (elem:TypeFilterServer, state:boolean) => {
+
+        if (state) {
+            const newAssoc = {
+                id: elem.id,
+                value: elem.name,
+                type: "theme"
+            }
+            updateAssocRequest({
+                ...assocRequest,
+                filters: [...assocRequest.filters, newAssoc]
+            })
+        } else {
+            updateAssocRequest({
+                ...assocRequest,
+                filters: assocRequest.filters.filter(e => (e.id != elem.id))
+            })
+        }
+
+    }
+
+    return <Expander title='Темы'>
+        <div className='filter-panel__assoc'>
+            {
+                theme_list.map(elem => (
+                    <CheckBox 
+                        title={elem.name} 
+                        key={`rpf-f${elem.id}`}
+                        onChangeStatus={state => {
+                            handleChangeStatus(elem, state)
+                        }}
+                        state={assocID.includes(elem.id)}
+                        desciption={elem.description}
+                    />
+                ))
+            }
+        </div>        
+    </Expander>
 }
 
 export default BlockThemes

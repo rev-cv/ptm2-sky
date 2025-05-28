@@ -85,7 +85,7 @@ async def generate_options_for_task(
     result_queue = Queue()
     # process = Process(target=run_llama, args=(prompt, result_queue, task_id))
     process = Process(
-        target=run_open_ai, 
+        target=mok_run_open_ai, 
         args=(update_promt, message, result_queue, task_id)
     )
     process.start()

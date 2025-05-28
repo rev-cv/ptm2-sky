@@ -1,44 +1,43 @@
-import { useState } from 'react'
 import { useAtomValue } from 'jotai'
 import { currentNewTask } from '@utils/jotai.store'
-import SubTask from '@comps/NewTask/ElementSubTask'
-import IcoPoint from '@asset/point.svg'
-import IcoEdit from '@asset/edit.svg'
-import '@comps/Accordion/Accordion.scss'
+
+import Expander from '@comps/Expander/Expander'
+import IcoSubTaskPoint from '@asset/task_point.svg'
 
 function BlockThemes() {
     const fillingNewTask = useAtomValue(currentNewTask)
-    const [isExpanded, setIsExpanded] = useState(false)
 
     if (!fillingNewTask.subtasks?.length) return null
 
-    return (
-        <div className={`accordion${isExpanded ? " view" : ""}`}>
-            <div 
-                className='new-task__h4 accordion__title' 
-                onClick={() => setIsExpanded(!isExpanded)}
-                >
-                <div className="accordion__pointer"><IcoPoint /></div>
-                <span>Подзадачи</span>
-                <div className="new-task__edit-block">
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation()
-                        }}  
-                        ><IcoEdit /></button>
+    return <Expander title='Подзадачи' onEditData={() => console.log(1)}>
+        { 
+            fillingNewTask.subtasks?.map((elem, i) => 
+                <div className="new-task__subtask" key={`new-task__subtask-${i}`}>
+
+                    <div className='new-task__subtask-title'>
+                        <IcoSubTaskPoint />{elem.title}
+                    </div>
+
+                    <div className='new-task__subtask-motiv'>
+                        {elem.motivation}
+                    </div>
+
+                    <div className='new-task__subtask-descr'>
+                        {elem.description}
+                    </div>
+
+                    <div className='new-task__subtask-instr'>
+                        {elem.instruction}
+                    </div>
+
+                    <div className='new-task__subtask-hours'>
+                        Время выполнения: ~{elem.continuance}h
+                    </div>
+
                 </div>
-            </div>
-            <div className="accordion__options">
-                <div className="accordion__options-sub">
-                    { 
-                        fillingNewTask.subtasks?.map((elem, index) => 
-                            <SubTask {...elem} key={`task-new--subtask-${index}`} />
-                        )
-                    }
-                </div>
-            </div>
-        </div>
-    )
+            )
+        }
+    </Expander>
 }
 
 export default BlockThemes
