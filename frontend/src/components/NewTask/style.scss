@@ -13,6 +13,12 @@
         font-weight: 700;
     }
 
+    &__h5 {
+        font-size: .65em;
+        font-weight: 700;
+        padding: 1em 0 1em 0;
+    }
+
     &__task {
         flex-grow: 1;
         font-size: 1em;
@@ -227,5 +233,11 @@
         &-clean {
             order: -1;
         }
+    }
+
+    &__no-data {
+        padding: 0.5em;
+        font-size: .6em;
+        color: var(--color-text-secondary);
     }
 }

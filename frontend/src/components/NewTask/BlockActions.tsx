@@ -2,22 +2,22 @@ import { useAtomValue } from 'jotai'
 import { currentNewTask } from '@utils/jotai.store'
 
 import Expander from '@comps/Expander/Expander'
-import IcoStressElement from '@asset/stress-element.svg'
+import IcoAction from '@asset/event.svg'
 
-function BlockStress() {
+function BlockAction() {
     const fillingNewTask = useAtomValue(currentNewTask)
 
     // if (!fillingNewTask.stress?.length) return null
 
     return <Expander 
-        title='Эмоциональная нагрузка' 
-        onEditData={() => console.log("Эмоциональная нагрузка")}>
+        title='Типы действия' 
+        onEditData={() => console.log("Типы действия")}>
         { 
-            fillingNewTask.stress?.length ?
-                fillingNewTask.stress?.map((elem, index) => (
+            fillingNewTask.action_type?.length ?
+                fillingNewTask.action_type?.map((elem, index) => (
                     <div className="new-task__theme-elem" key={`task-new--stress-${index}`}>
                         <div className='new-task__theme-elem-title'>
-                            <IcoStressElement />
+                            <IcoAction />
                             {elem.name}
                         </div>
                         <div className='new-task__subtask-descr'>{elem.description}</div>
@@ -29,4 +29,4 @@ function BlockStress() {
     </Expander>
 }
 
-export default BlockStress
+export default BlockAction

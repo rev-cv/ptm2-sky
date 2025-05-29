@@ -89,4 +89,8 @@
     &.view .expander__pointer svg {
         rotate: 90deg;
     }
+
+    &.activation .expander__header span {
+        color: var(--color-border-active)
+    }
 }

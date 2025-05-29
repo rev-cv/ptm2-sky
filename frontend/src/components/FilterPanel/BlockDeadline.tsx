@@ -8,7 +8,10 @@ function BlockActivation () {
 
     const [search, updateSearch] = useAtom(searchRequest)
 
-    return <Expander title='Дедлайн'>
+    return <Expander 
+        title='Дедлайн'
+        className={(search.deadline[0] || search.deadline[1]) ? "activation" : ""}
+        >
         <div className='filter-panel__period'>
             <div className='filter-panel__period-start'>
                 <ButtonCalendar 

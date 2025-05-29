@@ -23,9 +23,9 @@ function Expander ({
 
     const [isExpanded, setIsExpanded] = useState(false)
 
-    return <div className={`expander${isExpanded ? " view" : ""}`}>
+    return <div className={`expander${isExpanded ? " view" : ""}${className ? " " + className : ""}`}>
         <div 
-            className={`${className ? className + " " : ""}expander__header`} 
+            className="expander__header"
             onClick={() => {
                 setIsExpanded(!isExpanded)
                 if (onExpand) onExpand()

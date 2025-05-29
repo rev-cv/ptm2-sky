@@ -4,13 +4,12 @@ import { useEffect } from "react";
 import { filterFromServer } from '@utils/jotai.store'
 import { useAtom } from "jotai"
 
-import BlockActivation from "./BlockActivation";
-import BlockTaskchecks from "./BlockTaskchecks";
-import BlockDeadline from "./BlockDeadline";
-import BlockActions from "./BlockActions";
-import BlockEnergy from "./BlockEnergy";
-import BlockThemes from "./BlockThemes";
-import BlockCritical from "./BlockCritical";
+import BlockActivation from "./BlockActivation"
+import BlockTaskchecks from "./BlockTaskchecks"
+import BlockDeadline from "./BlockDeadline"
+import BlockCritical from "./BlockCritical"
+import BlockAssoc from "./BlockAssoc"
+import BlockState from "./BlockState";
 
 import "./style.scss"
 
@@ -44,15 +43,50 @@ function FilterPanel (){
 
             { 
                 filters?.theme && 
-                    <BlockThemes theme_list={filters.theme} /> 
+                    <BlockAssoc 
+                        assoc_list={filters.theme}
+                        type_assoc="theme"
+                        title={`Темы`}
+                    /> 
             }
-            
-            <BlockActions />
-            <BlockEnergy />
 
+            { 
+                filters?.state && 
+                    <BlockState 
+                        state_dict={filters.state}
+                        type_assoc="theme"
+                        title="Состояния"
+                    />
+            }
+
+            {
+                filters?.stress && 
+                    <BlockAssoc 
+                        assoc_list={filters.stress}
+                        type_assoc="stress"
+                        title="Эмоциональная нагрузка"
+                    /> 
+            }
+
+            {
+                filters?.action_type && 
+                    <BlockAssoc 
+                        assoc_list={filters.action_type}
+                        type_assoc="action_type"
+                        title="Типы действия"
+                    /> 
+            }
+
+            {
+                filters?.action_type && 
+                    <BlockAssoc 
+                        assoc_list={filters.energy_level}
+                        type_assoc="energy_level"
+                        title="Уровень энергии"
+                    /> 
+            }
         </div>
     )
 }
 
 export default FilterPanel;
-

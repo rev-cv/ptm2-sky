@@ -5,15 +5,25 @@ import { searchRequest, searchRequestID } from '@utils/jotai.store'
 import { useAtom, useAtomValue } from "jotai"
 
 import { TypeFilterServer, TypeSearchPanel } from '@mytype/typeSearchAndFilter'
+import { useEffect, useState } from 'react'
 
-type TypeBlockThemesProps = {
-    theme_list: TypeFilterServer[]
+type TypeBlockActionProps = {
+    assoc_list: TypeFilterServer[]
+    title: string
+    type_assoc: string
 }
 
-function BlockThemes ({theme_list}:TypeBlockThemesProps) {
+function BlockActivation ({title, type_assoc, assoc_list}:TypeBlockActionProps) {
 
     const [assocRequest, updateAssocRequest] = useAtom<TypeSearchPanel>(searchRequest)
     const assocID = useAtomValue(searchRequestID)
+    const [countFilters, setCountFilters] = useState(0)
+
+    useEffect(() => {
+        setCountFilters(
+            howManyFilters(assoc_list, assocID)
+        )
+    }, [assocRequest])
 
     const handleChangeStatus = (elem:TypeFilterServer, state:boolean) => {
 
@@ -21,7 +31,7 @@ function BlockThemes ({theme_list}:TypeBlockThemesProps) {
             const newAssoc = {
                 id: elem.id,
                 value: elem.name,
-                type: "theme"
+                type: type_assoc
             }
             updateAssocRequest({
                 ...assocRequest,
@@ -33,16 +43,15 @@ function BlockThemes ({theme_list}:TypeBlockThemesProps) {
                 filters: assocRequest.filters.filter(e => (e.id != elem.id))
             })
         }
-
     }
 
-    return <Expander title='Темы'>
+    return <Expander title={title} className={0 < countFilters ? "activation" : ""}>
         <div className='filter-panel__assoc'>
             {
-                theme_list.map(elem => (
+                assoc_list.map(elem => (
                     <CheckBox 
                         title={elem.name} 
-                        key={`rpf-f${elem.id}`}
+                        key={`rpf-${type_assoc}-f${elem.id}`}
                         onChangeStatus={state => {
                             handleChangeStatus(elem, state)
                         }}
@@ -55,4 +64,15 @@ function BlockThemes ({theme_list}:TypeBlockThemesProps) {
     </Expander>
 }
 
-export default BlockThemes
+export default BlockActivation
+
+
+const howManyFilters = (elems: TypeFilterServer[], ids:number[]) => {
+    let co = 0
+    elems.forEach(item => {
+        if (ids.includes(item.id)){
+            co+=1
+        }
+    });
+    return co
+}

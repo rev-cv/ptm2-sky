@@ -12,7 +12,7 @@ import values_component from '@comps/NewTask/BlockCriticalityValues.json'
 function BlockEnergy() {
     const [fillingNewTask, updateNewTask] = useAtom(currentNewTask)
 
-    if (!('risk' in fillingNewTask)) return null
+    // if (!('risk' in fillingNewTask)) return null
 
     return <Expander title='Оценка критичности'>
         <div className="new-task__energy">

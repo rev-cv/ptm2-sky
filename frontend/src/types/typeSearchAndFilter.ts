@@ -28,17 +28,19 @@ export type TypeSearchPanel = {
     impact: TypeRiskImpact[],
 }
 
+export type TypeFilterAssocServer_state = {
+    emotional: TypeFilterServer[]
+    intellectual: TypeFilterServer[]
+    motivational: TypeFilterServer[]
+    physical: TypeFilterServer[]
+    social: TypeFilterServer[]
+}
+
 export type TypeFilterAssocServer = {
     // типология фильтров жестко фиксирована на данный момент
     action_type: TypeFilterServer[]
     energy_level: TypeFilterServer[]
-    state: {
-        emotional: TypeFilterServer[]
-        intellectual: TypeFilterServer[]
-        motivational: TypeFilterServer[]
-        physical: TypeFilterServer[]
-        social: TypeFilterServer[]
-    }
+    state: TypeFilterAssocServer_state
     stress: TypeFilterServer[]
     theme: TypeFilterServer[]
 }

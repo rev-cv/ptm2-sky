@@ -15,6 +15,7 @@ import BlockStress from './BlockStress'
 import BlockEnergy from './BlockEnergy'
 import BlockCriticality from './BlockCriticality'
 import BlockTiming from './BlockTiming'
+import BlockAction  from './BlockActions';
 
 import IcoLogo from '@asset/cactus.svg'
 import IcoMagic from '@asset/magic.svg'
@@ -195,12 +196,16 @@ function NewTask () {
 
         <div className="new-task__options">
             <BlockSubTasks />
+            <BlockTiming />
+            <BlockCriticality />
+
+            <div className="new-task__h5">Соответвия</div>
+            
             <BlockThemes />
             <BlockStates />
             <BlockStress />
             <BlockEnergy />
-            <BlockCriticality />
-            <BlockTiming />
+            <BlockAction />
         </div>
 
         <div className='new-task__btns'>

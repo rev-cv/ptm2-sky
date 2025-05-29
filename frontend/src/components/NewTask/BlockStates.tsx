@@ -1,34 +1,26 @@
 import React from 'react'
 import { useAtomValue } from 'jotai'
-import { currentNewTask } from '@utils/jotai.store'
+import { currentNewTask, stateNames } from '@utils/jotai.store'
 
 import { TypeAssociation } from '@mytype/typesNewTask'
 import Expander from '@comps/Expander/Expander'
 import IcoStateElement from '@asset/states-element.svg'
 
-const stateNames = {
-    "physical": "физическое",
-    "intellectual": "интеллектуальное",
-    "emotional": "эмоциональное",
-    "motivational": "мотивационное",
-    "social": "социальное",
-}
-
-function hasNonEmptyArray(obj: object | undefined) {
-    if (!obj) return false
-    return Object.values(obj).some(array => Array.isArray(array) && array.length > 0);
-}
+// function hasNonEmptyArray(obj: object | undefined) {
+//     if (!obj) return false
+//     return Object.values(obj).some(array => Array.isArray(array) && array.length > 0);
+// }
 
 function BlockStates() {
     const fillingNewTask = useAtomValue(currentNewTask)
 
-    if (!hasNonEmptyArray(fillingNewTask.states)) return null
+    // if (!hasNonEmptyArray(fillingNewTask.states)) return null
 
     return <Expander 
         title='Состояния' 
         onEditData={() => console.log("редактировать «Состояния»")}>
         {
-            fillingNewTask.states && (
+            fillingNewTask.states ? (
                 <div className="new-task__states">
                     {
                         Object.entries(fillingNewTask.states).map(([key, array], index) => (
@@ -56,6 +48,7 @@ function BlockStates() {
                     }
                 </div>
             )
+            : <div className='new-task__no-data'>no data</div>
         }
     </Expander>
 }

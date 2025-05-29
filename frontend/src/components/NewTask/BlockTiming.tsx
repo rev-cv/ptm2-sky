@@ -12,7 +12,7 @@ import IcoCheck from '@asset/check.svg'
 function BlockEnergy() {
     const [fillingNewTask, updateNewTask] = useAtom(currentNewTask)
 
-    if (!fillingNewTask.energy_level?.length) return null
+    // if (!fillingNewTask.energy_level?.length) return null
 
     function updateChecksDates(value:string, index: number) {
         let newTaskchecks: string[] = []

@@ -6,9 +6,9 @@ import Expander from '@comps/Expander/Expander'
 function BlockThemes() {
     const fillingNewTask = useAtomValue(currentNewTask)
 
-    if (!fillingNewTask.match_themes?.length && !fillingNewTask.new_themes?.length) {
-        return null
-    }
+    // if (!fillingNewTask.match_themes?.length && !fillingNewTask.new_themes?.length) {
+    //     return null
+    // }
 
     return <Expander 
         title='Темы' 
@@ -32,6 +32,12 @@ function BlockThemes() {
                 </>
             : null
         }
+
+        {
+            (!fillingNewTask.match_themes?.length && !fillingNewTask.new_themes?.length) &&
+                <div className='new-task__no-data'>no data</div>
+        }
+
     </Expander>
 }
 
