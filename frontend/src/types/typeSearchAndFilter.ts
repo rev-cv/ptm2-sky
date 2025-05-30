@@ -3,6 +3,7 @@ export type TypeFilter = {
     type: string // тип фильтра
     id: number
     value: string
+    type_title: string
 }
 
 export type TypeFilterServer = {
@@ -24,8 +25,8 @@ export type TypeSearchPanel = {
     activation: TypeDatePeriods
     deadline: TypeDatePeriods
     taskchecks: TypeDatePeriods
-    risk: TypeRiskImpact[],
-    impact: TypeRiskImpact[],
+    risk: TypeRiskImpact[]
+    impact: TypeRiskImpact[]
 }
 
 export type TypeFilterAssocServer_state = {
@@ -39,7 +40,6 @@ export type TypeFilterAssocServer_state = {
 export type TypeFilterAssocServer = {
     // типология фильтров жестко фиксирована на данный момент
     action_type: TypeFilterServer[]
-    energy_level: TypeFilterServer[]
     state: TypeFilterAssocServer_state
     stress: TypeFilterServer[]
     theme: TypeFilterServer[]

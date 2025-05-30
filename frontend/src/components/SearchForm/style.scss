@@ -58,6 +58,8 @@
 
         user-select: none;
 
+        position: relative;
+
         cursor: default;
 
         > button {
@@ -67,6 +69,20 @@
         > div {
             font-size: .82em;
             color: var(--color-button-text);
+        }
+
+        > div:has(svg) {
+            width: 1.6em;
+            height: 1.6em;
+            transform-origin: center;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        &:has(> div svg) {
+            padding-left: .35em;
         }
     }
 }

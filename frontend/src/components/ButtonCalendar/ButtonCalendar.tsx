@@ -1,4 +1,4 @@
-import { useState, useRef, useLayoutEffect, FC, MouseEvent } from 'react'
+import { useState, useRef, useLayoutEffect, MouseEvent } from 'react'
 import { Calendar } from 'react-calendar'
 import './style.scss'
 import { formatDateString } from '@utils/date-funcs'
@@ -10,20 +10,20 @@ type TypePositionState = {
 }
 
 type TypeButtonCalendar = {
-    defaultDate?: string
-    onClickDay?: (value: string, event: MouseEvent) => void
+    noDate?: string
+    date?: string | Date | null
+    onClickDay?: (value: string) => void
 }
 
-const ButtonCalendar: FC<TypeButtonCalendar> = ({ onClickDay, defaultDate="No Date" }) => {
-    const [isShowContext, setShowContext] = useState<boolean>(false);
-    const [valueStringDate, setStringValueDate] = useState<string>(defaultDate);
-    const [valueDate, setValueDate] = useState<Date | null>(null);
+function ButtonCalendar ({ onClickDay, date=null, noDate="No Date" }:TypeButtonCalendar) {
+
+    const [isShowContext, setShowContext] = useState(false)
     const [position, setPosition] = useState<TypePositionState>(
         { top: 0, left: 0 }
-    );
+    )
 
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const contextRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null)
+    const contextRef = useRef<HTMLDivElement>(null)
 
     // определение позиции контекстного окна
     const calculatePosition = (): void => {
@@ -36,7 +36,7 @@ const ButtonCalendar: FC<TypeButtonCalendar> = ({ onClickDay, defaultDate="No Da
             height: window.innerHeight
         }
         
-        // Проверяем наличие места в различных направлениях
+        // проверка наличия места в различных направлениях
         const hasSpaceBelow = button.bottom + context.height <= viewport.height
         const hasSpaceLeft = button.left + context.width <= viewport.width
         
@@ -110,18 +110,11 @@ const ButtonCalendar: FC<TypeButtonCalendar> = ({ onClickDay, defaultDate="No Da
         setShowContext(!isShowContext);
     }
 
-    const handleSelectDate = (value: Date | null, event: MouseEvent): void => {
+    const handleSelectDate = (value: Date | null): void => {
         setShowContext(false)
-
-        setValueDate(value)
-        
-        setStringValueDate(
-            value != null ? formatDateString(value) : defaultDate
-        )
-
         if (onClickDay) {
-            if (value === null) return onClickDay("", event)
-            onClickDay(value.toString(), event)
+            if (value === null) return onClickDay("")
+            onClickDay(value.toString())
         }
     }
 
@@ -131,9 +124,10 @@ const ButtonCalendar: FC<TypeButtonCalendar> = ({ onClickDay, defaultDate="No Da
                 ref={buttonRef}
                 onClick={handleButtonClick}
                 className="context-button"
-                title={valueStringDate}
             >
-                <div className='context-button__value'>{valueStringDate}</div>
+                <div className='context-button__value'>
+                    {date ? formatDateString(date) : noDate}
+                </div>
                 <div className='context-button__icon'><IcoCalendar /></div>
             </button>
             
@@ -147,10 +141,10 @@ const ButtonCalendar: FC<TypeButtonCalendar> = ({ onClickDay, defaultDate="No Da
                         zIndex: 10
                     }}
                     >
-                    <Calendar onClickDay={handleSelectDate} value={valueDate} />
+                    <Calendar onClickDay={handleSelectDate} value={date} />
                     <div className="context-panel__clear">
                         <button
-                            onClick={(event) => handleSelectDate(null, event)}
+                            onClick={() => handleSelectDate(null)}
                             className="context-panel__close-button"
                         >clear
                         </button>

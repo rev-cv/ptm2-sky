@@ -4,7 +4,7 @@ import { currentNewTask, stateNames } from '@utils/jotai.store'
 
 import { TypeAssociation } from '@mytype/typesNewTask'
 import Expander from '@comps/Expander/Expander'
-import IcoStateElement from '@asset/states-element.svg'
+import IcoStateElement from '@asset/state-element.svg'
 
 // function hasNonEmptyArray(obj: object | undefined) {
 //     if (!obj) return false

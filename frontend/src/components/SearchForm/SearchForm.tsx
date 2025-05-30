@@ -3,11 +3,17 @@ import { useAtom } from 'jotai'
 import { openSidePanel, searchRequest } from '@utils/jotai.store'
 
 import Button from '@comps/Button/Button'
+import BlockPeriod from './BlockPeriod'
 
 import IcoSearch from '@asset/search.svg'
 import IcoFilter from '@asset/filter.svg'
 import IcoAdd from '@asset/add.svg'
 import IcoClose from '@asset/close.svg'
+
+import IcoTheme from '@asset/theme-element.svg'
+import IcoState from '@asset/state-element.svg'
+import IcoStress from '@asset/stress-element.svg'
+import IcoAction from '@asset/event-element.svg'
 
 import './style.scss'
 
@@ -50,13 +56,55 @@ function SearchForm() {
                 className='search-panel__viewer'
                 onClick={() => inputRef.current?.focus()}
                 >
+
+                <BlockPeriod 
+                    start={fillingRequest.activation[0]} 
+                    finish={fillingRequest.activation[1]}
+                    onDelete={() => updateRequest({
+                        ...fillingRequest,
+                        activation: [null, null]
+                    })}
+                    tfilter='activation'
+                />
+
+                <BlockPeriod 
+                    start={fillingRequest.deadline[0]} 
+                    finish={fillingRequest.deadline[1]}
+                    onDelete={() => updateRequest({
+                        ...fillingRequest,
+                        deadline: [null, null]
+                    })}
+                    tfilter='deadline'
+                />
+
+                <BlockPeriod 
+                    start={fillingRequest.taskchecks[0]} 
+                    finish={fillingRequest.taskchecks[1]}
+                    onDelete={() => updateRequest({
+                        ...fillingRequest,
+                        taskchecks: [null, null]
+                    })}
+                    tfilter='taskchecks'
+                />
+                
                 {
                     fillingRequest.filters.map((elem, index) => (
                         <div 
                             className='search-panel__filter' 
                             onClick={e => e.stopPropagation()}
                             key={`spf-f${elem.id}`}
-                            ><div>{elem.value}</div>
+                            title={elem.type_title}
+                            >
+                            <div>{
+                                elem.type === "theme" ?
+                                    <IcoTheme />
+                                : elem.type === "state" ?
+                                    <IcoState />
+                                : elem.type === "action_type" ?
+                                    <IcoAction />
+                                : <IcoStress />
+                            }</div>
+                            <div>{elem.value}</div>
                             <Button 
                                 IconComponent={IcoClose} 
                                 onClick={(e) => {
@@ -67,6 +115,7 @@ function SearchForm() {
                         </div>
                     ))
                 }
+
                 <input
                     type="text"
                     ref={inputRef}
@@ -83,6 +132,7 @@ function SearchForm() {
                         deleteFilter(fillingRequest.filters.length - 1)
                     }}
                 />
+
                 <span
                     ref={spanRef}
                     style={{

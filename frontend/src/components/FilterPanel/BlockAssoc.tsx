@@ -31,7 +31,8 @@ function BlockActivation ({title, type_assoc, assoc_list}:TypeBlockActionProps) 
             const newAssoc = {
                 id: elem.id,
                 value: elem.name,
-                type: type_assoc
+                type: type_assoc,
+                type_title: title
             }
             updateAssocRequest({
                 ...assocRequest,

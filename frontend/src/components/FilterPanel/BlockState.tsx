@@ -31,7 +31,8 @@ function BlockState ({state_dict, type_assoc, title}:TypeBlockState) {
             const newAssoc = {
                 id: elem.id,
                 value: elem.name,
-                type: type_assoc
+                type: type_assoc,
+                type_title: title
             }
             updateAssocRequest({
                 ...assocRequest,
@@ -54,10 +55,10 @@ function BlockState ({state_dict, type_assoc, title}:TypeBlockState) {
                     </div>
                     <div className='filter-panel__assoc'>
                         {
-                            array.map((elem: TypeFilterServer, i) => (
+                            array.map((elem: TypeFilterServer) => (
                                 <CheckBox 
                                     title={elem.name} 
-                                    key={`rpf-${type_assoc}-f${elem.id}`}
+                                    key={`rpf-f${elem.id}`}
                                     onChangeStatus={state => {
                                         handleChangeStatus(elem, state)
                                     }}
@@ -72,6 +73,7 @@ function BlockState ({state_dict, type_assoc, title}:TypeBlockState) {
         }
     </Expander>
 }
+
 
 export default BlockState
 

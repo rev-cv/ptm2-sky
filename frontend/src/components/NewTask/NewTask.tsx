@@ -12,7 +12,6 @@ import BlockThemes from './BlockThemes'
 import BlockSubTasks from './BlockSubTasks'
 import BlockStates from './BlockStates'
 import BlockStress from './BlockStress'
-import BlockEnergy from './BlockEnergy'
 import BlockCriticality from './BlockCriticality'
 import BlockTiming from './BlockTiming'
 import BlockAction  from './BlockActions';
@@ -204,7 +203,6 @@ function NewTask () {
             <BlockThemes />
             <BlockStates />
             <BlockStress />
-            <BlockEnergy />
             <BlockAction />
         </div>
 

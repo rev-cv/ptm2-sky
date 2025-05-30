@@ -2,7 +2,7 @@ import { useAtomValue } from 'jotai'
 import { currentNewTask } from '@utils/jotai.store'
 
 import Expander from '@comps/Expander/Expander'
-import IcoAction from '@asset/event.svg'
+import IcoAction from '@asset/event-element.svg'
 
 function BlockAction() {
     const fillingNewTask = useAtomValue(currentNewTask)

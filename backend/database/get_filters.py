@@ -45,7 +45,6 @@ def get_completed_promt(promt, db):
         ["%%%STATE%%%", "state"],
         ["%%%ACTION_LEVEL%%%", "action_type"],
         ["%%%STRESS%%%", "stress"],
-        ["%%%ENERGY_LEVEL%%%", "energy_level"],
     ]
 
     for temp, filter_type in rep_temp:

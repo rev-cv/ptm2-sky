@@ -33,7 +33,8 @@ function BlockEnergy() {
                 Дата активации задачи
             </div>
             <ButtonCalendar
-                defaultDate='Activation at creation time'
+                noDate='No deadline'
+                date={fillingNewTask.activation}
                 onClickDay={
                     (value) => updateNewTask({...fillingNewTask, activation: value})
                 }
@@ -55,7 +56,8 @@ function BlockEnergy() {
                 Дата дедлайна задачи
             </div>
             <ButtonCalendar
-                defaultDate='No deadline'
+                noDate='No deadline'
+                date={fillingNewTask.deadline}
                 onClickDay={
                     (value) => updateNewTask({...fillingNewTask, deadline: value})
                 }
@@ -74,11 +76,12 @@ function BlockEnergy() {
                 Даты проверок задачи
             </div>
             {
-                fillingNewTask.taskchecks && fillingNewTask.taskchecks.map((_, index) => (
-                    <div className='new-task__taskchecks-time' key={`data-check-${index}`}>
+                fillingNewTask.taskchecks && fillingNewTask.taskchecks.map((d, i) => (
+                    <div className='new-task__taskchecks-time' key={`data-check-${i}`}>
                             <ButtonCalendar
-                                defaultDate='Date not set'
-                                onClickDay={value => updateChecksDates(value, index)}
+                                noDate='Date not set'
+                                date={d}
+                                onClickDay={value => updateChecksDates(value, i)}
                             />
                             {/* {
                                 datestr && 
