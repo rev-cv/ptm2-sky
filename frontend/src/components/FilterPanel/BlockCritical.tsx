@@ -1,10 +1,12 @@
 import { useAtom } from 'jotai'
 import { searchRequest } from '@utils/jotai.store'
+import { TypeRiskImpact } from '@mytype/typeSearchAndFilter'
 
 import IcoImpact from '@asset/impact.svg'
 import IcoRisk from '@asset/risk.svg'
 
 import Expander from '@comps/Expander/Expander'
+import CheckBox from '@comps/CheckBox/CheckBox'
 
 import values_component from '@comps/NewTask/BlockCriticalityValues.json'
 
@@ -18,20 +20,29 @@ function BlockCritical () {
                 <IcoRisk />
                 Риски невыполнения
             </div>
-            {/* <Toggle
-                elements={values_component.risk}
-                onChange={(v:number) => {
-                    if ([0, 1, 2, 3].includes(v)) {
-                        updateNewTask({...fillingNewTask, risk: v as 0 | 2 | 1 | 3})
-                    }
-                }}
-                activeValue={fillingNewTask.risk || 0}
-            /> */}
-            {/* <div className="new-task__energy-descr">
-                { values_component.risk.find(item => item.value === fillingNewTask.risk)?.description }
+            <div className='filter-panel__assoc'>
+                {
+                    values_component.risk.map((elem, index) => (
+                        elem.value != 0 ?
+                        <CheckBox 
+                            title={elem.label} 
+                            key={`rpf-${index}-value${elem.value}`}
+                            onChangeStatus={state => {
+                                let new_risk = [...search.risk]
+                                if (state) {
+                                    new_risk.push(elem.value as TypeRiskImpact)
+                                } else {
+                                    new_risk = new_risk.filter(el => el != elem.value)
+                                }
+                                updateSearch({...search, risk: new_risk})
+                            }}
+                            state={search.risk?.includes(elem.value as TypeRiskImpact)}
+                            desciption={elem.description}
+                        />
+                        : null
+                    ))
+                }
             </div>
-            <div className="new-task__energy-motiv">{fillingNewTask.risk_explanation}</div>
-            <div className="new-task__energy-motiv">{fillingNewTask.risk_proposals}</div> */}
         </div>
 
         <div className="new-task__energy">
@@ -39,18 +50,29 @@ function BlockCritical () {
                 <IcoImpact />
                 Последствия невыполнения
             </div>
-            {/* <Toggle 
-                elements={values_component.impact}
-                onChange={(v:number) => {
-                    if ([0, 1, 2, 3].includes(v)) {
-                        updateNewTask({...fillingNewTask, impact: v as 0 | 2 | 1 | 3})
-                    }
-                }}
-                activeValue={fillingNewTask.impact || 0}
-            />
-            <div className="new-task__energy-descr">
-                { values_component.impact.find(item => item.value === fillingNewTask.impact)?.description }
-            </div> */}
+            <div className='filter-panel__assoc'>
+                {
+                    values_component.impact.map((elem, index) => (
+                        elem.value != 0 ?
+                        <CheckBox 
+                            title={elem.label} 
+                            key={`rpf-${index}-value${elem.value}`}
+                            onChangeStatus={state => {
+                                let new_impact = [...search.impact]
+                                if (state) {
+                                    new_impact.push(elem.value as TypeRiskImpact)
+                                } else {
+                                    new_impact = new_impact.filter(el => el != elem.value)
+                                }
+                                updateSearch({...search, impact: new_impact})
+                            }}
+                            state={search.impact?.includes(elem.value as TypeRiskImpact)}
+                            desciption={elem.description}
+                        />
+                        : null 
+                    ))
+                }
+            </div>
         </div>
     </Expander>
 }

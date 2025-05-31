@@ -1,5 +1,6 @@
-const APIURL = import.meta.env.VITE_API_URL;
-const WSURL = import.meta.env.VITE_WS_URL;
+const APIURL = import.meta.env.VITE_API_URL
+const WSURL = import.meta.env.VITE_WS_URL
+
 import { useState, useEffect, useRef } from 'react'
 import { useAtom } from 'jotai'
 import { currentNewTask, resetTask } from '@utils/jotai.store'

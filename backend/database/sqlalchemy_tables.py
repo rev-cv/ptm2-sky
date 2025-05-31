@@ -77,9 +77,9 @@ class Task(Base):
 
     # --- relationships ---
     
-    subtasks = relationship("SubTask", backref="task")
-    filters = relationship("Association", secondary=task_associations)
-    taskchecks = relationship("TaskCheck", backref="task")
+    subtasks = relationship("SubTask", backref="task", lazy="joined")
+    filters = relationship("Association", secondary=task_associations, lazy="joined")
+    taskchecks = relationship("TaskCheck", backref="task", lazy="joined")
     
 # --- инициализация базы данных ---
 

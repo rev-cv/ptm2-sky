@@ -94,16 +94,6 @@ def write_new_task_to_database(task_data, db):
             )
             associations.append(assoc)
 
-    # Energy level
-    if task_data.energy_level:
-        for assoc_data in task_data.energy_level:
-            db_filter = get_or_create_filter(db, assoc_data, "energy_level")
-            assoc = Association(
-                filter_id=db_filter.id,
-                reason=assoc_data.reason
-            )
-            associations.append(assoc)
-
     # Action type
     if task_data.action_type:
         for assoc_data in task_data.action_type:

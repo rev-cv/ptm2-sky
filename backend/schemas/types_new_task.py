@@ -50,8 +50,6 @@ class NewTaskRequest(BaseModel):
     states: Optional[States] = None
     action_type: Optional[List[TypeAssociation]] = None
     stress: Optional[List[TypeAssociation]] = None
-    energy_level: Optional[List[TypeAssociation]] = None
     deadline: Optional[str] = None
     activation: Optional[str] = None
     taskchecks: Optional[List[str]] = None
-    

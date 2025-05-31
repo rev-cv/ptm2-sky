@@ -5,11 +5,15 @@ import uuid
 import json
 from llama_cpp import Llama
 from openai import OpenAI
-from database.sqlalchemy_tables import get_db
 from sqlalchemy.orm import Session
+
+from database.sqlalchemy_tables import get_db
 from database.create_task import write_new_task_to_database
 from database.get_filters import get_all_filters_dict, get_completed_promt
+from database.get_tasks import get_tasks_by_filters
+
 from schemas.types_new_task import TaskGenerateRequest, NewTaskRequest
+from schemas.types_get_filters import TypeSearchPanel
 
 
 tasks = {}       # Хранилище задач
@@ -206,3 +210,15 @@ async def get_filters(request: Request, db: Session = Depends(get_db)):
 #     retsult = get_completed_promt(magic_task_promt, db)
 #     print(retsult)
 #     return retsult
+
+@router.post("/search_tasks")
+async def search_tasks(
+    request: Request, 
+    filters: TypeSearchPanel = Body(...), 
+    db: Session = Depends(get_db)
+    ):
+
+    return {
+        "status": "success", 
+        "result": get_tasks_by_filters(db, filters)
+    }

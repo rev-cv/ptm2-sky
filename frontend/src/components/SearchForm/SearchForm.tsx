@@ -1,6 +1,8 @@
-import { useRef, useEffect, useLayoutEffect } from 'react'
-import { useAtom } from 'jotai'
-import { openSidePanel, searchRequest } from '@utils/jotai.store'
+const APIURL = import.meta.env.VITE_API_URL
+
+import { useRef, useEffect, useState, useLayoutEffect } from 'react'
+import { useAtom, getDefaultStore } from 'jotai'
+import { openSidePanel, searchRequest, searchRequestID } from '@utils/jotai.store'
 
 import Button from '@comps/Button/Button'
 import BlockPeriod from './BlockPeriod'
@@ -15,9 +17,14 @@ import IcoState from '@asset/state-element.svg'
 import IcoStress from '@asset/stress-element.svg'
 import IcoAction from '@asset/event-element.svg'
 
+import IcoImpact from '@asset/impact.svg'
+import IcoRisk from '@asset/risk.svg'
+
 import './style.scss'
 
 function SearchForm() {
+
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [fillingRequest, updateRequest] = useAtom(searchRequest)
     const [, setPanel] = useAtom(openSidePanel)
 
@@ -45,6 +52,35 @@ function SearchForm() {
         })
     }
 
+    const handleSearch = async () => {
+        setStatus('loading')
+
+        const store = getDefaultStore()
+
+        console.log({
+            ...fillingRequest,
+            filters: store.get(searchRequestID)
+        })
+
+        try {
+            const res = await fetch(`${APIURL}/api/search_tasks`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...fillingRequest,
+                    filters: store.get(searchRequestID)
+                })
+            })
+            if (!res.ok) throw new Error('Ошибка поиска')
+            const data = await res.json()
+            console.log('Search results:', data)
+            setStatus('success')
+        } catch (err) {
+            setStatus('error')
+            console.error('Ошибка поиска задач:', err)
+        }
+    }
+
     return <div className='panel'>
         <Button 
             IconComponent={IcoAdd} 
@@ -57,6 +93,8 @@ function SearchForm() {
                 onClick={() => inputRef.current?.focus()}
                 >
 
+                {/* отображение фильтра «даты активации» */}
+
                 <BlockPeriod 
                     start={fillingRequest.activation[0]} 
                     finish={fillingRequest.activation[1]}
@@ -66,6 +104,8 @@ function SearchForm() {
                     })}
                     tfilter='activation'
                 />
+
+                {/* отображение фильтра «даты дедлайнов» */}
 
                 <BlockPeriod 
                     start={fillingRequest.deadline[0]} 
@@ -77,6 +117,8 @@ function SearchForm() {
                     tfilter='deadline'
                 />
 
+                {/* отображение фильтра «даты проверки» */}
+
                 <BlockPeriod 
                     start={fillingRequest.taskchecks[0]} 
                     finish={fillingRequest.taskchecks[1]}
@@ -86,7 +128,50 @@ function SearchForm() {
                     })}
                     tfilter='taskchecks'
                 />
+
+                {/* отображение фильтра «риски» */}
                 
+                {
+                    0 < fillingRequest.risk?.length &&
+                        <div 
+                            className='search-panel__filter' 
+                            onClick={e => e.stopPropagation()}
+                            title="risk"
+                            >
+                                <div><IcoRisk /></div>
+                                <div>{riskImpactString(fillingRequest.risk, true)}</div>
+                                <Button 
+                                    IconComponent={IcoClose} 
+                                    onClick={(e) => {
+                                        updateRequest({...fillingRequest, risk: []})
+                                        e.stopPropagation()
+                                    }}
+                                />
+                        </div>
+                }
+
+                {/* отображение фильтра «риски невыполнения» */}
+                {
+                    0 < fillingRequest.impact?.length &&
+                        <div 
+                            className='search-panel__filter' 
+                            onClick={e => e.stopPropagation()}
+                            title="impact"
+                            >
+                                <div><IcoImpact /></div>
+                                <div>{riskImpactString(fillingRequest.impact, false)}</div>
+                                <Button 
+                                    IconComponent={IcoClose} 
+                                    onClick={(e) => {
+                                        updateRequest({...fillingRequest, impact: []})
+                                        e.stopPropagation()
+                                    }}
+                                />
+                        </div>
+                }
+                
+                {/* отображение фильтров-ассоциаций */}
+
                 {
                     fillingRequest.filters.map((elem, index) => (
                         <div 
@@ -133,6 +218,8 @@ function SearchForm() {
                     }}
                 />
 
+                {/* отображение ввода */}
+
                 <span
                     ref={spanRef}
                     style={{
@@ -157,6 +244,8 @@ function SearchForm() {
             
             <Button
                 IconComponent={IcoSearch}
+                onClick={handleSearch}
+                disabled={status === 'loading'}
             />
             
         </div>
@@ -166,3 +255,26 @@ function SearchForm() {
 }
 
 export default SearchForm
+
+
+function riskImpactString (list_ri:number[], isRisk:boolean) : string {
+    let result:string[] = []
+
+    list_ri.sort().forEach(n => {
+        switch (n) {
+            case 0:
+                result.push("No"); break;
+            case 1:
+                result.push("Minor"); break;
+            case 2:
+                result.push("Moderate"); break;
+            case 3:
+                isRisk ? result.push("High")
+                : result.push("Critical")
+                break;
+            default:
+                break;
+        }
+    })
+    return result.join(", ")
+}
