@@ -1,8 +1,7 @@
 const APIURL = import.meta.env.VITE_API_URL
 
 import { useRef, useEffect, useState, useLayoutEffect } from 'react'
-import { useAtom, getDefaultStore } from 'jotai'
-import { openSidePanel, searchRequest, searchRequestID } from '@utils/jotai.store'
+import { useAtom, getDefaultStore, searchRequest, searchRequestID, openSidePanel, viewTasks } from '@utils/jotai.store'
 
 import Button from '@comps/Button/Button'
 import BlockPeriod from './BlockPeriod'
@@ -27,6 +26,7 @@ function SearchForm() {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [fillingRequest, updateRequest] = useAtom(searchRequest)
     const [, setPanel] = useAtom(openSidePanel)
+    const [, setViewTasks] = useAtom(viewTasks)
 
     const spanRef = useRef<HTMLSpanElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
@@ -52,7 +52,7 @@ function SearchForm() {
         })
     }
 
-    const handleSearch = async () => {
+    const initiateSearch = async () => {
         setStatus('loading')
 
         const store = getDefaultStore()
@@ -73,6 +73,9 @@ function SearchForm() {
             })
             if (!res.ok) throw new Error('Ошибка поиска')
             const data = await res.json()
+
+            setViewTasks(data.result)
+            
             console.log('Search results:', data)
             setStatus('success')
         } catch (err) {
@@ -244,7 +247,7 @@ function SearchForm() {
             
             <Button
                 IconComponent={IcoSearch}
-                onClick={handleSearch}
+                onClick={initiateSearch}
                 disabled={status === 'loading'}
             />
             

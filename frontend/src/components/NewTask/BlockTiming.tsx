@@ -1,5 +1,4 @@
-import { useAtom } from 'jotai'
-import { currentNewTask } from '@utils/jotai.store'
+import { useAtom, currentNewTask } from '@utils/jotai.store'
 import { sortDates } from '@utils/date-funcs'
 
 import Expander from '@comps/Expander/Expander'

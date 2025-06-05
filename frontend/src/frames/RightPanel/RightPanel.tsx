@@ -1,5 +1,4 @@
-import { useAtomValue } from 'jotai'
-import { openSidePanel } from '@utils/jotai.store'
+import { useAtomValue, openSidePanel } from '@utils/jotai.store'
 
 import FilterPanel from '@comps/FilterPanel/FilterPanel'
 

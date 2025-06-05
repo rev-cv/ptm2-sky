@@ -1,5 +1,4 @@
-import { useAtomValue } from 'jotai'
-import { currentNewTask } from '@utils/jotai.store'
+import { useAtomValue, currentNewTask } from '@utils/jotai.store'
 
 import Expander from '@comps/Expander/Expander'
 import IcoSubTaskPoint from '@asset/task_point.svg'

@@ -1,7 +1,6 @@
 import './style.scss'
 import { useState, useEffect } from "react";
-import { useAtom } from 'jotai'
-import { openSidePanel } from '@utils/jotai.store'
+import { useAtom, openSidePanel } from '@utils/jotai.store'
 
 function Сurtain() {
     const [currentOpenPanel, setPanel] = useAtom(openSidePanel)

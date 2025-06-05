@@ -1,5 +1,4 @@
-import { useAtom } from 'jotai'
-import { searchRequest } from '@utils/jotai.store'
+import { useAtom, searchRequest } from '@utils/jotai.store'
 import { TypeRiskImpact } from '@mytype/typeSearchAndFilter'
 
 import IcoImpact from '@asset/impact.svg'

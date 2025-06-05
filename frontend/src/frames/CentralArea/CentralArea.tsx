@@ -1,9 +1,9 @@
-import { useAtom } from 'jotai'
-import { openSidePanel } from '@utils/jotai.store'
+import { useAtom, openSidePanel } from '@utils/jotai.store'
 import './style.scss'
 
 import Button from '@comps/Button/Button'
 import SearchForm from '@comps/SearchForm/SearchForm'
+import Tasks from '@comps/Tasks/Tasks'
 
 import IcoSetting from '@asset/setting.svg'
 
@@ -12,12 +12,10 @@ function CentralArea() {
 
     return (
         <div className="frame-central">
-            {/* <button onClick={() => setPanel("left")}>left</button>
-            <button onClick={() => setPanel("right")}>right</button>
-            <button onClick={() => setPanel("setting")}>setting</button> */}
 
             <div className="frame-central__page">
                 <SearchForm />
+                <Tasks />
             </div>
 
             <Button

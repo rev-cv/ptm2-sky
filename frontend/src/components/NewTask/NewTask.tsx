@@ -2,8 +2,7 @@ const APIURL = import.meta.env.VITE_API_URL
 const WSURL = import.meta.env.VITE_WS_URL
 
 import { useState, useEffect, useRef } from 'react'
-import { useAtom } from 'jotai'
-import { currentNewTask, resetTask } from '@utils/jotai.store'
+import { useAtom, currentNewTask, resetTask } from '@utils/jotai.store'
 import useWebSocket from 'react-use-websocket'
 
 import Button from '@comps/Button/Button'
@@ -27,7 +26,6 @@ import './style.scss'
 function NewTask () {
     
     const [fillingNewTask, updateNewTask] = useAtom(currentNewTask)
-    const [isDoneMagic, setIsDoneMagic] = useState(false)
 
     const refTaskTitle = useRef<HTMLInputElement>(null);
     const refTaskDescr = useRef<HTMLTextAreaElement>(null);
@@ -66,7 +64,6 @@ function NewTask () {
                     // setResult(data.result);
                     updateNewTask({...fillingNewTask, ...data.result})
                     console.log('Parsed result:', data.result);
-                    setIsDoneMagic(true);
                     setTaskId(null); // сброс websocket соединения
                 }
             } catch (error) {
@@ -111,7 +108,6 @@ function NewTask () {
         updateNewTask(resetTask)
         setTaskId(null)
         setStatus('idle')
-        setIsDoneMagic(false)
         refTaskTitle.current?.focus()
     }
 
@@ -208,24 +204,18 @@ function NewTask () {
         </div>
 
         <div className='new-task__btns'>
-            {
-                isDoneMagic ? 
-                    <Button
-                        text="Create task"
-                        IconComponent={status === 'creating' ? Loader : IcoAdd }
-                        className='new-task__btns-submit'
-                        onClick={createNewTask}
-                        disabled={status === 'creating'}
-                    />
-                : 5 < fillingNewTask.title.length &&
-                    <Button
-                        text="Magic"
-                        IconComponent={status === 'running' || status === 'starting' ? Loader : IcoMagic }
-                        className='new-task__btns-submit'
-                        onClick={generateOptionsForTask}
-                        disabled={status === 'running' || status === 'starting'}
-                    />
-            }
+            <Button
+                IconComponent={status === 'running' || status === 'starting' ? Loader : IcoMagic }
+                onClick={generateOptionsForTask}
+                disabled={status === 'running' || status === 'starting'}
+            />
+
+            <Button
+                text="Create task"
+                IconComponent={status === 'creating' ? Loader : IcoAdd }
+                onClick={createNewTask}
+                disabled={(status === 'creating' || 5 < fillingNewTask.title.length)}
+            />
 
             <Button
                 IconComponent={IcoClean}

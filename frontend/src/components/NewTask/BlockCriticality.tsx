@@ -1,5 +1,4 @@
-import { useAtom } from 'jotai'
-import { currentNewTask } from '@utils/jotai.store'
+import { useAtom, currentNewTask } from '@utils/jotai.store'
 
 import Expander from '@comps/Expander/Expander'
 import Toggle from '@comps/Toggles/Toggle'

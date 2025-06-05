@@ -1,6 +1,5 @@
 import React from 'react'
-import { useAtomValue } from 'jotai'
-import { currentNewTask, stateNames } from '@utils/jotai.store'
+import { useAtomValue, currentNewTask, stateNames } from '@utils/jotai.store'
 
 import { TypeAssociation } from '@mytype/typesNewTask'
 import Expander from '@comps/Expander/Expander'

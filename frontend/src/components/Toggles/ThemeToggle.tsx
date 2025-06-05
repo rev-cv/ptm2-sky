@@ -1,6 +1,5 @@
-import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import { themeWithStorageAtom } from '@utils/jotai.store';
+import { useAtom, themeWithStorageAtom } from '@utils/jotai.store';
 import './style.scss'
 
 function ThemeToggle() {
