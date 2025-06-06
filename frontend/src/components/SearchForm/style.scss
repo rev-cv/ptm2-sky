@@ -4,6 +4,7 @@
     position: sticky;
     top: .5em;
     gap: 1em;
+    z-index: 3;
 
     &__add-new-task {
         font-size: .9em;
