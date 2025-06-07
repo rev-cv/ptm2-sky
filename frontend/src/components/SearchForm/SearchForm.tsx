@@ -2,6 +2,7 @@ const APIURL = import.meta.env.VITE_API_URL
 
 import { useRef, useEffect, useState, useLayoutEffect } from 'react'
 import { useAtom, getDefaultStore, searchRequest, searchRequestID, openSidePanel, viewTasks } from '@utils/jotai.store'
+import { searchRequestSchema } from '@mytype/typeSearchAndFilter'
 
 import Button from '@comps/Button/Button'
 import BlockPeriod from './BlockPeriod'
@@ -53,6 +54,15 @@ function SearchForm() {
     }
 
     const initiateSearch = async () => {
+
+        const parseResult = searchRequestSchema.safeParse(fillingRequest);
+        if (!parseResult.success) {
+            setStatus('error');
+            console.error('Ошибка валидации данных поиска:', parseResult.error.format());
+            alert('Некорректные данные поиска!');
+            return;
+        }
+
         setStatus('loading')
 
         const store = getDefaultStore()

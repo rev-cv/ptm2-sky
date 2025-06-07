@@ -6,7 +6,7 @@ import datetime
 
 Base = declarative_base()
 
-DATABASE_URL = "sqlite:///example2.db"
+DATABASE_URL = "sqlite:///example.db"
 engine = create_engine(DATABASE_URL, echo=True)  # echo=True для отладки
 
 # --- фабрика сессий ---
@@ -45,6 +45,7 @@ class SubTask(Base):
     __tablename__ = 'subtasks'
     id = Column(Integer, primary_key=True, index=True)
     task_id = Column(Integer, ForeignKey('tasks.id'))
+    status = Column(Boolean, default=False)
     title = Column(String, nullable=False)
     description = Column(Text)
     instruction = Column(Text)
@@ -65,6 +66,8 @@ class Task(Base):
 
     activation = Column(DateTime)
     deadline = Column(DateTime)
+
+    status = Column(Boolean, default=False)
 
     impact = Column(Integer)
     risk = Column(Integer)

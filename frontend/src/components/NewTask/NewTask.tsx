@@ -3,6 +3,7 @@ const WSURL = import.meta.env.VITE_WS_URL
 
 import { useState, useEffect, useRef } from 'react'
 import { useAtom, currentNewTask, resetTask } from '@utils/jotai.store'
+import { newTaskSchema } from '@mytype/typesNewTask'
 import useWebSocket from 'react-use-websocket'
 
 import Button from '@comps/Button/Button'
@@ -27,8 +28,8 @@ function NewTask () {
     
     const [fillingNewTask, updateNewTask] = useAtom(currentNewTask)
 
-    const refTaskTitle = useRef<HTMLInputElement>(null);
-    const refTaskDescr = useRef<HTMLTextAreaElement>(null);
+    const refTaskTitle = useRef<HTMLInputElement>(null)
+    const refTaskDescr = useRef<HTMLTextAreaElement>(null)
 
     // реактивы отвечающие за магический запрос
     const [taskId, setTaskId] = useState<string | null>(null)
@@ -50,34 +51,34 @@ function NewTask () {
             setTaskId(null)
             setStatus('idle')
         },
-    }, !!taskId); // !!taskId указывает, что соединение должно быть активно только при наличии taskId
+    }, !!taskId) // !!taskId указывает, что соединение должно быть активно только при наличии taskId
 
     // обработка сообщений WebSocket
     useEffect(() => {
         if (lastMessage !== null) {
-            // console.log('Raw message:', lastMessage.data);
+            // console.log('Raw message:', lastMessage.data)
             try {
-                const data = JSON.parse(lastMessage.data);
-                // console.log('Parsed data:', data);
-                setStatus(data.status);
+                const data = JSON.parse(lastMessage.data)
+                // console.log('Parsed data:', data)
+                setStatus(data.status)
                 if (data.result) {
                     // setResult(data.result);
                     updateNewTask({...fillingNewTask, ...data.result})
-                    console.log('Parsed result:', data.result);
+                    console.log('Parsed result:', data.result)
                     setTaskId(null); // сброс websocket соединения
                 }
             } catch (error) {
-                console.error('Parse error:', error);
-                setStatus('error');
+                console.error('Parse error:', error)
+                setStatus('error')
                 // setResult({ "message": 'Failed to parse WebSocket message' });
             }
         }
-    }, [lastMessage]);
+    }, [lastMessage])
 
     // запуск анализа задачи нейронкой
     const generateOptionsForTask = async () => {
-        setStatus('starting');
-        // setResult(null);
+        setStatus('starting')
+
         try {
             const response = await fetch(`${APIURL}/api/generate_options_for_task`, {
                 method: 'POST',
@@ -86,19 +87,19 @@ function NewTask () {
                     text: fillingNewTask.title,
                     description: fillingNewTask.description
                 })
-            });
+            })
             
-            if (!response.ok) throw new Error('Failed to start task');
+            if (!response.ok) throw new Error('Failed to start task')
             
-            const data = await response.json();
-            console.log('Task started:', data);
+            const data = await response.json()
+            console.log('Task started:', data)
             
             // сохранить taskId для последующего подключения к WebSocket
-            setTaskId(data.task_id);
-            setStatus(data.status);
+            setTaskId(data.task_id)
+            setStatus(data.status)
         } catch (error:any) {
-            console.error('Start task error:', error);
-            setStatus('error');
+            console.error('Start task error:', error)
+            setStatus('error')
             // setResult({ message: error.message || 'Failed to start task' });
         }
     }
@@ -112,9 +113,17 @@ function NewTask () {
     }
 
     async function createNewTask () {
+
+        const parseResult = newTaskSchema.safeParse(fillingNewTask)
+        if (!parseResult.success) {
+            setStatus('error')
+            alert(parseResult.error.errors[0]?.message || 'Некорректные данные задачи!')
+            return
+        }
+
         console.log("created new task")
 
-        setStatus('creating');
+        setStatus('creating')
         
         try {
             console.log(JSON.stringify({...fillingNewTask}))
@@ -134,18 +143,19 @@ function NewTask () {
                     deadline,
                     taskchecks
                 })
-            });
+            })
             
-            if (!response.ok) throw new Error('Failed to create task');
+            if (!response.ok) throw new Error('Failed to create task')
             
-            const data = await response.json();
-            console.log('Task created:', data);
+            const data = await response.json()
+
+            console.log('Task created:', data)
 
             if (data.status === "created") clearForm()
 
         } catch (error:any) {
-            console.error('Start task error:', error);
-            setStatus('error');
+            console.error('Start task error:', error)
+            setStatus('error')
         }
     }
 
@@ -207,14 +217,17 @@ function NewTask () {
             <Button
                 IconComponent={status === 'running' || status === 'starting' ? Loader : IcoMagic }
                 onClick={generateOptionsForTask}
-                disabled={status === 'running' || status === 'starting'}
+                disabled={
+                    status === 'running' || status === 'starting'
+                        || fillingNewTask.title.length < 6
+                }
             />
 
             <Button
                 text="Create task"
                 IconComponent={status === 'creating' ? Loader : IcoAdd }
                 onClick={createNewTask}
-                disabled={(status === 'creating' || 5 < fillingNewTask.title.length)}
+                disabled={(status === 'creating' || fillingNewTask.title.length < 6)}
             />
 
             <Button

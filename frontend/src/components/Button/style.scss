@@ -19,6 +19,23 @@
         width: 1.2em;
         height: 1.2em;
     }
+
+    &:disabled {
+        background-color: var(--color-button-disabled);
+        cursor: default;
+
+        &:hover {
+            background-color: var(--color-button-disabled);
+        }
+
+        svg * {
+            color: var(--color-text-secondary);
+        }
+
+        span {
+            color: var(--color-text-secondary);
+        }
+    }
 }
 
 .custom-button-first {
@@ -50,7 +67,12 @@
 }
 
 .custom-button-transparent {
-    background-color: red
+    background-color: transparent;
+    border: 1px solid var(--color-button-transparent-hover);
+
+    span {
+        transform: translateY(.07em);
+    }
 }
 
 .custom-button-ico-text {

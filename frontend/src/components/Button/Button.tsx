@@ -20,8 +20,6 @@ function Button({ text=null, IconComponent=null, className, onClick, disabled=fa
             result += "custom-button-transparent"
         }
 
-
-
         if (text && IconComponent) {
             result += " custom-button-ico-text"
         } else if (text) {

@@ -1,6 +1,7 @@
 
-type TypeTasks_SubTask = {
+export type TypeTasks_SubTask = {
     id: number
+    status: boolean
     title: string
     description: string
     continuance: number // продолжительность выполнения подзадачи в часах
@@ -9,7 +10,7 @@ type TypeTasks_SubTask = {
     task_id: number // ID задачи, к которой относится подзадача
 }
 
-type TypeTasks_Filter = {
+export type TypeTasks_Filter = {
     id: number
     name: string // название фильтра
     description: string // описание фильтра
@@ -19,6 +20,7 @@ type TypeTasks_Filter = {
 
 export type TypeViewTask = {
     id: number
+    status: boolean
     title: string
     description: string
     motivation: string

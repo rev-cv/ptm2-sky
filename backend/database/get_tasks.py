@@ -88,15 +88,18 @@ def serialize_task(task):
 
     return {
         "id": task.id,
+        "status": task.status,
         "title": task.title,
         "description": task.description,
         "activation": task.activation,
         "deadline": task.deadline,
         "impact": task.impact,
+        "subtasks" : task.subtasks,
         "risk": task.risk,
         "risk_explanation": task.risk_explanation,
         "risk_proposals": task.risk_proposals,
         "motivation": task.motivation,
         "created_at": task.created_at,
-        "filters": filters_by_type
+        "filters": filters_by_type,
+        "taskchecks": [tc.date for tc in task.taskchecks],
     }

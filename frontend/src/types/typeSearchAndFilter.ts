@@ -1,3 +1,4 @@
+import { z } from "zod"
 
 export type TypeFilter = {
     type: string // тип фильтра
@@ -44,3 +45,20 @@ export type TypeFilterAssocServer = {
     stress: TypeFilterServer[]
     theme: TypeFilterServer[]
 }
+
+export const searchRequestSchema = z.object({
+    text: z.string(),
+    filters: z.array(z.object({
+        type: z.string(),
+        id: z.number(),
+        value: z.string(),
+        type_title: z.string(),
+    })),
+    lastOpenedPage: z.number(),
+    sorted: z.string(),
+    activation: z.tuple([z.string().nullable(), z.string().nullable()]),
+    deadline: z.tuple([z.string().nullable(), z.string().nullable()]),
+    taskchecks: z.tuple([z.string().nullable(), z.string().nullable()]),
+    risk: z.array(z.number()),
+    impact: z.array(z.number()),
+});
