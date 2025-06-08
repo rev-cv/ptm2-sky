@@ -8,10 +8,6 @@ function Tasks() {
 
     return (<div className="task-list">
         { tasks.map((task) => <BlockTask key={task.id} objTask={task} /> ) }
-        { tasks.map((task) => <BlockTask key={task.id} objTask={task} /> ) }
-        { tasks.map((task) => <BlockTask key={task.id} objTask={task} /> ) }
-        { tasks.map((task) => <BlockTask key={task.id} objTask={task} /> ) }
-        { tasks.map((task) => <BlockTask key={task.id} objTask={task} /> ) }
     </div>)
 }
 

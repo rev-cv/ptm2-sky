@@ -23,7 +23,7 @@ function BlockFilterPeriod ({start, finish, onDelete, tfilter}:TypeBlockFilterPe
     if (!start && !finish) return null
 
     return <div 
-        className='search-panel__filter' 
+        className='search-component__filter' 
         onClick={e => e.stopPropagation()}
         title={titles[tfilter] || ""}
         >
@@ -39,7 +39,6 @@ function BlockFilterPeriod ({start, finish, onDelete, tfilter}:TypeBlockFilterPe
             IconComponent={IcoClose} 
             onClick={() => onDelete()}
         />
-        {/* <span className='search-panel__filter-type'>{tFilter}</span> */}
     </div>
 }
 
