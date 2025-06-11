@@ -1,8 +1,8 @@
-const APIURL = import.meta.env.VITE_API_URL;
+import { loadFilters } from './loadFilters'
 import { useEffect } from "react";
 
 import { filterFromServer } from '@utils/jotai.store'
-import { useAtom } from "jotai"
+import { useAtomValue } from "jotai"
 
 import BlockCritical from "./BlockCritical"
 import BlockAssoc from "./BlockAssoc"
@@ -13,23 +13,9 @@ import "./style.scss"
 
 function FilterPanel (){
 
-    const [filters, setFiltersWithServer] = useAtom(filterFromServer) 
+    const filters = useAtomValue(filterFromServer) 
 
-    useEffect(() => {
-        fetch(`${APIURL}/api/get_filters`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(res => res.json())
-            .then(data => {
-                // обработка полученных фильтров
-                console.log("filters from API:", data)
-                setFiltersWithServer(data)
-            })
-            .catch(err => {
-                console.error("Ошибка загрузки фильтров:", err)
-            })
-    }, [])
+    useEffect(() => loadFilters(), [])
 
     return (
         <div className="filter-panel">

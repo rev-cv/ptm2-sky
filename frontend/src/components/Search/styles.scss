@@ -50,6 +50,8 @@
             opacity 300ms ease-in-out,
             grid-template-rows 300ms ease-in-out
         ;
+
+        overflow: hidden;
         
         > div {
             overflow: hidden;
@@ -63,6 +65,7 @@
 
         &:not(.view) > div {
             padding: 0 !important;
+            max-height: 0 !important;
         }
     }
 }
@@ -151,10 +154,11 @@
 }
 
 .preset-component {
+    align-items: start;
     display: flex;
     gap: .5em;
 
     > button {
-        font-size: .8em !important;
+        font-size: .5em !important;
     }
 }

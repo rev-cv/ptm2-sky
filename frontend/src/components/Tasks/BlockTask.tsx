@@ -29,7 +29,7 @@ function Task({objTask} : TaskProps) {
     const [isOpenDates, setIsOpenDates] = useState(false)
 
     const deadline = objTask.deadline ? new Date(objTask.deadline) : null;
-    const deadlaneDiff = deadline ? Math.floor((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
+    const deadlaneDiff = deadline ? Math.floor((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24) + 1) : null;
     const deadlineClass = deadlaneDiff != null && 
         deadlaneDiff < 1 ? "day_1" 
         : deadlaneDiff && deadlaneDiff < 3 ? "days_3"

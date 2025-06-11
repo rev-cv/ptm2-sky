@@ -10,6 +10,10 @@ export const searchRequestID = atom((get) =>
     get(searchRequest).filters.map(f => f.id)
 )
 
+type TypeSamplingStatus = 'idle' | 'loading' | 'success' | 'error'
+
+export const samplingStatus = atom<TypeSamplingStatus>("idle")
+
 export function getSearchRequest (searchRequestType: string) {
     let request:TypeSearchPanel = {
         text: "",

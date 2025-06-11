@@ -22,6 +22,7 @@ function BlockActivation ({title, period_type}:TypeBlockFilterDates) {
                 period = [f, s]
             }
         }
+        
         switch (period_type) {
             case "activation":
                 updateSearch({...search, activation: period}); break;

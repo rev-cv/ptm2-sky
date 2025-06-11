@@ -56,7 +56,7 @@ class TaskCheck(Base):
     __tablename__ = 'taskchecks'
     id = Column(Integer, primary_key=True, index=True)
     task_id = Column(Integer, ForeignKey('tasks.id'))
-    date = Column(DateTime)
+    date = Column(DateTime(timezone=True))
 
 class Task(Base):
     __tablename__ = 'tasks'
@@ -64,8 +64,8 @@ class Task(Base):
     title = Column(String, nullable=False)
     description = Column(Text)
 
-    activation = Column(DateTime)
-    deadline = Column(DateTime)
+    activation = Column(DateTime(timezone=True))
+    deadline = Column(DateTime(timezone=True))
 
     status = Column(Boolean, default=False)
 
@@ -76,7 +76,11 @@ class Task(Base):
     risk_proposals = Column(Text)
     motivation = Column(Text)
 
-    created_at = Column(DateTime, nullable=False, default=datetime.datetime.now(datetime.timezone.utc))
+    created_at = Column(
+        DateTime(timezone=True), 
+        nullable=False, 
+        default=datetime.datetime.now(datetime.timezone.utc)
+    )
 
     # --- relationships ---
     

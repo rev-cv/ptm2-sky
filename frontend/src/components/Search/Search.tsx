@@ -1,8 +1,8 @@
-const APIURL = import.meta.env.VITE_API_URL
 import { useState, useRef, useLayoutEffect, useEffect } from 'react'
 
-import { useAtom, getDefaultStore, searchRequest, searchRequestID, openSidePanel, viewTasks, getSearchRequest, deepEqual } from '@utils/jotai.store'
-import { searchRequestSchema } from '@mytype/typeSearchAndFilter'
+import { loadTasks } from './loadTasks'
+
+import { useAtom, useAtomValue, searchRequest, openSidePanel, getSearchRequest, deepEqual, samplingStatus } from '@utils/jotai.store'
 
 import Button from '@comps/Button/Button'
 import BlockFilter from './BlockFilter'
@@ -12,6 +12,7 @@ import IcoSearch from '@asset/search.svg'
 import IcoPreset from '@asset/preset.svg'
 import IcoFilter from '@asset/filter.svg'
 import IcoAdd from '@asset/add.svg'
+import Loader from '@comps/Loader/Loader'
 
 import IcoTheme from '@asset/theme-element.svg'
 import IcoState from '@asset/state-element.svg'
@@ -26,10 +27,11 @@ import './styles.scss'
 function Search() {
 
     const [switchPanel, setSwitchPanel] = useState<"search"|"preset">("preset");
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+    const status = useAtomValue(samplingStatus)
+    // useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [fillingRequest, updateRequest] = useAtom(searchRequest)
     const [, setPanel] = useAtom(openSidePanel)
-    const [, setViewTasks] = useAtom(viewTasks)
+    const [isProcessPreset, setProcessPreset] = useState<boolean>(false);
 
     const spanRef = useRef<HTMLSpanElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
@@ -48,52 +50,25 @@ function Search() {
         return () => window.removeEventListener('resize', recalcWidth)
     }, [])
 
+    useEffect(() => {
+        // инициализация начального пресета
+        setProcessPreset(true);
+        updateRequest(getSearchRequest("today"));
+    }, [])
+
+    useEffect(() => {
+        // процес отправки запроса инициализированный установкой пресета
+        if (isProcessPreset) {
+            loadTasks(true)
+            setProcessPreset(false)
+        }
+    }, [fillingRequest])
+
     function deleteFilter (index:number) {
         updateRequest({
             ...fillingRequest,
             filters: fillingRequest.filters.filter((_, i) => (i != index))
         })
-    }
-
-    const initiateSearch = async () => {
-
-        const parseResult = searchRequestSchema.safeParse(fillingRequest);
-        if (!parseResult.success) {
-            setStatus('error');
-            console.error('Ошибка валидации данных поиска:', parseResult.error.format());
-            alert('Некорректные данные поиска!');
-            return;
-        }
-
-        setStatus('loading')
-
-        const store = getDefaultStore()
-
-        console.log({
-            ...fillingRequest,
-            filters: store.get(searchRequestID)
-        })
-
-        try {
-            const res = await fetch(`${APIURL}/api/search_tasks`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...fillingRequest,
-                    filters: store.get(searchRequestID)
-                })
-            })
-            if (!res.ok) throw new Error('Ошибка поиска')
-            const data = await res.json()
-
-            setViewTasks(data.result)
-            
-            console.log('Search results:', data)
-            setStatus('success')
-        } catch (err) {
-            setStatus('error')
-            console.error('Ошибка поиска задач:', err)
-        }
     }
 
     return (
@@ -241,8 +216,8 @@ function Search() {
             
                         <Button
                             className='search-component__submit'
-                            IconComponent={IcoSearch}
-                            onClick={initiateSearch}
+                            IconComponent={status === "loading" ? Loader : IcoSearch}
+                            onClick={() => loadTasks(true)}
                             disabled={status === 'loading'}
                         />
                     </div>
@@ -250,17 +225,23 @@ function Search() {
                 <div className={`panel__preset${switchPanel === "preset" ? " view" : ""}`}>
                     <div className='preset-component'>
                         <Button
+                            text="all"
+                            variant={
+                                deepEqual("default", fillingRequest) ? "first" : "transparent"
+                            }
+                            onClick={() => {
+                                setProcessPreset(true)
+                                updateRequest(getSearchRequest("default"))
+                            }}
+                        />
+                        <Button
                             text="today"
                             variant={
                                 deepEqual("today", fillingRequest) ? "first" : "transparent"
                             }
                             onClick={() => {
-                                updateRequest(
-                                    getSearchRequest("today")
-                                )
-                                setTimeout(() => {
-                                    initiateSearch()
-                                }, 1000)
+                                setProcessPreset(true)
+                                updateRequest(getSearchRequest("today"))
                             }}
                         />
                         <Button
@@ -269,12 +250,8 @@ function Search() {
                                 deepEqual("3day", fillingRequest) ? "first" : "transparent"
                             }
                             onClick={() => {
-                                updateRequest(
-                                    getSearchRequest("3day")
-                                )
-                                setTimeout(() => {
-                                    initiateSearch()
-                                }, 1000)
+                                setProcessPreset(true)
+                                updateRequest(getSearchRequest("3day"))
                             }}
                         />
                         <Button
@@ -283,12 +260,8 @@ function Search() {
                                 deepEqual("7day", fillingRequest) ? "first" : "transparent"
                             }
                             onClick={() => {
-                                updateRequest(
-                                    getSearchRequest("7day")
-                                )
-                                setTimeout(() => {
-                                    initiateSearch()
-                                }, 1000)
+                                setProcessPreset(true)
+                                updateRequest(getSearchRequest("7day"))
                             }}
                         />
                     </div>
