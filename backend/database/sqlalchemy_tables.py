@@ -51,6 +51,7 @@ class SubTask(Base):
     instruction = Column(Text)
     continuance = Column(Float)
     motivation = Column(Text)
+    order = Column(Integer)
 
 class TaskCheck(Base):
     __tablename__ = 'taskchecks'

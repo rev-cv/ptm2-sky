@@ -127,7 +127,7 @@
             font-size: .6em;
         }
 
-        > div {
+         * {
             font-size: .82em;
             color: var(--color-button-text);
         }
@@ -160,5 +160,9 @@
 
     > button {
         font-size: .5em !important;
+    }
+
+    > button:not(.custom-button-first) * {
+        color: var(--color-text-primary)
     }
 }

@@ -264,6 +264,16 @@ function Search() {
                                 updateRequest(getSearchRequest("7day"))
                             }}
                         />
+                        <Button
+                            text="overdue"
+                            variant={
+                                deepEqual("overdue", fillingRequest) ? "first" : "transparent"
+                            }
+                            onClick={() => {
+                                setProcessPreset(true)
+                                updateRequest(getSearchRequest("overdue"))
+                            }}
+                        />                        
                     </div>
                 </div>
             </div>

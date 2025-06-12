@@ -55,6 +55,10 @@ export function getSearchRequest (searchRequestType: string) {
                 tomorrowDate.toISOString()
             ]
             return request
+        case "overdue":
+            tomorrowDate.setDate(nowDate.getDate() + 7)
+            request.deadline = [null, nowDate.toISOString()]
+            return request            
         default:
             throw new Error("Unknown search request type")
     }

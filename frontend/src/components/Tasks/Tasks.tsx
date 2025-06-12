@@ -26,7 +26,7 @@ function Tasks() {
     return (
         <div className="task-list">
             { tasks.map((task) => 
-                <BlockTask key={task.id} objTask={task} /> 
+                <BlockTask key={`task-viewed-${task.id}`} objTask={task} /> 
             ) }
         </div>
     )

@@ -4,15 +4,14 @@ import IcoCheck from "@asset/check-sub-active.svg"
 
 type CheckBoxSubTaskProps = {
     state?: boolean
+    onChangeStatus?: (status:boolean) => void
 }
 
-function CheckBoxTask ({state = false}: CheckBoxSubTaskProps) {
+function CheckBoxTask ({state = false, onChangeStatus}: CheckBoxSubTaskProps) {
     return (
         <button
             className={`checkbox-sub${state ? " active" : ""}`}
-            onClick={() => {
-                // Placeholder for future functionality
-            }}
+            onClick={() => onChangeStatus && onChangeStatus(!state) }
         >
             <div className="circle"><IcoCircle /></div>
             <div className="check"><IcoCheck /></div>

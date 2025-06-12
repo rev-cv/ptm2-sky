@@ -1,0 +1,78 @@
+
+.modal-curtain {
+    position: absolute;
+    background-color: var(--color-curtain);
+    inset: 0;
+    z-index: 10;
+    backdrop-filter: blur(12px);
+    transition:
+        opacity 300ms ease-in-out,
+        backdrop-filter 300ms ease-in-out
+    ;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    opacity: 0;
+    transition: opacity 300ms ease-in-out;
+
+    .modal {
+        max-width: 1200px;
+        width: 98vw;
+        height: 95%;
+
+        border: 1px solid var(--color-bg-secondary);
+
+        // background-color: var(--color-bg-secondary);
+        transform: scale(0);
+        transition: transform 300ms ease-in-out;
+
+        border-radius: .5em;
+        overflow: hidden;
+
+        position: relative;
+
+        &__title-bar {
+            display: flex;
+            padding: 0.2em;
+            background-color: var(--color-bg-secondary);
+
+            > div {
+                flex-grow: 1;
+                font-size: .8em;
+                font-weight: 700;
+                opacity: .8;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            button {
+                border: 0;
+                font-size: .6em;
+                position: absolute;
+                top: .3em;
+                right: .3em;
+            }
+        }
+    }
+
+    .custom-button-transparent {
+        border: 0;
+        font-size: .6em;
+        position: absolute;
+        top: .2em;
+        right: .2em;
+    }
+
+    &.modal--open {
+        opacity: 1;
+        
+        > .modal {
+            transform: scale(1);
+        }
+    }
+}
+

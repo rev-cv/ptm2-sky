@@ -34,13 +34,14 @@ def write_new_task_to_database(task_data, db):
     # подзадачи
     subtasks = []
     if task_data.subtasks:
-        for sub in task_data.subtasks:
+        for index, sub in enumerate(task_data.subtasks):
             db_sub = SubTask(
                 title=sub.title,
                 description=sub.description,
                 instruction=sub.instruction,
                 continuance=sub.continuance,
-                motivation=sub.motivation
+                motivation=sub.motivation,
+                order=index
             )
             subtasks.append(db_sub)
 

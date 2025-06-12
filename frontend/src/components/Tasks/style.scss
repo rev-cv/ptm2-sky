@@ -102,12 +102,17 @@
 
             &__button {
                 height: 1.6em;
-                padding: .2em .45em .2em .2em !important;
-                gap: .2em;
+                padding: .2em .45em !important;
+                gap: .4em;
 
                 span {
                     color: var(--color-text-secondary);
                     font-size: .6em;
+                }
+
+                svg {
+                    width: 70%;
+                    height: 70%;
                 }
             }
 
@@ -115,6 +120,19 @@
                 width: 1.6em;
                 height: 1.6em;
                 padding: .2em;
+            }
+
+            &__button,
+            &__button-circle {
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                
+                svg {
+                    width: 70%;
+                    height: 70%;
+                }
             }
         }
 

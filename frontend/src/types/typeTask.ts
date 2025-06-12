@@ -8,6 +8,7 @@ export type TypeTasks_SubTask = {
     instruction: string
     motivation?: string
     task_id: number // ID задачи, к которой относится подзадача
+    order: number
 }
 
 export type TypeTasks_Filter = {

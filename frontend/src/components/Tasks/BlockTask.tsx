@@ -7,11 +7,13 @@ import './style.scss'
 import ProgressCircle from '@comps/ProgressCircle/ProgressCircle'
 import Button from '@comps/Button/Button'
 import BlockSubTask from './BlockSubTask'
+import Modal from '@comps/Modal/Modal'
+import EditorTask from '@comps/EditorTask/EditorTask'
 
 import IcoStart from '@asset/start.svg'
 import IcoRisk from '@asset/risk.svg'
 import IcoImpact from '@asset/impact.svg'
-import IcoTaskPoint from '@asset/task_point.svg'
+import IcoSubTasks from '@asset/subtask.svg'
 import IcoFilters from '@asset/filter.svg'
 import IcoCalendar from '@asset/calendar.svg'
 
@@ -27,6 +29,7 @@ function Task({objTask} : TaskProps) {
     const [isOpenSubTask, setIsOpenSubTask] = useState(false)
     const [isOpenFiters, setIsOpenFiters] = useState(false)
     const [isOpenDates, setIsOpenDates] = useState(false)
+    const [isOpenEditorTask, setIsOpenEditorTask] = useState(false)
 
     const deadline = objTask.deadline ? new Date(objTask.deadline) : null;
     const deadlaneDiff = deadline ? Math.floor((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24) + 1) : null;
@@ -95,7 +98,12 @@ function Task({objTask} : TaskProps) {
         return null;
     }
 
-    return (<div className={`task-list__item`}>
+    return (<>
+    
+    <div 
+        className={`task-list__item`}
+        onClick={() => setIsOpenEditorTask(true)}
+        >
         <div className="task-list__item__title">{objTask.title}</div>
         <div className="task-list__item__description">{objTask.description}</div>
         <div className="task-list__item__description">{objTask.motivation}</div>
@@ -116,7 +124,10 @@ function Task({objTask} : TaskProps) {
                         title={`risk ${objTask.risk}`} 
                         value={objTask.risk} 
                         Icon={IcoRisk}
-                        onClick={() => handleToggleExpanders("risk")}
+                        onClick={e => {
+                            handleToggleExpanders("risk")
+                            e.stopPropagation()
+                        }}
                     /> : null
             }
 
@@ -126,15 +137,21 @@ function Task({objTask} : TaskProps) {
                         title={`impact ${objTask.impact}`} 
                         value={objTask.impact} 
                         Icon={IcoImpact}
-                        onClick={() => handleToggleExpanders("risk")}
+                        onClick={e => {
+                            handleToggleExpanders("risk")
+                            e.stopPropagation()
+                        }}
                     /> : null
             }
 
             <Button 
                 variant='transparent'
-                IconComponent={IcoTaskPoint}
+                IconComponent={IcoSubTasks}
                 className="task-list__item__onside__button"
-                onClick={() => handleToggleExpanders("subtask")}
+                onClick={e => {
+                    handleToggleExpanders("subtask")
+                    e.stopPropagation()
+                }}
                 text={(objTask.subtasks ? objTask.subtasks.reduce((prev, cur) => !cur.status ? prev + 1 : prev, 0): 0).toString()}
             />
 
@@ -142,7 +159,10 @@ function Task({objTask} : TaskProps) {
                 variant='transparent'
                 IconComponent={IcoFilters}
                 className="task-list__item__onside__button"
-                onClick={() => handleToggleExpanders("filters")}
+                onClick={e => {
+                    handleToggleExpanders("filters")
+                    e.stopPropagation()
+                }}
                 text={countFilters().toString()}
             />
 
@@ -150,7 +170,10 @@ function Task({objTask} : TaskProps) {
                 variant='transparent'
                 IconComponent={IcoCalendar}
                 className="task-list__item__onside__button-circle"
-                onClick={() => handleToggleExpanders("dates")}
+                onClick={e => {
+                    handleToggleExpanders("dates")
+                    e.stopPropagation()
+                }}
             />
         </div>
 
@@ -164,8 +187,12 @@ function Task({objTask} : TaskProps) {
                                     <Button 
                                         text={f.name} 
                                         className="task-list__item__filter-button" 
-                                        onClick={() => console.log(`Filter by ${f.name}`)}
+                                        onClick={e => {
+                                            console.log(`Filter by ${f.name}`)
+                                            e.stopPropagation()
+                                        }}
                                         variant="transparent"
+                                        key={`filter-for-task-item-${f.id}`}
                                     />
                                 ))
                             }
@@ -176,8 +203,12 @@ function Task({objTask} : TaskProps) {
                                             <Button 
                                                 text={f.name} 
                                                 className="task-list__item__filter-button" 
-                                                onClick={() => console.log(`Filter by ${f.name}`)}
+                                                onClick={e => {
+                                                    console.log(`Filter by ${f.name}`)
+                                                    e.stopPropagation()
+                                                }}
                                                 variant="transparent"
+                                                key={`filter-for-task-item-${f.id}`}
                                             />
                                         ))
                                     ) : null
@@ -207,7 +238,7 @@ function Task({objTask} : TaskProps) {
                 {
                     riskValue ? 
                         <div>
-                            <span>Risk {riskValue.label}. </span>
+                            {/* <span>Risk {riskValue.label}. </span> */}
                             <span>{riskValue.description}</span>
                         </div>
                     : null
@@ -215,7 +246,7 @@ function Task({objTask} : TaskProps) {
                 {
                     impactValue ? 
                         <div>
-                            <span>Risk {impactValue.label}. </span>
+                            {/* <span>Risk {impactValue.label}. </span> */}
                             <span>{impactValue.description}</span>
                         </div>
                     : null
@@ -242,6 +273,7 @@ function Task({objTask} : TaskProps) {
                 <div>
                     <span>Task checks: </span>
                     {
+                        objTask.taskchecks.length === 0 ? "N/A" :
                         objTask.taskchecks.map((check, index) => (
                             <div key={`task-check-${index}`}>
                                 {formatDateString(new Date(check))}
@@ -251,7 +283,20 @@ function Task({objTask} : TaskProps) {
                 </div>
             </div>
         </div>
-    </div>)
+    </div>
+
+    {
+        // отображение модального окна для задачи
+        isOpenEditorTask ? 
+            <Modal
+                title={`[${objTask.id}] ${objTask.title}`}
+                onClose={() => setIsOpenEditorTask(false)}
+            >
+                <EditorTask originakTask={objTask} />
+
+            </Modal> : null
+    }
+    </>)
 }
 
 export default Task

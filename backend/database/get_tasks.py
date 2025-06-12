@@ -62,8 +62,8 @@ def get_tasks_by_filters(db, filters):
     page_size = 20
     query = query.offset((page - 1) * page_size).limit(page_size)
 
-    import time
-    time.sleep(5)
+    # import time
+    # time.sleep(5)
 
     return [serialize_task(task) for task in query.all()]
 
