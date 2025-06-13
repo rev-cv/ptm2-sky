@@ -29,7 +29,7 @@
             }
 
             &:hover::before {
-                background-color: var(--color-bg-secondary);
+                background-color: var(--color-bg-primary);
                 z-index: -1;
                 opacity: .6;
                 border-top-left-radius: 1.2em;
@@ -42,14 +42,14 @@
                 * {
                     color: var(--color-button-default);
                 }
-                
-                &::before {
-                    opacity: 1 !important;
-                    background-color: var(--color-bg-secondary);
-                    z-index: -1;
-                    border-top-left-radius: 1.2em;
-                    border-bottom-left-radius: 1.2em;
-                }
+            }
+
+            &.active::before {
+                background-color: var(--color-bg-primary);
+                opacity: 1;
+                z-index: -1;
+                border-top-left-radius: 1.2em;
+                border-bottom-left-radius: 1.2em;
             }
 
             svg {
@@ -60,7 +60,7 @@
     }
     
     &__content {
-        background-color: var(--color-bg-secondary);
+        background-color: var(--color-bg-primary);
 
         display: flex;
         flex-direction: column;
@@ -74,8 +74,9 @@
         flex-grow: 1;
         max-width: 600px;
         width: 100%;
+        padding-top: 1em;
         
-        &__explanation {
+        &__label {
             font-size: .5em;
             font-weight: 600;
             transform: translateY(.5em);
@@ -87,7 +88,6 @@
         display: flex;
         flex-direction: column;
         gap: .5em;
-        padding-top: 1em;
 
         &__title {
             font-size: 1.4em; 
@@ -97,7 +97,7 @@
         &__descr {
             font-size: .8em;
             line-height: 1.2em !important;
-            border-left: 2px solid var(--color-button-default);
+            border-left: 1px solid var(--color-button-default);
             padding-left: 1em;
             opacity: .8;
         }
@@ -118,11 +118,12 @@
 
 .editor-subtask {
     display: grid;
-    grid-template-columns: 1.4em 1.8em 1fr;
+    grid-template-columns: 1.4em 1.8em 1fr 1.4em;
     gap: .2em;
     border-top: 1px solid transparent;
     transition: border-color 300ms ease-in-out;
     padding-top: .3em;
+    position: relative;
 
     .checkbox-sub {
         grid-column: 2 / 3;
@@ -130,9 +131,27 @@
     }
 
     &__title {
-        font-size: 1em;
-        font-weight: 600;
+        font-size: .8em;
+        font-weight: 700;
         line-height: 1.2em;
+        grid-column: 3 / 4;
+    }
+
+    &__text {
+        font-size: .7em;
+        line-height: 1.2em;
+        grid-column: 3 / 4;
+        border-left: 1px solid var(--color-button-default);
+        padding-left: 1em;
+    }
+
+    &__label {
+        grid-column: 3 / 4;
+        font-size: .5em;
+        font-weight: 600;
+        transform: translateY(.5em);
+        opacity: .4;
+        user-select: none;
     }
 
     &__drag-and-drop {
@@ -165,5 +184,41 @@
 
     &.drag-over {
         border-color: var(--color-button-default);
+    }
+
+    &:last-child {
+        grid-row: 1;
+        min-height: 100px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__remove {
+        grid-column: 4 / 5;
+        grid-row: 1 / 2;
+
+        width: 1.4em;
+        height: 1.4em;  
+        padding: .2em;
+
+        opacity: 0;
+        transition: opacity 300ms ease-in-out;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &:hover .editor-subtask__remove {
+        opacity: 1;
+    }
+
+    &__continuance {
+        outline: none;
+        max-width: 100px;
+        text-align: center;
     }
 }

@@ -5,7 +5,7 @@
     --color-text-primary: #555555;
     --color-text-secondary: #7B7B7B;
 
-    --color-curtain: #{rgba(#333, .2)};
+    --color-curtain: #{rgba(#5c5c5c, .3)};
 
     --color-border-active: #3c76f1;
     --color-border-inactive: #afafaf;
@@ -29,10 +29,15 @@
     --color-error: #f44336;
     --color-warning: #ff9800;
     --color-prevention: #ffe644;
+
+    --color-button-delete: rgba(244, 67, 54, 0.12);
+    --color-button-delete-hover: rgba(244, 67, 54, 0.22);
+    --color-button-delete-active: rgba(244, 67, 54, 0.32);
+    --color-button-delete-text: #f44336;
 }
 
 :root.dark-theme {
-    --color-bg-primary: #1a1a1a;
+    --color-bg-primary: #202020;
     --color-bg-secondary: #2c2c2c;
 
     --color-text-primary: #d1d1d1;

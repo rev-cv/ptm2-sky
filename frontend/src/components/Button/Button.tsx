@@ -1,7 +1,7 @@
 import './style.scss'
 import {TypeButtonProps} from '@mytype/typeButton'
 
-function Button({ text=null, IconComponent=null, className, onClick, disabled=false, variant="first" }: TypeButtonProps) {
+function Button({ text=null, title="", IconComponent=null, className, onClick, disabled=false, variant="first" }: TypeButtonProps) {
 
     const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
         if (!disabled && onClick) {
@@ -18,6 +18,8 @@ function Button({ text=null, IconComponent=null, className, onClick, disabled=fa
             result += "custom-button-second"
         } else if (variant === "transparent") {
             result += "custom-button-transparent"
+        } else if (variant === "remove") {
+            result += "custom-button-remove"
         }
 
         if (text && IconComponent) {
@@ -36,6 +38,7 @@ function Button({ text=null, IconComponent=null, className, onClick, disabled=fa
             className={getVariantButton()}
             onClick={handleClick}
             disabled={disabled}
+            title={title}
             >
             {IconComponent && <IconComponent />}
             {text && <span>{text}</span>}

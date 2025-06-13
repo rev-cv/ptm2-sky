@@ -75,6 +75,22 @@
     }
 }
 
+.custom-button-remove {
+    background-color: var(--color-button-delete);
+
+    * {
+        color: var(--color-button-delete-text);
+    }
+    
+    &:hover {
+        background-color: var(--color-button-delete-hover);
+    }
+
+    &:active {
+        background-color: var(--color-button-delete-active);
+    }
+}
+
 .custom-button-ico-text {
     @extend %custom-button;
     gap: .6em;

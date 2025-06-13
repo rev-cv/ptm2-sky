@@ -24,13 +24,13 @@ function DescriptionTask ({title="", descr="", motiv="", id="", created="N/A", o
             onChange={e => onChangeTitle(e.target.value)}
             isBanOnEnter={true}
         />
-        <div className='editor-task__block__explanation'>description</div>
+        <div className='editor-task__block__label'>description</div>
         <TextArea 
             value={descr} 
             className='editor-task__block-descr__descr'
             onChange={e => onChangeDescr(e.currentTarget.value)}
         />
-        <div className='editor-task__block__explanation'>motivation</div>
+        <div className='editor-task__block__label'>motivation</div>
         <TextArea 
             value={motiv} 
             className='editor-task__block-descr__descr'

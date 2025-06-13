@@ -7,7 +7,7 @@ export type TypeTasks_SubTask = {
     continuance: number // продолжительность выполнения подзадачи в часах
     instruction: string
     motivation?: string
-    task_id: number // ID задачи, к которой относится подзадача
+    task_id?: number // ID задачи, к которой относится подзадача
     order: number
 }
 
