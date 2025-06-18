@@ -27,10 +27,10 @@ function Toggle({elements, onChange, activeValue=0}:TypeToggle) {
                 )
             }
         </div>
-    );
+    )
 }
 
-export default Toggle;
+export default Toggle
 
 export function setActiveByValue(array: TypeToggleElement[], targetValue: number): TypeToggleElement[] {
     return array.map(obj => ({...obj, isActive: obj.value === targetValue }))

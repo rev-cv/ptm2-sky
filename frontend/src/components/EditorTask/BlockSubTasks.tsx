@@ -14,14 +14,12 @@ type TypeBlockSubTasks = {
     onUpdate: (newOrder: TypeTasks_SubTask[]) => void
 }
 
-function compare(a: TypeTasks_SubTask, b: TypeTasks_SubTask) {
-    return a.order - b.order
-}
-
 function BlockSubTasks({ subtasks, onUpdate }: TypeBlockSubTasks) {
     const [dragOverIdx, setDragOverIdx] = useState<number | null>(null)
 
-    const sortedSubtasks = [...subtasks].sort(compare)
+    const sortedSubtasks = [...subtasks].sort(
+        (a: TypeTasks_SubTask, b: TypeTasks_SubTask) => a.order - b.order
+    )
 
     const handleDragStart = (idx: number, e: React.DragEvent) => {
         e.dataTransfer.effectAllowed = "move"

@@ -112,7 +112,73 @@
     &__block-subtasks {
         display: flex;
         flex-direction: column;
-        gap: .2em;
+        gap: .8em;
+    }
+
+    &__block-risk,
+    &__block-impact,
+    &__block-timing {
+        display: flex;
+        flex-direction: column;
+        gap: .5em;
+
+        &__title {
+            font-size: .8em;
+            font-weight: 700;
+
+            display: flex;
+            align-items: center;
+            gap: .6em;
+
+            user-select: none;
+        }
+
+        &__descr {
+            font-size: .7em;
+            line-height: 1.2em;
+            user-select: none;
+        }
+
+        &__prop {
+            font-size: .7em;
+            line-height: 1.2em;
+            border-left: 1px solid var(--color-button-default);
+            padding-left: 1em;
+        }
+
+        &__label {
+            font-size: .5em;
+            font-weight: 600;
+            transform: translateY(.5em);
+            opacity: .4;
+            user-select: none;
+        }
+
+        &__d {
+            // background-color: red;
+            flex-basis: 1.6em;
+            display: flex;
+            align-items: center;
+            position: relative;
+
+            &::after {
+                content: "";
+                height: .5px;
+                right: 0;
+                left: 0;
+                background-color: var(--color-bg-secondary);
+                position: absolute;
+                top: .8em;
+            }
+        }
+
+        .context-button-container {
+            max-width: 250px;
+        }
+
+        .ico-deadline svg {
+            transform: rotate(180deg);
+        }
     }
 }
 
@@ -124,6 +190,8 @@
     transition: border-color 300ms ease-in-out;
     padding-top: .3em;
     position: relative;
+    margin-right: -1.4em;
+    margin-left: -1.4em;
 
     .checkbox-sub {
         grid-column: 2 / 3;

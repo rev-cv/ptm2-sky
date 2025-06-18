@@ -19,6 +19,8 @@ export type TypeTasks_Filter = {
     proposals?: string | null // предложения по фильтру
 }
 
+export type TypeTasks_RI = 0 | 1 | 2 | 3
+
 export type TypeViewTask = {
     id: number
     status: boolean
@@ -32,8 +34,8 @@ export type TypeViewTask = {
     activation: string | null // время активации задачи
     taskchecks: string[] // даты проверки задачи
 
-    risk: 0 | 1 | 2 | 3
-    impact: 0 | 1 | 2 | 3
+    risk: TypeTasks_RI
+    impact: TypeTasks_RI
     risk_proposals: string
     risk_explanation: string
     
