@@ -9,12 +9,12 @@ import IcoGrid from '@asset/grid.svg'
 import IcoAdd from '@asset/add.svg'
 import IcoRemove from '@asset/close.svg'
 
-type TypeBlockSubTasks = {
+type TypeProps = {
     subtasks: TypeTasks_SubTask[]
     onUpdate: (newOrder: TypeTasks_SubTask[]) => void
 }
 
-function BlockSubTasks({ subtasks, onUpdate }: TypeBlockSubTasks) {
+function BlockSubTasks({ subtasks, onUpdate }: TypeProps) {
     const [dragOverIdx, setDragOverIdx] = useState<number | null>(null)
 
     const sortedSubtasks = [...subtasks].sort(

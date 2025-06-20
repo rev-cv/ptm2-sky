@@ -9,13 +9,13 @@ type TypePositionState = {
     left: number
 }
 
-type TypeButtonCalendar = {
+type TypeProps = {
     noDate?: string
     date?: string | Date | null
     onClickDay?: (value: string) => void
 }
 
-function ButtonCalendar ({ onClickDay, date=null, noDate="No Date" }:TypeButtonCalendar) {
+function ButtonCalendar ({ onClickDay, date=null, noDate="No Date" }:TypeProps) {
 
     const [isShowContext, setShowContext] = useState(false)
     const [position, setPosition] = useState<TypePositionState>(

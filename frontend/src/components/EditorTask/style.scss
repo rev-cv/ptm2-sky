@@ -117,7 +117,8 @@
 
     &__block-risk,
     &__block-impact,
-    &__block-timing {
+    &__block-timing,
+    &__block-filters {
         display: flex;
         flex-direction: column;
         gap: .5em;
@@ -288,5 +289,118 @@
         outline: none;
         max-width: 100px;
         text-align: center;
+    }
+}
+
+.editor-current-filter {
+    display: grid;
+    grid-template-columns: 1fr 1.4em;
+    cursor: default;
+    user-select: none;
+    position: relative;
+    padding: .2em;
+
+    &__title {
+        font-size: .7em;
+        font-weight: 700;
+        grid-column: 1 / 2;
+        z-index: 2;
+    }
+
+    &__remove {
+        width: 1.4em;
+        height: 1.4em;  
+        padding: .2em;
+        z-index: 3;
+
+        opacity: 0;
+        transition: opacity 300ms ease-in-out;
+
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+        justify-self: end;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: var(--color-text-primary);
+        opacity: 0;
+        transition: opacity 300ms ease-in-out;
+    }
+
+    &:hover::before {
+        opacity: .05;
+    }
+
+    &:hover .editor-current-filter__remove {
+        opacity: 1;
+    }
+
+    &__textarea {
+        font-size: .7em;
+        line-height: 1.2em;
+        grid-column: 1 / 2;
+        border-left: 1px solid var(--color-button-default);
+        padding-left: 1em;
+        z-index: 2;
+    }
+
+    &__label {
+        font-size: .5em;
+        font-weight: 600;
+        opacity: .4;
+        z-index: 2;
+    }
+}
+
+.editor-current-filter-btn {
+    padding: .5em;
+    border-radius: .5em;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &__title {
+        font-size: .7em;
+        font-weight: 700;
+        grid-column: 1 / 2;
+        z-index: 2;
+        line-height: 1em;
+        color: var(--color-text-primary);
+    }
+
+    &__descr {
+        font-size: .7em;
+        line-height: 1.2em;
+        color: var(--color-text-primary);
+    }
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: var(--color-text-primary);
+        opacity: 0;
+        transition: opacity 300ms ease-in-out;
+    }
+
+    &:hover::before {
+        opacity: .05;
+    }
+}
+
+.editor-current-filter-btn.active {
+    background-color: var(--color-button-default);
+
+    * {
+        color: var(--color-button-text);
     }
 }

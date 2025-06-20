@@ -52,3 +52,5 @@ export type TypeViewTask = {
         action_type: TypeTasks_Filter[]
     }
 }
+
+export type TypeStates = "physical" | "intellectual" | "emotional" | "motivational" | "social"

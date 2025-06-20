@@ -24,6 +24,10 @@ function BlockTiming ({deadline, activation, taskchecks,
         <div className='editor-task__block-timing__title'>
             <IcoStart /><span>Дата активации</span>
         </div>
+
+        <div className="editor-task__block-timing__descr">
+            Дата, когда задача становится активной и доступной для выполнения.
+        </div>
         
         <ButtonCalendar 
             date={activation}
@@ -32,8 +36,13 @@ function BlockTiming ({deadline, activation, taskchecks,
 
         <div className='editor-task__block-timing__d'></div>
 
+
         <div className='editor-task__block-timing__title ico-deadline'>
             <IcoStart /><span>Дата дедлайна</span>
+        </div>
+
+        <div className="editor-task__block-timing__descr">
+            Крайний срок, к которому задача должна быть завершена.
         </div>
         
         <ButtonCalendar 
@@ -43,8 +52,13 @@ function BlockTiming ({deadline, activation, taskchecks,
 
         <div className='editor-task__block-timing__d'></div>
 
+
         <div className='editor-task__block-timing__title'>
             <IcoCheck /><span>Даты проверок задачи</span>
+        </div>
+
+        <div className="editor-task__block-timing__descr">
+            Даты, когда запланированы напоминания или проверки прогресса по задаче.
         </div>
         
         {
