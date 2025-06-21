@@ -17,7 +17,7 @@
     opacity: 0;
     transition: opacity 300ms ease-in-out;
 
-    .modal {
+    .modal, .modal-ok {
         max-width: 1200px;
         width: 98vw;
         height: 95%;
@@ -70,8 +70,42 @@
     &.modal--open {
         opacity: 1;
         
-        > .modal {
+        > .modal, 
+        > .modal-ok {
             transform: scale(1);
+        }
+    }
+
+    .modal-ok {
+        background-color: var(--color-bg-secondary);
+        padding: 1em;
+        width: 300px;
+        height: 150px;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: auto 1fr;
+        gap: 0.4em;
+
+        &__question {
+            grid-column: 1 / -1;
+            font-size: 1em;
+            font-weight: 700;
+            line-height: 1em;
+        }
+
+        > button {
+            align-self: self-end;
+            display: flex;
+            justify-content: center;
+        }
+
+        &__ok {
+            grid-column: 2 / 3;
+        }
+
+        &__cancel {
+            grid-column: 3 / 4;
         }
     }
 }

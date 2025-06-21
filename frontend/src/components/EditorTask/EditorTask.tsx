@@ -1,13 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAtomValue, filterFromServer } from "@utils/jotai.store"
 import { formatDateString } from '@utils/date-funcs'
-import { TypeViewTask, TypeStates } from '@mytype/typeTask'
+import { TypeViewTask } from '@mytype/typeTask'
 
 import BlockDescription from './BlockDescr'
 import BlockSubTasks from './BlockSubTasks'
 import BlockTiming from './BlockTiming'
 import BlockRisk from './BlockRisk'
-import BlockFilters from './BlockFilters'
+import BlockFilters, {TypeFilterServer__Tabs} from './BlockFilters'
 
 import IcoState from '@asset/state-element.svg'
 import IcoStrass from '@asset/stress-element.svg'
@@ -22,6 +22,7 @@ import './style.scss'
 
 type TypeProps = {
     originakTask: TypeViewTask
+    onExit?: (editedTask:TypeViewTask) => void
 }
 
 const asideButtons = [
@@ -35,22 +36,27 @@ const asideButtons = [
     ["Типы действий", "actions", IcoAction],
 ]
 
-type TypeStateButtons = [string, TypeStates, string]
-
-const stateButtons:TypeStateButtons[] = [
-    ["Эмоциональное", "emotional", "Состояние, связанное с чувствами и настроением, влияющее на восприятие и выполнение задачи."],
-    ["Интеллектуальное", "intellectual", "Состояние, требующее умственной активности, анализа и логического мышления для решения задачи."],
-    ["Мотивационное", "motivational", "Состояние, характеризующееся уровнем вдохновения и желания активно работать над задачей."],
-    ["Физическое", "physical", "Состояние, связанное с физической энергией и самочувствием, необходимым для выполнения задачи."],
-    ["Социальное", "social", "Состояние, связанное с взаимодействием с другими людьми, влияющее на выполнение задачи в группе или обществе."]
-]
-
-function EditorTask ({originakTask}:TypeProps) {
+function EditorTask ({originakTask, onExit}:TypeProps) {
 
     const [activeTab, setActiveTab] = useState(asideButtons[0][1])
-    const [activeState, setActiveState] = useState(stateButtons[0][1])
     const [task, updateTask] = useState({...originakTask})
+    const onExitRef = useRef(onExit);
+    const mountedRef = useRef(true); // флаг монтирования
     const allFilters = useAtomValue(filterFromServer)
+
+    useEffect(() => { onExitRef.current = onExit }, [onExit])
+
+    useEffect(() => {
+        mountedRef.current = true
+        return () => {
+            setTimeout(() => {
+                if (!mountedRef.current && onExitRef.current) {
+                    onExitRef.current({ ...task });
+                }
+            }, 0);
+            mountedRef.current = false;
+        };
+    }, []);
 
     const getPage = () => {
         switch (activeTab) {
@@ -193,46 +199,95 @@ function EditorTask ({originakTask}:TypeProps) {
                     }}
                 />
             case "states":
-                return <div>
-                    <div>{
-                        stateButtons.map(elem => (
-                            <button onClick={() => setActiveState(elem[1])}>{elem[0]}</button>
-                        ))
-                    }</div>
-                    <BlockFilters 
-                        allList={allFilters?.state[activeState]}
-                        curList={task.filters.state[activeState]}
-                        tt="состояния"
-                        description="Условия (эмоциональное настроение, физическая энергия, окружающая обстановка), оптимальные для успешного выполнения задачи."
-                        onAddElement={elem => {
-                            updateTask({
-                                ...task, 
-                                filters: {
-                                    ...task.filters, 
-                                    action_type: [...task.filters.action_type, elem] 
+                const statelist:TypeFilterServer__Tabs[] = [
+                    {
+                        tabname: "Эмоциональное",
+                        sysname: "emotional",
+                        descr: "Состояние, связанное с чувствами и настроением, влияющее на восприятие и выполнение задачи.",
+                        allList: allFilters?.state.emotional
+                    },
+                    {
+                        tabname: "Интеллектуальное",
+                        sysname: "intellectual",
+                        descr: "Состояние, требующее умственной активности, анализа и логического мышления для решения задачи.",
+                        allList: allFilters?.state.intellectual
+                    },
+                    {
+                        tabname: "Мотивационное",
+                        sysname: "motivational",
+                        descr: "Состояние, характеризующееся уровнем вдохновения и желания активно работать над задачей.",
+                        allList: allFilters?.state.motivational
+                    },
+                    {
+                        tabname: "Физическое",
+                        sysname: "physical",
+                        descr: "Состояние, связанное с физической энергией и самочувствием, необходимым для выполнения задачи.",
+                        allList: allFilters?.state.physical
+                    },
+                    {
+                        tabname: "Социальное",
+                        sysname: "social",
+                        descr: "Состояние, связанное с взаимодействием с другими людьми, влияющее на выполнение задачи в группе или обществе.",
+                        allList: allFilters?.state.social
+                    }
+                ]
+
+                const addedFilters = [
+                    ...task.filters.state.emotional,
+                    ...task.filters.state.intellectual,
+                    ...task.filters.state.motivational,
+                    ...task.filters.state.physical,
+                    ...task.filters.state.social,
+                ]
+
+                return <BlockFilters 
+                    tabList={statelist}
+                    curList={addedFilters}
+                    tt="состояния"
+                    description="Условия (эмоциональное настроение, физическая энергия, окружающая обстановка), оптимальные для успешного выполнения задачи."
+                    onAddElement={(elem, tab) => {
+                        const state = {...task.filters.state}
+                        if (tab) {
+                            state[tab] = [...state[tab], elem]
+                        }
+                        
+                        updateTask({ 
+                            ...task, filters: {
+                                ...task.filters, state
+                            }
+                        })
+                    }}
+                    onDelElement={id => {
+                        updateTask({
+                            ...task, 
+                            filters: {
+                                ...task.filters, 
+                                state: {
+                                    emotional: task.filters.state.emotional.filter(elsel => elsel.id != id),
+                                    intellectual: task.filters.state.intellectual.filter(elsel => elsel.id != id),
+                                    motivational: task.filters.state.motivational.filter(elsel => elsel.id != id),
+                                    physical: task.filters.state.physical.filter(elsel => elsel.id != id),
+                                    social: task.filters.state.social.filter(elsel => elsel.id != id)
                                 }
-                            })
-                        }}
-                        onDelElement={id => {
-                            updateTask({
-                                ...task, 
-                                filters: {
-                                    ...task.filters, 
-                                    action_type: task.filters.action_type.filter(elem => elem.id != id)
+                            }
+                        })
+                    }}
+                    onUpdateElement={el => {
+                        updateTask({
+                            ...task, 
+                            filters: {
+                                ...task.filters, 
+                                state: {
+                                    emotional: task.filters.state.emotional.map(elem => elem.id != el.id ? elem : el),
+                                    intellectual: task.filters.state.intellectual.map(elem => elem.id != el.id ? elem : el),
+                                    motivational: task.filters.state.motivational.map(elem => elem.id != el.id ? elem : el),
+                                    physical: task.filters.state.physical.map(elem => elem.id != el.id ? elem : el),
+                                    social: task.filters.state.social.map(elem => elem.id != el.id ? elem : el)
                                 }
-                            })
-                        }}
-                        onUpdateElement={el => {
-                            updateTask({
-                                ...task, 
-                                filters: {
-                                    ...task.filters, 
-                                    action_type: task.filters.action_type.map(elem => elem.id != el.id ? elem : el)
-                                }
-                            })
-                        }}
-                    />
-                </div>
+                            }
+                        })
+                    }}
+                />
             default:
                 break;
         }

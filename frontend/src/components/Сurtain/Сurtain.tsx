@@ -1,34 +1,32 @@
 import './style.scss'
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 import { useAtom, openSidePanel } from '@utils/jotai.store'
 
 function Сurtain() {
     const [currentOpenPanel, setPanel] = useAtom(openSidePanel)
     const [isShow, setStatusShow] = useState(false)
 
-    const [shouldRender, setShouldRender] = useState(currentOpenPanel !== 'none');
+    const [shouldRender, setShouldRender] = useState(currentOpenPanel !== 'none')
 
     // управление анимацией показа и скрытия компонента
     useEffect(() => {
         if (currentOpenPanel !== 'none') {
-            setShouldRender(true);
+            setShouldRender(true)
             // ждем когда компонент отрисуется перед запуском анимации отображения компонента
             setTimeout(() => {
-                setStatusShow(true);
-            }, 100);
+                setStatusShow(true)
+            }, 100)
         } else {
-            setStatusShow(false);
+            setStatusShow(false)
             // ждем пока компонент закончится анимацию размонтирования, перед реальным скрытием
             const timeout = setTimeout(() => {
-                setShouldRender(false);
-            }, 300);
-            return () => clearTimeout(timeout);
+                setShouldRender(false)
+            }, 300)
+            return () => clearTimeout(timeout)
         }
-    }, [currentOpenPanel]);
+    }, [currentOpenPanel])
 
-    if (!shouldRender) {
-        return null;
-    }
+    if (!shouldRender) return null
 
     return <div
         id='curtain'

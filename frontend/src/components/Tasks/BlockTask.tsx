@@ -8,6 +8,7 @@ import ProgressCircle from '@comps/ProgressCircle/ProgressCircle'
 import Button from '@comps/Button/Button'
 import BlockSubTask from './BlockSubTask'
 import Modal from '@comps/Modal/Modal'
+import ModalOK from '@comps/Modal/ModalOK'
 import EditorTask from '@comps/EditorTask/EditorTask'
 
 import IcoStart from '@asset/start.svg'
@@ -30,6 +31,9 @@ function Task({objTask} : TaskProps) {
     const [isOpenFiters, setIsOpenFiters] = useState(false)
     const [isOpenDates, setIsOpenDates] = useState(false)
     const [isOpenEditorTask, setIsOpenEditorTask] = useState(false)
+
+    const [editableTask, setEditableTask] = useState({...objTask})
+    const [isModalChanged, setShowModalChanged] = useState(false)
 
     const deadline = objTask.deadline ? new Date(objTask.deadline) : null;
     const deadlaneDiff = deadline ? Math.floor((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24) + 1) : null;
@@ -291,10 +295,27 @@ function Task({objTask} : TaskProps) {
             <Modal
                 title={`[${objTask.id}] ${objTask.title}`}
                 onClose={() => setIsOpenEditorTask(false)}
-            >
-                <EditorTask originakTask={objTask} />
-
+                >
+                <EditorTask 
+                    originakTask={objTask}
+                    onExit={updatedTask => {
+                        setShowModalChanged(true)
+                        setEditableTask(updatedTask)
+                    }}
+                />
             </Modal> : null
+    }
+
+    {
+        // отображение модального окна для подтверждения
+        // внесенных изменений в EditorTask
+        isModalChanged ? 
+            <ModalOK 
+                title='Сохранить изменения?'
+                onStatus={status => {
+                    setIsOpenEditorTask(false)
+                }}
+            /> : null
     }
     </>)
 }
