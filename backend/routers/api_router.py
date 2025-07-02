@@ -11,9 +11,11 @@ from database.sqlalchemy_tables import get_db
 from database.create_task import write_new_task_to_database
 from database.get_filters import get_all_filters_dict, get_completed_promt
 from database.get_tasks import get_tasks_by_filters
+from database.update_task import update_task
 
 from schemas.types_new_task import TaskGenerateRequest, NewTaskRequest
 from schemas.types_get_filters import TypeSearchPanel
+from schemas.types_update_task import TypeTask
 
 
 tasks = {}       # Хранилище задач
@@ -221,4 +223,19 @@ async def search_tasks(
     return {
         "status": "success", 
         "result": get_tasks_by_filters(db, filters)
+    }
+
+
+@router.post("/update_task")
+async def search_tasks(
+    request: Request, 
+    task: TypeTask = Body(...), 
+    db: Session = Depends(get_db)
+    ):
+
+    updateable = update_task(db, task)
+
+    return {
+        "status": "success", 
+        "updateable": updateable
     }

@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { useAtomValue, filterFromServer } from "@utils/jotai.store"
 import { formatDateString } from '@utils/date-funcs'
 import { TypeViewTask } from '@mytype/typeTask'
 
+import Modal from '@comps/Modal/Modal'
 import BlockDescription from './BlockDescr'
 import BlockSubTasks from './BlockSubTasks'
 import BlockTiming from './BlockTiming'
@@ -40,23 +41,7 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
 
     const [activeTab, setActiveTab] = useState(asideButtons[0][1])
     const [task, updateTask] = useState({...originakTask})
-    const onExitRef = useRef(onExit);
-    const mountedRef = useRef(true); // флаг монтирования
     const allFilters = useAtomValue(filterFromServer)
-
-    useEffect(() => { onExitRef.current = onExit }, [onExit])
-
-    useEffect(() => {
-        mountedRef.current = true
-        return () => {
-            setTimeout(() => {
-                if (!mountedRef.current && onExitRef.current) {
-                    onExitRef.current({ ...task });
-                }
-            }, 0);
-            mountedRef.current = false;
-        };
-    }, []);
 
     const getPage = () => {
         switch (activeTab) {
@@ -116,7 +101,7 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
                             ...task, 
                             filters: {
                                 ...task.filters, 
-                                theme: task.filters.theme.filter(elem => elem.id != id)
+                                theme: task.filters.theme.filter(elem => elem.idf != id)
                             }
                         })
                     }}
@@ -125,7 +110,7 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
                             ...task, 
                             filters: {
                                 ...task.filters, 
-                                theme: task.filters.theme.map(elem => elem.id != el.id ? elem : el)
+                                theme: task.filters.theme.map(elem => elem.idf != el.idf ? elem : el)
                             }
                         })
                     }}
@@ -150,7 +135,7 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
                             ...task, 
                             filters: {
                                 ...task.filters, 
-                                stress: task.filters.stress.filter(elem => elem.id != id)
+                                stress: task.filters.stress.filter(elem => elem.idf != id)
                             }
                         })
                     }}
@@ -159,7 +144,7 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
                             ...task, 
                             filters: {
                                 ...task.filters, 
-                                stress: task.filters.stress.map(elem => elem.id != el.id ? elem : el)
+                                stress: task.filters.stress.map(elem => elem.idf != el.idf ? elem : el)
                             }
                         })
                     }}
@@ -184,7 +169,7 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
                             ...task, 
                             filters: {
                                 ...task.filters, 
-                                action_type: task.filters.action_type.filter(elem => elem.id != id)
+                                action_type: task.filters.action_type.filter(elem => elem.idf != id)
                             }
                         })
                     }}
@@ -193,7 +178,7 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
                             ...task, 
                             filters: {
                                 ...task.filters, 
-                                action_type: task.filters.action_type.map(elem => elem.id != el.id ? elem : el)
+                                action_type: task.filters.action_type.map(elem => elem.idf != el.idf ? elem : el)
                             }
                         })
                     }}
@@ -263,11 +248,11 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
                             filters: {
                                 ...task.filters, 
                                 state: {
-                                    emotional: task.filters.state.emotional.filter(elsel => elsel.id != id),
-                                    intellectual: task.filters.state.intellectual.filter(elsel => elsel.id != id),
-                                    motivational: task.filters.state.motivational.filter(elsel => elsel.id != id),
-                                    physical: task.filters.state.physical.filter(elsel => elsel.id != id),
-                                    social: task.filters.state.social.filter(elsel => elsel.id != id)
+                                    emotional: task.filters.state.emotional.filter(elsel => elsel.idf != id),
+                                    intellectual: task.filters.state.intellectual.filter(elsel => elsel.idf != id),
+                                    motivational: task.filters.state.motivational.filter(elsel => elsel.idf != id),
+                                    physical: task.filters.state.physical.filter(elsel => elsel.idf != id),
+                                    social: task.filters.state.social.filter(elsel => elsel.idf != id)
                                 }
                             }
                         })
@@ -278,11 +263,21 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
                             filters: {
                                 ...task.filters, 
                                 state: {
-                                    emotional: task.filters.state.emotional.map(elem => elem.id != el.id ? elem : el),
-                                    intellectual: task.filters.state.intellectual.map(elem => elem.id != el.id ? elem : el),
-                                    motivational: task.filters.state.motivational.map(elem => elem.id != el.id ? elem : el),
-                                    physical: task.filters.state.physical.map(elem => elem.id != el.id ? elem : el),
-                                    social: task.filters.state.social.map(elem => elem.id != el.id ? elem : el)
+                                    emotional: task.filters.state.emotional.map(
+                                        elem => elem.idf != el.idf ? elem : el
+                                    ),
+                                    intellectual: task.filters.state.intellectual.map(
+                                        elem => elem.idf != el.idf ? elem : el
+                                    ),
+                                    motivational: task.filters.state.motivational.map(
+                                        elem => elem.idf != el.idf ? elem : el
+                                    ),
+                                    physical: task.filters.state.physical.map(
+                                        elem => elem.idf != el.idf ? elem : el
+                                    ),
+                                    social: task.filters.state.social.map(
+                                        elem => elem.idf != el.idf ? elem : el
+                                    )
                                 }
                             }
                         })
@@ -293,26 +288,33 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
         }
     }
 
-    return <div className="editor-task">
+    return <Modal 
+        title={`[${task.id}] ${task.title}`}
+        onClose={() => { if (onExit) onExit(task) }}
+    >
+    
+        <div className="editor-task">
 
-        <div className="editor-task__menu">
-            {
-                asideButtons.map((item, index) => {
-                    const Icon = item[2]
-                    return <button
-                        className={item[1] === activeTab ? 'active' : ""}
-                        onClick={() => setActiveTab(item[1])}
-                        key={`editor-task-menu-${index}=${item[1]}`}
-                        ><Icon /> {item[0]}
-                    </button>
-                })
-            }
+            <div className="editor-task__menu">
+                {
+                    asideButtons.map((item, index) => {
+                        const Icon = item[2]
+                        return <button
+                            className={item[1] === activeTab ? 'active' : ""}
+                            onClick={() => setActiveTab(item[1])}
+                            key={`editor-task-menu-${index}=${item[1]}`}
+                            ><Icon /> {item[0]}
+                        </button>
+                    })
+                }
+            </div>
+
+            <div className="editor-task__content">
+                { getPage() }
+            </div>
         </div>
 
-        <div className="editor-task__content">
-            { getPage() }
-        </div>
-    </div>
+    </Modal>
 }
 
 export default EditorTask

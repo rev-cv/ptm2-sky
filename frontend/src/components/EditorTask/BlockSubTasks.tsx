@@ -36,9 +36,9 @@ function BlockSubTasks({ subtasks, onUpdate }: TypeProps) {
         const draggedIdx = Number(e.dataTransfer.getData("text/plain"))
         if (isNaN(draggedIdx)) return
         const updated = [...sortedSubtasks]
-        const [removed] = updated.splice(draggedIdx, 1)
-        updated.splice(idx, 0, removed)
-        
+        const [removed] = updated.splice(draggedIdx, 1) // удаление перетаскиваемого элемента
+        const targetIdx = draggedIdx < idx ? idx - 1 : idx // корректировка индекса
+        updated.splice(targetIdx, 0, removed)
         const withOrder = updated.map((item, i) => ({ ...item, order: i }))
         setDragOverIdx(null)
         onUpdate(withOrder)

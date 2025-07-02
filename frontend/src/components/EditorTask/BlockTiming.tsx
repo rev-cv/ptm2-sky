@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import ButtonCalendar from '@comps/ButtonCalendar/ButtonCalendar'
 import Button from '@comps/Button/Button'
+import { sortDateStrings } from '@utils/date-funcs'
 
 import IcoStart from '@asset/start.svg'
 import IcoCheck from '@asset/check.svg'
@@ -14,10 +16,12 @@ type TypeProps = {
     updateTaskchecks: (ds:string[]) => void
 }
 
-
-
 function BlockTiming ({deadline, activation, taskchecks,
     updateDeadline, updateActivation, updateTaskchecks} : TypeProps ) {
+
+    const [emptyTaskChecks, setEmptyTaskChecks] = useState<string[]>([])
+
+    const tch = sortDateStrings(taskchecks)
 
     return <div className="editor-task__block editor-task__block-timing">
 
@@ -62,23 +66,41 @@ function BlockTiming ({deadline, activation, taskchecks,
         </div>
         
         {
-            taskchecks.map((ds, index) => (
+            tch.map((ds, index) => (
                 <ButtonCalendar 
                     date={ds}
                     onClickDay={value => {
-                        const ntsd = [...taskchecks]
-                        ntsd[index] = value
-                        updateTaskchecks(ntsd)
+                        let ntsd = [...taskchecks]
+                        if (value === "") {
+                            ntsd.splice(index, 1)
+                        } else {
+                            ntsd[index] = value
+                        }
+                        updateTaskchecks(sortDateStrings(ntsd))
                     }}
+                    key={`modal-edit-task__taskchecks:${index}`}
+                />
+            ))
+        }
+
+        {
+            emptyTaskChecks.map((ds, index) => (
+                <ButtonCalendar 
+                    date={ds}
+                    onClickDay={value => {
+                        setEmptyTaskChecks(emptyTaskChecks.splice(index, 1))
+                        if (value != "") {
+                            updateTaskchecks(sortDateStrings([...tch, value]))
+                        }
+                    }}
+                    key={`emptyTaskChecks:${index}`}
                 />
             ))
         }
 
         <Button
             IconComponent={IcoAdd}
-            onClick={() => updateTaskchecks([
-                ...taskchecks, new Date(Date.now() + 86400000).toString()
-            ])}
+            onClick={ () => setEmptyTaskChecks([...emptyTaskChecks, ""])}
             title='add new subtask'
         />
 
@@ -86,3 +108,5 @@ function BlockTiming ({deadline, activation, taskchecks,
 }
 
 export default BlockTiming
+
+

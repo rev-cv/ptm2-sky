@@ -1,15 +1,17 @@
 import { useState } from 'react'
 
+import { updateTask } from './updateTask'
+
 import { TypeViewTask } from '@mytype/typeTask'
 import { formatDateString } from '@utils/date-funcs'
+import { taskChangeDetector } from '@utils/task-change-detector'
 import './style.scss'
 
 import ProgressCircle from '@comps/ProgressCircle/ProgressCircle'
 import Button from '@comps/Button/Button'
 import BlockSubTask from './BlockSubTask'
-import Modal from '@comps/Modal/Modal'
 import ModalOK from '@comps/Modal/ModalOK'
-import EditorTask from '@comps/EditorTask/EditorTask'
+import ModalEditorTask from '@comps/EditorTask/EditorTask'
 
 import IcoStart from '@asset/start.svg'
 import IcoRisk from '@asset/risk.svg'
@@ -32,7 +34,10 @@ function Task({objTask} : TaskProps) {
     const [isOpenDates, setIsOpenDates] = useState(false)
     const [isOpenEditorTask, setIsOpenEditorTask] = useState(false)
 
+    // editableTask - объект задачи полученный после закрытия модального окна редактирования задачи
     const [editableTask, setEditableTask] = useState({...objTask})
+
+    // isModalChanged - открытие модального окна предупреждения внесения изменений
     const [isModalChanged, setShowModalChanged] = useState(false)
 
     const deadline = objTask.deadline ? new Date(objTask.deadline) : null;
@@ -148,27 +153,31 @@ function Task({objTask} : TaskProps) {
                     /> : null
             }
 
-            <Button 
-                variant='transparent'
-                IconComponent={IcoSubTasks}
-                className="task-list__item__onside__button"
-                onClick={e => {
-                    handleToggleExpanders("subtask")
-                    e.stopPropagation()
-                }}
-                text={(objTask.subtasks ? objTask.subtasks.reduce((prev, cur) => !cur.status ? prev + 1 : prev, 0): 0).toString()}
-            />
+            {
+                (0 < objTask.subtasks?.length) ? <Button 
+                    variant='transparent'
+                    IconComponent={IcoSubTasks}
+                    className="task-list__item__onside__button"
+                    onClick={e => {
+                        handleToggleExpanders("subtask")
+                        e.stopPropagation()
+                    }}
+                    text={(objTask.subtasks ? objTask.subtasks.reduce((prev, cur) => !cur.status ? prev + 1 : prev, 0): 0).toString()}
+                /> : null
+            }
 
-            <Button 
-                variant='transparent'
-                IconComponent={IcoFilters}
-                className="task-list__item__onside__button"
-                onClick={e => {
-                    handleToggleExpanders("filters")
-                    e.stopPropagation()
-                }}
-                text={countFilters().toString()}
-            />
+            {
+                hasAtLeastOneFilter(objTask) ? <Button 
+                    variant='transparent'
+                    IconComponent={IcoFilters}
+                    className="task-list__item__onside__button"
+                    onClick={e => {
+                        handleToggleExpanders("filters")
+                        e.stopPropagation()
+                    }}
+                    text={countFilters().toString()}
+                /> : null
+            }
 
             <Button 
                 variant='transparent'
@@ -292,18 +301,16 @@ function Task({objTask} : TaskProps) {
     {
         // отображение модального окна для задачи
         isOpenEditorTask ? 
-            <Modal
-                title={`[${objTask.id}] ${objTask.title}`}
-                onClose={() => setIsOpenEditorTask(false)}
-                >
-                <EditorTask 
-                    originakTask={objTask}
-                    onExit={updatedTask => {
+            <ModalEditorTask 
+                originakTask={objTask}
+                onExit={updatedTask => {
+                    setIsOpenEditorTask(false)
+                    if (taskChangeDetector(updatedTask)) {
                         setShowModalChanged(true)
                         setEditableTask(updatedTask)
-                    }}
-                />
-            </Modal> : null
+                    }
+                }}
+            /> : null
     }
 
     {
@@ -314,6 +321,8 @@ function Task({objTask} : TaskProps) {
                 title='Сохранить изменения?'
                 onStatus={status => {
                     setIsOpenEditorTask(false)
+                    setShowModalChanged(false)
+                    if (status) updateTask(editableTask)
                 }}
             /> : null
     }
@@ -321,3 +330,18 @@ function Task({objTask} : TaskProps) {
 }
 
 export default Task
+
+
+function hasAtLeastOneFilter(task: TypeViewTask): boolean {
+    const { filters } = task;
+    return (
+        filters?.theme?.length > 0 ||
+        filters?.state?.physical?.length > 0 ||
+        filters?.state?.intellectual?.length > 0 ||
+        filters?.state?.emotional?.length > 0 ||
+        filters?.state?.motivational?.length > 0 ||
+        filters?.state?.social?.length > 0 ||
+        filters?.stress?.length > 0 ||
+        filters?.action_type?.length > 0
+    );
+}

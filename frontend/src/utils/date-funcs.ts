@@ -104,3 +104,23 @@ export function formatPeriod(start?: mydate, finish?: mydate): string {
 
     return "";
 }
+
+export const newTaskCheck = () => {
+    const tomorrow = new Date(Date.now() + 86400000)
+    tomorrow.setUTCHours(0, 0, 0, 0)
+    return tomorrow.toUTCString()
+}
+
+export function sortDateStrings(dateStrings: string[]): string[] {
+    if (!Array.isArray(dateStrings) || dateStrings.length === 0) {
+        return [];
+    }
+    return [...new Set(dateStrings)]
+        .map(str => ({
+            original: str,
+            date: new Date(str)
+        }))
+        .filter(item => !isNaN(item.date.getTime()))
+        .sort((a, b) => a.date.getTime() - b.date.getTime())
+        .map(item => item.original);
+}

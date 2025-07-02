@@ -1,6 +1,7 @@
 from sqlalchemy import or_, and_
 from database.sqlalchemy_tables import Task, Association, TaskCheck
 from datetime import datetime
+from serializers.returned_task import serialize_task
 
 def get_tasks_by_filters(db, filters):
     query = db.query(Task)
@@ -62,56 +63,4 @@ def get_tasks_by_filters(db, filters):
     page_size = 20
     query = query.offset((page - 1) * page_size).limit(page_size)
 
-    # import time
-    # time.sleep(5)
-
     return [serialize_task(task) for task in query.all()]
-
-
-def serialize_task(task):
-
-    filters_by_type = {}
-
-    for assoc in task.filters:
-        filter_type = assoc.filter.filter_type if assoc.filter else "unknown"
-        filter_obj = {
-            "id": assoc.id,
-            "reason": assoc.reason,
-            "proposals": assoc.proposals,
-            "name": assoc.filter.name if assoc.filter else None,
-            "description": assoc.filter.description if assoc.filter else None
-        }
-
-        # Если тип содержит __, делаем вложенность
-        if "__" in filter_type:
-            main_type, sub_type = filter_type.split("__", 1)
-            if main_type not in filters_by_type:
-                filters_by_type[main_type] = {}
-            if sub_type not in filters_by_type[main_type]:
-                filters_by_type[main_type][sub_type] = []
-            filters_by_type[main_type][sub_type].append(filter_obj)
-        else:
-            if filter_type not in filters_by_type:
-                filters_by_type[filter_type] = []
-            filters_by_type[filter_type].append(filter_obj)
-
-    return {
-        "id": task.id,
-        "status": task.status,
-        "title": task.title,
-        "description": task.description,
-        "activation": task.activation.isoformat() + "Z" if task.activation else task.activation,
-        "deadline": task.deadline.isoformat() + "Z" if task.deadline else task.deadline,
-        "impact": task.impact,
-        "subtasks" : task.subtasks,
-        "risk": task.risk,
-        "risk_explanation": task.risk_explanation,
-        "risk_proposals": task.risk_proposals,
-        "motivation": task.motivation,
-        "created_at": task.created_at.isoformat() + "Z",
-        "filters": filters_by_type,
-        "taskchecks": [
-            tc.date.isoformat() + "Z" if tc.date else tc.date
-            for tc in task.taskchecks
-        ],
-    }

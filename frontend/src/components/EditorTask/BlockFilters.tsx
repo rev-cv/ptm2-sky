@@ -27,14 +27,15 @@ type TypeProps = {
 
 function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement, onUpdateElement, tt, description} : TypeProps) {
 
-    const curListID = curList.map(elem => elem.id)
+    const curListID = curList.map(elem => elem.idf)
 
     const toogleFilter = (elem:TypeFilterServer, sub:TypeStates|undefined=undefined) => {
         if (curListID.includes(elem.id)) {
             onDelElement(elem.id)
         } else {
             onAddElement({
-                id: elem.id,
+                id: -1, // id еще не добавленной ассоциации с фильтром < 0
+                idf: elem.id, // id фильтра с котором будет ассоциирована ассоциация
                 name: elem.name,
                 description: elem.description, 
                 reason: "",
@@ -44,7 +45,7 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
     }
 
     return <div className="editor-task__block-filters">
-        {/* <div>{description}</div> */}
+        <div className='editor-task__block-filters__about'>{description}</div>
         <div className="editor-task__block-filters__col1">
             <div className='editor-task__block-filters__title'>
                 <span>Добавленные {tt}</span>
@@ -63,7 +64,7 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
                         <Button
                             IconComponent={IcoRemove}
                             variant='remove'
-                            onClick={() => onDelElement(filter.id)}
+                            onClick={() => onDelElement(filter.idf)}
                             className="editor-current-filter__remove"
                             title='remove'
                         />
@@ -107,7 +108,7 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
             }
 
             {
-                tabList?.map((tab, tabIndex) => (<>
+                tabList?.map(tab => (<>
                     <div className='editor-task__block-filters__title'>
                         <span>{tab.tabname}</span>
                     </div>

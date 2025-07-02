@@ -185,11 +185,17 @@
     &__block-filters {
         display: grid;
         grid-template-columns: minmax(200px, 2fr) 3px minmax(200px, 1fr);
+        grid-template-areas: 
+            "about about about"
+            "col1 line col2"
+        ;
+        grid-auto-flow: dense;
+        grid-template-rows: min-content 1fr;
+
         padding: 1em 0 0 1.6em;
         height: 100%;
         width: 100%;
         overflow: hidden;
-        // background-color: red;
         margin-bottom: 1em;
         position: relative;
 
@@ -197,9 +203,6 @@
         &__col2 {
             align-self: stretch;
             gap: .4em;
-            // background-color: red;
-            // display: flex;
-            // flex-direction: column;
             flex: 1 1 0;
             min-height: 0;
             max-height: 100%;
@@ -221,23 +224,27 @@
         }
 
         &__col1 {
-            grid-column: 1 / 2;
             margin-right: -.4em;
+            grid-area: col1;
+
+        }
+
+        &__about {
+            grid-area: about;
+            font-size: .65em;
+            line-height: 1.2em;
+            opacity: .5;
         }
 
         &::after {
             content: "";
             width: .5px;
-            top: 0;
-            bottom: 0;
             background-color: var(--color-bg-secondary);
-            position: absolute;
-            top: .8em;
-            grid-column: 2 / 3;
+            grid-area: line;
         }
 
         &__col2 {
-            grid-column: 3 / 4;
+            grid-area: col2;
         }
     }
 }
@@ -426,6 +433,7 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    border: 1px solid var(--color-bg-secondary);
 
     &__title {
         font-size: .7em;

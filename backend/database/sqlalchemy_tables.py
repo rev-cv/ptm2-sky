@@ -34,7 +34,7 @@ class Filter(Base):
 class Association(Base):
     __tablename__ = 'associations'
     id = Column(Integer, primary_key=True, index=True)
-    filter_id = Column(Integer, ForeignKey('filters.id'))
+    filter_id = Column(Integer, ForeignKey('filters.id'), nullable=False)
     reason = Column(Text) # обоснование причины добавления связи с фильтром
     relevance  = Column(Integer) # процент соответствия с фильтром
     proposals = Column(Text) # предложения / рекомендации
