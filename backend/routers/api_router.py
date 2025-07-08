@@ -7,15 +7,15 @@ from llama_cpp import Llama
 from openai import OpenAI
 from sqlalchemy.orm import Session
 
-from database.sqlalchemy_tables import get_db
+from database.sqlalchemy_tables import get_db, Task
 from database.create_task import write_new_task_to_database
 from database.get_filters import get_all_filters_dict, get_completed_promt
 from database.get_tasks import get_tasks_by_filters
-from database.update_task import update_task
+from database.write_task import write_task
 
 from schemas.types_new_task import TaskGenerateRequest, NewTaskRequest
 from schemas.types_get_filters import TypeSearchPanel
-from schemas.types_update_task import TypeTask
+from schemas.types_write_task import TypeTask
 
 
 tasks = {}       # Хранилище задач
@@ -183,18 +183,18 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
             del websockets[task_id]
 
 
-@router.post("/create_new_task")
-async def create_new_task(
-    request: Request, 
-    task_data: NewTaskRequest = Body(...), 
-    db: Session = Depends(get_db)
-    ):
+# @router.post("/create_new_task")
+# async def create_new_task(
+#     request: Request, 
+#     task_data: NewTaskRequest = Body(...), 
+#     db: Session = Depends(get_db)
+#     ):
 
-    print(task_data)
+#     print(task_data)
 
-    task = write_new_task_to_database(task_data, db)
+#     task = write_new_task_to_database(task_data, db)
 
-    return {"task_id": task.id, "status": "created"}
+#     return {"task_id": task.id, "status": "created"}
 
 
 @router.post("/get_filters")
@@ -205,13 +205,6 @@ async def get_filters(request: Request, db: Session = Depends(get_db)):
     """
     filters = get_all_filters_dict(db, True)
     return filters
-
-
-# @router.post("/get_promt")
-# async def get_promt(request: Request, db: Session = Depends(get_db)):
-#     retsult = get_completed_promt(magic_task_promt, db)
-#     print(retsult)
-#     return retsult
 
 @router.post("/search_tasks")
 async def search_tasks(
@@ -225,17 +218,37 @@ async def search_tasks(
         "result": get_tasks_by_filters(db, filters)
     }
 
-
-@router.post("/update_task")
-async def search_tasks(
+@router.post("/write_task")
+async def create_and_update_task(
     request: Request, 
     task: TypeTask = Body(...), 
     db: Session = Depends(get_db)
     ):
 
-    updateable = update_task(db, task)
+    updateable = write_task(db, task)
 
     return {
         "status": "success", 
         "updateable": updateable
+    }
+
+@router.post("/remove_task")
+async def delete_task(
+    request: Request, 
+    body = Body(...), 
+    db: Session = Depends(get_db)
+    ):
+
+    taskid = body["taskid"]
+
+    db_task = db.query(Task).get(taskid)
+    if db_task is None:
+        return
+    
+    db.delete(db_task)
+    db.commit()
+    
+    return {
+        "status": "success",
+        "message": taskid
     }

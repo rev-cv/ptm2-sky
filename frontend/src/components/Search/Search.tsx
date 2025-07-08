@@ -1,8 +1,8 @@
 import { useState, useRef, useLayoutEffect, useEffect } from 'react'
 
-import { loadTasks } from './loadTasks'
+import { loadTasks } from '@api/loadTasks'
 
-import { useAtom, useAtomValue, searchRequest, openSidePanel, getSearchRequest, deepEqual, samplingStatus } from '@utils/jotai.store'
+import { useAtom, useAtomValue, searchRequest, openSidePanel, getSearchRequest, deepEqual, samplingStatus, isOpenNewTaskEditor } from '@utils/jotai.store'
 
 import Button from '@comps/Button/Button'
 import BlockFilter from './BlockFilter'
@@ -26,20 +26,22 @@ import './styles.scss'
 
 function Search() {
 
-    const [switchPanel, setSwitchPanel] = useState<"search"|"preset">("preset");
+    const [switchPanel, setSwitchPanel] = useState<"search"|"preset">("preset")
+
     const status = useAtomValue(samplingStatus)
     // useState<'idle' | 'loading' | 'success' | 'error'>('idle')
     const [fillingRequest, updateRequest] = useAtom(searchRequest)
+    const [_, setStatusNewTaskEditor] = useAtom(isOpenNewTaskEditor)
     const [, setPanel] = useAtom(openSidePanel)
-    const [isProcessPreset, setProcessPreset] = useState<boolean>(false);
+    const [isProcessPreset, setProcessPreset] = useState<boolean>(false)
 
     const spanRef = useRef<HTMLSpanElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
 
     function recalcWidth () {
         if (spanRef.current) {
-            const spanWidth = spanRef.current.offsetWidth + 20;
-            spanRef.current.parentElement?.style.setProperty('--text-width', `${spanWidth}px`);
+            const spanWidth = spanRef.current.offsetWidth + 20
+            spanRef.current.parentElement?.style.setProperty('--text-width', `${spanWidth}px`)
         }
     }
 
@@ -76,7 +78,8 @@ function Search() {
             <div className="panel__newtask">
                 <Button 
                     IconComponent={IcoAdd} 
-                    onClick={() => setPanel("left")}
+                    // onClick={() => setPanel("left")}
+                    onClick={() => setStatusNewTaskEditor(true)}
                 />
             </div>
             <div className="panel__search-conteiner">

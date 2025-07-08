@@ -10,6 +10,8 @@ import FilterPanel from '@comps/FilterPanel/FilterPanel'
 import ThemeToggle from '@comps/Toggles/ThemeToggle'
 import Сurtain from '@comps/Сurtain/Сurtain'
 
+import EditorNewTask from '@comps/EditorTask/EditorNewTask'
+
 import IcoSetting from '@asset/setting.svg'
 
 function PageApp() {
@@ -56,6 +58,8 @@ function PageApp() {
             </div>
 
             <Сurtain />
+
+            <EditorNewTask />
         </>
     )
 }

@@ -4,13 +4,17 @@ import CheckBoxTask from '@comps/CheckBox/CheckBoxTask'
 
 type BlockSubTaskProps = {
     subtask: TypeTasks_SubTask
+    onChangeStatus: () => void
 }
 
-function BlockSubTask ({subtask}:BlockSubTaskProps) {
+function BlockSubTask ({subtask, onChangeStatus}:BlockSubTaskProps) {
     
     return (
         <div className="task-list__item__subtask">
-            <CheckBoxTask state={true} />
+            <CheckBoxTask 
+                state={subtask.status} 
+                onChangeStatus={onChangeStatus}
+            />
             <div className="task-list__item__subtask-title">{subtask.title}</div>
             <div className="task-list__item__subtask-description">{subtask.description}</div>
             <div className="task-list__item__subtask-motivation">{subtask.motivation}</div>

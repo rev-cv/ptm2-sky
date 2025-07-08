@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
-import { updateTask } from './updateTask'
+import { updateTask } from '@api/updateTask'
+import { removeTask } from '@api/removeTask'
 
 import { TypeViewTask } from '@mytype/typeTask'
 import { formatDateString } from '@utils/date-funcs'
@@ -110,7 +111,7 @@ function Task({objTask} : TaskProps) {
     return (<>
     
     <div 
-        className={`task-list__item`}
+        className={`task-list__item${objTask.status ? " task-done" : ""}`}
         onClick={() => setIsOpenEditorTask(true)}
         >
         <div className="task-list__item__title">{objTask.title}</div>
@@ -240,6 +241,7 @@ function Task({objTask} : TaskProps) {
                         <BlockSubTask 
                             key={`task-subtask-id${index}`} 
                             subtask={subtask}
+                            onChangeStatus={() => {}}
                         />
                     ))
                 }
@@ -309,6 +311,10 @@ function Task({objTask} : TaskProps) {
                         setShowModalChanged(true)
                         setEditableTask(updatedTask)
                     }
+                }}
+                onDelete={() => {
+                    removeTask(objTask.id)
+                    setIsOpenEditorTask(false)
                 }}
             /> : null
     }

@@ -224,9 +224,16 @@
                 color: var(--color-text-secondary);
             }
         }
+
+        &.task-done::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: var(--color-border-active);
+            opacity: .2;
+        }
     }
 }
-
 
 .task-list-loader {
     padding: 2em 1em;

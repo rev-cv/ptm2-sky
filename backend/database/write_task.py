@@ -1,12 +1,20 @@
 from database.sqlalchemy_tables import Task, Association, TaskCheck, Filter, SubTask
-from schemas.types_update_task import TypeTask
+from schemas.types_write_task import TypeTask
 from sqlalchemy.orm import Session
 from serializers.returned_task import serialize_task
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
-def update_task(db: Session, t: TypeTask):
-    task = db.query(Task).get(t.id)   
+def write_task(db: Session, t: TypeTask):
+    if t.id < 0:
+        # создание новой задачи
+        task = Task(title="")
+        db.add(task)
+        db.commit() # нужно получить id
+        db.refresh(task)
+    else: 
+        # редактирование существующий задачи
+        task = db.query(Task).get(t.id)
 
     if t.status is not None:
         task.status = t.status

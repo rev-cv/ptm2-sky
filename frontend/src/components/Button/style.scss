@@ -79,7 +79,8 @@
     background-color: var(--color-button-delete);
 
     * {
-        color: var(--color-button-delete-text);
+        color: var(--color-button-delete-text) !important;
+        font-weight: normal;
     }
     
     &:hover {

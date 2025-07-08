@@ -29,7 +29,8 @@
       "@frames/*": ["src/frames/*"],
       "@utils/*": ["src/utils/*"],
       "@asset/*": ["src/assets/*"],
-      "@mytype/*": ["src/types/*"]
+      "@mytype/*": ["src/types/*"],
+      "@api/*": ["src/api/*"]
     }
   },
   "include": ["src"]

@@ -85,7 +85,7 @@ export const updateTask = async (editingTask:TypeViewTask) => {
     }
 
     try {
-        const res = await fetch(`${APIURL}/api/update_task`, {
+        const res = await fetch(`${APIURL}/api/write_task`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(changesInTask)

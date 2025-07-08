@@ -43,6 +43,7 @@ export type TypeViewTask = {
     
     filters: { // формат в котором фильтры приходят с сервера
         theme: TypeTasks_Filter[]
+        // темы с id==-1 являются еще не существующими в базе данных
         state: {
             physical: TypeTasks_Filter[]
             intellectual: TypeTasks_Filter[]
@@ -56,7 +57,6 @@ export type TypeViewTask = {
 }
 
 export type TypeStates = "physical" | "intellectual" | "emotional" | "motivational" | "social"
-
 
 export type TypeReturnTask = {
     // тип данных задачи отправляемых на сервер

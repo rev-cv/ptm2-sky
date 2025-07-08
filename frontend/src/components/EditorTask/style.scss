@@ -2,6 +2,7 @@
 .editor-task {
     display: grid;
     grid-template-columns: 270px 1fr;
+    grid-template-rows: 1fr auto;
     height: 100%;
 
     &__menu {
@@ -16,7 +17,7 @@
             align-items: center;
             gap: 0.5em;
             font-size: .75em;
-            padding: .6em 1em .5em 1em;
+            padding: .55em 1em .5em 1em;
             position: relative;
             font-weight: 700;
             line-height: 1em;
@@ -57,6 +58,29 @@
                 height: 1.2em;
             }
         }
+
+        &__bottom {
+            flex-grow: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+    }
+    
+    &__bottom-btns {
+        position: relative;
+        background-color: var(--color-bg-primary);
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: center;
+        gap: 1em;
+        padding: .5em;
+        margin-top: .5em;
+
+        &-clean {
+            position: absolute;
+            left: 1em;
+        }
     }
     
     &__content {
@@ -92,6 +116,12 @@
         &__title {
             font-size: 1.4em; 
             font-weight: 700;
+            border-bottom: 1px solid transparent;
+
+            &:empty {
+                opacity: .4;
+                border-bottom-color: var(--color-error);
+            }
         }
 
         &__descr {
@@ -106,6 +136,12 @@
             font-size: 0.6em;
             opacity: .2;
             user-select: none;
+        }
+
+        &__status {
+            // display: flex;
+            // justify-content: center;
+            padding-bottom: .4em;
         }
     }
 
@@ -423,6 +459,8 @@
         font-weight: 600;
         opacity: .4;
         z-index: 2;
+        // padding: .5em 0;
+        padding-bottom: .5em;
     }
 }
 

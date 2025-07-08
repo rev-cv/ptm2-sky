@@ -36,3 +36,6 @@ class TypeTask(BaseModel):
     deadline: Optional[str] = None
     activation: Optional[str] = None
     taskchecks: Optional[List[str]] = None
+
+    # никак не учавствующие, но могут передаваться при создании задачи
+    created_at: Optional[str] = None

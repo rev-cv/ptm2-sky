@@ -1,8 +1,8 @@
 
-export * from './newtask.store'
-export * from './search.store'
-export * from './server-filters.store'
-export * from './ui.store'
-export * from './view-tasks.store'
+export * from './jotai.newtask'
+export * from './jotai.search'
+export * from './jotai.server-filters'
+export * from './jotai.ui'
+export * from './jotai.view-tasks'
 
 export { useAtom, useAtomValue, getDefaultStore } from 'jotai'

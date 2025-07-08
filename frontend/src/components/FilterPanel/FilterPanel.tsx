@@ -1,4 +1,4 @@
-import { loadFilters } from './loadFilters'
+import { loadFilters } from '@api/loadFilters'
 import { useEffect } from "react";
 
 import { filterFromServer } from '@utils/jotai.store'

@@ -4,40 +4,22 @@ import { formatDateString } from '@utils/date-funcs'
 import { TypeViewTask } from '@mytype/typeTask'
 
 import Modal from '@comps/Modal/Modal'
+import BlockMenu, { asideButtons } from './BlockMenu'
 import BlockDescription from './BlockDescr'
 import BlockSubTasks from './BlockSubTasks'
 import BlockTiming from './BlockTiming'
 import BlockRisk from './BlockRisk'
 import BlockFilters, {TypeFilterServer__Tabs} from './BlockFilters'
 
-import IcoState from '@asset/state-element.svg'
-import IcoStrass from '@asset/stress-element.svg'
-import IcoAction from '@asset/event-element.svg'
-import IcoTheme from '@asset/theme-element.svg'
-import IcoRisk from '@asset/risk.svg'
-import IcoCalendar from '@asset/calendar.svg'
-import IcoStep from '@asset/subtask.svg'
-import IcoDescr from '@asset/title.svg'
-
 import './style.scss'
 
 type TypeProps = {
     originakTask: TypeViewTask
     onExit?: (editedTask:TypeViewTask) => void
+    onDelete?: () => void
 }
 
-const asideButtons = [
-    ["Описание задачи", "descr", IcoDescr],
-    ["Разбивка по шагам", "steps", IcoStep],
-    ["Тайминг сроков", "timing", IcoCalendar],
-    ["Оценка критичности", "risk", IcoRisk],
-    ["Темы", "themes", IcoTheme],
-    ["Состояния", "states", IcoState],
-    ["Эмоциональная нагрузка", "stress", IcoStrass],
-    ["Типы действий", "actions", IcoAction],
-]
-
-function EditorTask ({originakTask, onExit}:TypeProps) {
+function EditorTask ({originakTask, onExit, onDelete}:TypeProps) {
 
     const [activeTab, setActiveTab] = useState(asideButtons[0][1])
     const [task, updateTask] = useState({...originakTask})
@@ -51,10 +33,12 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
                     title={task.title}
                     descr={task.description}
                     motiv={task.motivation}
+                    status={task.status}
                     created={formatDateString(task.created_at)}
                     onChangeTitle={s => updateTask({...task, title: s})}
                     onChangeDescr={s => updateTask({...task, description: s})}
                     onChangeMotiv={s => updateTask({...task, motivation: s})}
+                    onChangeStatus={b => updateTask({...task, status: b})}
                 />
             case "steps":
                 return <BlockSubTasks 
@@ -294,20 +278,12 @@ function EditorTask ({originakTask, onExit}:TypeProps) {
     >
     
         <div className="editor-task">
-
-            <div className="editor-task__menu">
-                {
-                    asideButtons.map((item, index) => {
-                        const Icon = item[2]
-                        return <button
-                            className={item[1] === activeTab ? 'active' : ""}
-                            onClick={() => setActiveTab(item[1])}
-                            key={`editor-task-menu-${index}=${item[1]}`}
-                            ><Icon /> {item[0]}
-                        </button>
-                    })
-                }
-            </div>
+            <BlockMenu
+                isEdit={true}
+                activeTab={activeTab}
+                onChangeTab={activeTab => setActiveTab(activeTab)}
+                onDeleteTask={() => onDelete && onDelete()}
+            />
 
             <div className="editor-task__content">
                 { getPage() }

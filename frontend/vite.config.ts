@@ -24,7 +24,8 @@ export default defineConfig({
             '@asset':  path.resolve(__dirname, './src/assets'),
             '@mytype': path.resolve(__dirname, './src/types'),
             '@frames': path.resolve(__dirname, './src/frames'),
-            '@pages':  path.resolve(__dirname, './src/pages')
+            '@pages':  path.resolve(__dirname, './src/pages'),
+            '@api':  path.resolve(__dirname, './src/api')
         },
     },
 })
