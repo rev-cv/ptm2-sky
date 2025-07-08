@@ -1,6 +1,6 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { loadTasks } from '@api/loadTasks'
-import { currentNewTask2, resetTask2, getDefaultStore } from '@utils/jotai.store'
+import { currentNewTask2, resetTask2, getDefaultStore, addToast } from '@utils/jotai.store'
 
 export const createTask = async () => {
     const store = getDefaultStore()
@@ -18,6 +18,7 @@ export const createTask = async () => {
             // console.log(data)
             loadTasks()
             store.set(currentNewTask2, resetTask2)
+            addToast("Добавлена новая задача!")
         } else {
             throw new Error(`Создание новой задачи: Ошибка возвращенных данных`)
         }

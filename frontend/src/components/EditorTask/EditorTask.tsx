@@ -27,7 +27,7 @@ function EditorTask ({originakTask, onExit, onDelete}:TypeProps) {
 
     const getPage = () => {
         switch (activeTab) {
-            case "descr":
+            case "":
                 return <BlockDescription
                     id={task.id}
                     title={task.title}

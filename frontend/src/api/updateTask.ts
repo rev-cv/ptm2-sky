@@ -1,6 +1,6 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { TypeViewTask, TypeReturnTask, TypeTasks_Filter } from '@mytype/typeTask'
-import { getDefaultStore, viewTasks } from "@utils/jotai.store"
+import { getDefaultStore, viewTasks, addToast } from "@utils/jotai.store"
 import { taskChangeFIltersDetector, taskChangeSubtasksDetector } from '@utils/task-change-detector'
 
 export const updateTask = async (editingTask:TypeViewTask) => {
@@ -97,6 +97,8 @@ export const updateTask = async (editingTask:TypeViewTask) => {
                 elem.id === updateable.id ? updateable : elem
             ))
             console.log(updateable.deadline)
+
+            addToast("Задача обновлена!")
         } else {
             throw new Error(`Редактирование задачи ${e.id}: Ошибка возвращенных данных`)
         }

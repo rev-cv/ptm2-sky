@@ -9,6 +9,7 @@ import Tasks from '@comps/Tasks/Tasks'
 import FilterPanel from '@comps/FilterPanel/FilterPanel'
 import ThemeToggle from '@comps/Toggles/ThemeToggle'
 import Сurtain from '@comps/Сurtain/Сurtain'
+import Toast from '@comps/Toast/Toast'
 
 import EditorNewTask from '@comps/EditorTask/EditorNewTask'
 
@@ -60,6 +61,8 @@ function PageApp() {
             <Сurtain />
 
             <EditorNewTask />
+
+            <Toast />
         </>
     )
 }

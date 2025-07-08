@@ -7,11 +7,12 @@ from llama_cpp import Llama
 from openai import OpenAI
 from sqlalchemy.orm import Session
 
-from database.sqlalchemy_tables import get_db, Task
-from database.create_task import write_new_task_to_database
+from database.sqlalchemy_tables import get_db
+# from database.create_task import write_new_task_to_database
 from database.get_filters import get_all_filters_dict, get_completed_promt
 from database.get_tasks import get_tasks_by_filters
 from database.write_task import write_task
+from database.remove_task import remove_task
 
 from schemas.types_new_task import TaskGenerateRequest, NewTaskRequest
 from schemas.types_get_filters import TypeSearchPanel
@@ -239,16 +240,9 @@ async def delete_task(
     db: Session = Depends(get_db)
     ):
 
-    taskid = body["taskid"]
-
-    db_task = db.query(Task).get(taskid)
-    if db_task is None:
-        return
-    
-    db.delete(db_task)
-    db.commit()
+    remove_task(db, body["taskid"])
     
     return {
         "status": "success",
-        "message": taskid
+        "message": body["taskid"]
     }

@@ -8,7 +8,7 @@
 
     font-size: 1rem;
 
-    height: 100%;
+    // min-height: 100%;
 
     &__item {
         border-bottom: 1px solid var(--color-bg-secondary);
@@ -52,6 +52,10 @@
             color: var(--color-text-secondary);
             margin-bottom: .5em;
             white-space: pre-wrap;
+
+            &:empty {
+                margin-bottom: -.5em;
+            }
         }
 
         &__deadline {
@@ -100,6 +104,7 @@
             gap: .3em;
             padding-top: .5em;
             z-index: 1;
+            cursor: default;
 
             &__button {
                 height: 1.6em;
@@ -134,6 +139,11 @@
                     width: 70%;
                     height: 70%;
                 }
+            }
+
+            &:empty {
+                margin-bottom: -.5em;
+                padding: 0 !important;
             }
         }
 
@@ -229,8 +239,16 @@
             content: "";
             position: absolute;
             inset: 0;
-            background-color: var(--color-border-active);
+            background-color: var(--color-done);
             opacity: .2;
+        }
+
+        &.task-fail::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-color: var(--color-error);
+            opacity: .1;
         }
     }
 }

@@ -11,7 +11,6 @@ import './style.scss'
 import ProgressCircle from '@comps/ProgressCircle/ProgressCircle'
 import Button from '@comps/Button/Button'
 import BlockSubTask from './BlockSubTask'
-import ModalOK from '@comps/Modal/ModalOK'
 import ModalEditorTask from '@comps/EditorTask/EditorTask'
 
 import IcoStart from '@asset/start.svg'
@@ -35,12 +34,6 @@ function Task({objTask} : TaskProps) {
     const [isOpenDates, setIsOpenDates] = useState(false)
     const [isOpenEditorTask, setIsOpenEditorTask] = useState(false)
 
-    // editableTask - объект задачи полученный после закрытия модального окна редактирования задачи
-    const [editableTask, setEditableTask] = useState({...objTask})
-
-    // isModalChanged - открытие модального окна предупреждения внесения изменений
-    const [isModalChanged, setShowModalChanged] = useState(false)
-
     const deadline = objTask.deadline ? new Date(objTask.deadline) : null;
     const deadlaneDiff = deadline ? Math.floor((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24) + 1) : null;
     const deadlineClass = deadlaneDiff != null && 
@@ -50,11 +43,15 @@ function Task({objTask} : TaskProps) {
         : deadlaneDiff && deadlaneDiff < 14 ? "week_2"
         : "in_near_future"
 
+    const isFail = deadline && deadline < new Date()
+
     const created_at = objTask.created_at ? new Date(objTask.created_at) : null;
     const activation = objTask.activation ? new Date(objTask.activation) : null;
 
     const riskValue = getRiskImpactValue("risk", objTask.risk);
     const impactValue = getRiskImpactValue("impact", objTask.impact);
+
+    
 
     function handleToggleExpanders(arg: string) {
         switch (arg) {
@@ -111,7 +108,7 @@ function Task({objTask} : TaskProps) {
     return (<>
     
     <div 
-        className={`task-list__item${objTask.status ? " task-done" : ""}`}
+        className={`task-list__item${objTask.status ? " task-done" : isFail ? " task-fail" : ""}`}
         onClick={() => setIsOpenEditorTask(true)}
         >
         <div className="task-list__item__title">{objTask.title}</div>
@@ -126,7 +123,7 @@ function Task({objTask} : TaskProps) {
                 </div>
         }
 
-        <div className="task-list__item__onside">
+        <div className="task-list__item__onside" onClick={e => e.stopPropagation()}>
 
             {
                 (objTask.risk && 0 < objTask.risk) ?
@@ -180,15 +177,20 @@ function Task({objTask} : TaskProps) {
                 /> : null
             }
 
-            <Button 
-                variant='transparent'
-                IconComponent={IcoCalendar}
-                className="task-list__item__onside__button-circle"
-                onClick={e => {
-                    handleToggleExpanders("dates")
-                    e.stopPropagation()
-                }}
-            />
+            {
+                (objTask.risk && 0 < objTask.risk || objTask.impact && 0 < objTask.impact || 0 < objTask.subtasks?.length ) ? 
+                <Button 
+                    variant='transparent'
+                    IconComponent={IcoCalendar}
+                    className="task-list__item__onside__button-circle"
+                    onClick={e => {
+                        handleToggleExpanders("dates")
+                        e.stopPropagation()
+                    }}
+                /> : null
+            }
+
+            
         </div>
 
         <div className={`task-list__item__extender${isOpenFiters ? " view" : ""}`}>
@@ -308,27 +310,12 @@ function Task({objTask} : TaskProps) {
                 onExit={updatedTask => {
                     setIsOpenEditorTask(false)
                     if (taskChangeDetector(updatedTask)) {
-                        setShowModalChanged(true)
-                        setEditableTask(updatedTask)
+                        setTimeout(() => updateTask(updatedTask), 400)
                     }
                 }}
                 onDelete={() => {
                     removeTask(objTask.id)
                     setIsOpenEditorTask(false)
-                }}
-            /> : null
-    }
-
-    {
-        // отображение модального окна для подтверждения
-        // внесенных изменений в EditorTask
-        isModalChanged ? 
-            <ModalOK 
-                title='Сохранить изменения?'
-                onStatus={status => {
-                    setIsOpenEditorTask(false)
-                    setShowModalChanged(false)
-                    if (status) updateTask(editableTask)
                 }}
             /> : null
     }

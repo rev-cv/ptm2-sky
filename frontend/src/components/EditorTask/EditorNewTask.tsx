@@ -27,7 +27,6 @@ function EditorNewTask () {
 
     const getPage = () => {
         switch (activeTab) {
-            case "descr":
             case "":
                 return <BlockDescription
                     id={task.id}

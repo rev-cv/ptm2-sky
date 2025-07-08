@@ -1,0 +1,87 @@
+
+.toast-container {
+    // background-color: yellowgreen;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    user-select: none;
+    pointer-events: none;
+    z-index: 10;
+
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 0.5em;
+    align-items: center;
+    padding-bottom: 1em;
+
+    .toast {
+        position: relative;
+        border-radius: calc((.26em + 1.2em + .2em + 2px) / 2);
+        padding: 1px;
+        font-size: 0.6em;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+
+        > span {
+            background-color: var(--color-bg-secondary);
+            padding: .26em 1em .2em 1em;
+            
+            line-height: 1.2em;
+            font-weight: 600;
+            border-radius: calc((.26em + 1.2em + .2em) / 2);
+            // opacity: 0;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            height: 200px;
+            width: 200px;
+            margin: -2px;
+            z-index: -1;
+            animation: spingradient 1500ms linear infinite;
+        }
+
+        &.toast-loader::after {
+            background: conic-gradient(
+                var(--color-border-active),
+                transparent,
+                var(--color-warning),
+                transparent,
+                var(--color-border-active),
+            );
+        }
+
+        &.toast-save::after {
+            background: conic-gradient(
+                var(--color-button-text),
+                var(--color-button-text),
+                var(--color-done),
+                var(--color-button-text),
+            );
+        }
+
+        &.toast-delete::after {
+            background: conic-gradient(
+                var(--color-button-text),
+                var(--color-button-text),
+                var(--color-error),
+                var(--color-button-text),
+            );
+        }
+    }
+}
+
+@keyframes spingradient {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

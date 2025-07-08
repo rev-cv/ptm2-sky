@@ -1,5 +1,6 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { loadTasks } from '@api/loadTasks'
+import { addToast } from '@utils/jotai.store'
 
 export const removeTask = async (taskid:number) => {
     try {
@@ -10,6 +11,7 @@ export const removeTask = async (taskid:number) => {
         })
         if (res.ok) {
             loadTasks()
+            addToast("Задача удалена!", "delete")
         } else {
             throw new Error(`Удаление задачи с id=${taskid}: Ошибка возвращенных данных`)
         }

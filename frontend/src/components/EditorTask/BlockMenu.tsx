@@ -11,7 +11,7 @@ import IcoDescr from '@asset/title.svg'
 import IcoDelete from '@asset/delete.svg'
 
 export const asideButtons = [
-    ["Описание задачи", "descr", IcoDescr],
+    ["Описание задачи", "", IcoDescr],
     ["Разбивка по шагам", "steps", IcoStep],
     ["Тайминг сроков", "timing", IcoCalendar],
     ["Оценка критичности", "risk", IcoRisk],
