@@ -91,6 +91,9 @@
         align-items: center;
         padding-right: 1.8em;
         overflow-y: auto;
+
+        border-top-left-radius: calc(27px / 1.7);
+        border-bottom-left-radius: calc(27px / 1.7);
     }
 
     &__block {

@@ -22,13 +22,15 @@
         width: 98vw;
         height: 95%;
 
-        border: 1px solid var(--color-bg-secondary);
+        // border: 2px solid var(--color-bg-primary);
 
         // background-color: var(--color-bg-secondary);
         transform: scale(0);
         transition: transform 300ms ease-in-out;
 
-        border-radius: .5em;
+        // border-radius: .5em;
+        border-radius: calc(27px / 1.7);
+        // border-top-right-radius: calc(27px / 1.7);
         overflow: hidden;
 
         position: relative;

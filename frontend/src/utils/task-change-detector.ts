@@ -104,6 +104,7 @@ export function taskChangeSubtasksDetector (originalTask:TypeViewTask, editingTa
         if (os.description != es.description) return true
         if (os.instruction != es.instruction) return true
         if (os.motivation != es.motivation) return true
+        if (os.continuance != es.continuance) return true
         if (os.order != es.order) return true
     }
 

@@ -6,7 +6,7 @@ import IcoRisk from '@asset/risk.svg'
 import Toggle from '@comps/Toggles/Toggle'
 import TextArea from '@comps/TextArea/TextArea'
 
-import values_component from '@comps/NewTask/BlockCriticalityValues.json'
+import values_component from '@api/BlockCriticalityValues.json'
 
 type TypeProps = {
     risk: TypeTasks_RI

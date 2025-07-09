@@ -6,7 +6,7 @@ import Toggle from '@comps/Toggles/Toggle'
 import IcoImpact from '@asset/impact.svg'
 import IcoRisk from '@asset/risk.svg'
 
-import values_component from '@comps/NewTask/BlockCriticalityValues.json'
+import values_component from '@api/BlockCriticalityValues.json'
 
 function BlockEnergy() {
     const [fillingNewTask, updateNewTask] = useAtom(currentNewTask)

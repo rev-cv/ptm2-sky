@@ -8,31 +8,23 @@ import { formatDateString } from '@utils/date-funcs'
 import { taskChangeDetector } from '@utils/task-change-detector'
 import './style.scss'
 
-import ProgressCircle from '@comps/ProgressCircle/ProgressCircle'
-import Button from '@comps/Button/Button'
 import BlockSubTask from './BlockSubTask'
 import ModalEditorTask from '@comps/EditorTask/EditorTask'
 
 import IcoStart from '@asset/start.svg'
 import IcoRisk from '@asset/risk.svg'
 import IcoImpact from '@asset/impact.svg'
-import IcoSubTasks from '@asset/subtask.svg'
 import IcoFilters from '@asset/filter.svg'
-import IcoCalendar from '@asset/calendar.svg'
 
-import riskImpact from '@comps/NewTask/BlockCriticalityValues.json'
+import riskImpact from '@api/BlockCriticalityValues.json'
 
 type TaskProps = {
     objTask: TypeViewTask;
 }
 
 function Task({objTask} : TaskProps) {
-
-    const [isOpenRist, setIsOpenRisk] = useState(false)
-    const [isOpenSubTask, setIsOpenSubTask] = useState(false)
-    const [isOpenFiters, setIsOpenFiters] = useState(false)
-    const [isOpenDates, setIsOpenDates] = useState(false)
     const [isOpenEditorTask, setIsOpenEditorTask] = useState(false)
+    const [isOpenSubTasks, setIsOpenSubTasks] = useState(false)
 
     const deadline = objTask.deadline ? new Date(objTask.deadline) : null;
     const deadlaneDiff = deadline ? Math.floor((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24) + 1) : null;
@@ -45,52 +37,23 @@ function Task({objTask} : TaskProps) {
 
     const isFail = deadline && deadline < new Date()
 
-    const created_at = objTask.created_at ? new Date(objTask.created_at) : null;
     const activation = objTask.activation ? new Date(objTask.activation) : null;
 
     const riskValue = getRiskImpactValue("risk", objTask.risk);
     const impactValue = getRiskImpactValue("impact", objTask.impact);
 
-    
+    const countFilters = getCountFilters()
 
-    function handleToggleExpanders(arg: string) {
-        switch (arg) {
-            case "risk":
-                setIsOpenRisk(!isOpenRist)
-                setIsOpenSubTask(false)
-                setIsOpenFiters(false)
-                setIsOpenDates(false)
-                break
-            case "subtask":
-                setIsOpenRisk(false)
-                setIsOpenSubTask(!isOpenSubTask)
-                setIsOpenFiters(false)
-                setIsOpenDates(false)
-                break
-            case "filters":
-                setIsOpenRisk(false)
-                setIsOpenSubTask(false)
-                setIsOpenFiters(!isOpenFiters)
-                setIsOpenDates(false)
-                break
-            case "dates":
-                setIsOpenRisk(false)
-                setIsOpenSubTask(false)
-                setIsOpenFiters(false)
-                setIsOpenDates(!isOpenDates)
-                break
-            default:
-                console.warn(`Unknown expander type: ${arg}`)
-                return
-        }
-    }
+    const [doneSubTasksCount, waitSubTasksCount] = objTask.subtasks.reduce((prev, cur) => 
+	    cur.status ? [prev[0] + 1, prev[0]] : [prev[0], prev[1] + 1], [0, 0]
+    )
 
-    function countFilters () {
+    function getCountFilters () {
         return (objTask?.filters.theme?.length || 0) +
             (objTask?.filters.stress?.length || 0) +
             (objTask?.filters.action_type?.length || 0) +
             (objTask?.filters.state
-                ? Object.values(objTask?.filters.state).reduce((sum, arr) => sum + (arr?.length || 0), 0)
+                ? Object.values(objTask.filters.state).reduce((sum, arr) => sum + (arr?.length || 0), 0)
                 : 0)
     }
 
@@ -108,233 +71,121 @@ function Task({objTask} : TaskProps) {
     return (<>
     
     <div 
-        className={`task-list__item${objTask.status ? " task-done" : isFail ? " task-fail" : ""}`}
+        className={`task-item${objTask.status ? " task-done" : isFail ? " task-fail" : ""}`}
         onClick={() => setIsOpenEditorTask(true)}
         >
-        <div className="task-list__item__title">{objTask.title}</div>
-        <div className="task-list__item__description">{objTask.description}</div>
-        <div className="task-list__item__description">{objTask.motivation}</div>
-        {
-            objTask.deadline &&
-                <div className={`task-list__item__deadline ${deadlineClass}`}>
-                    <IcoStart />
-                    { deadline ? <span>{formatDateString(deadline)}</span> : "" }
-                    { deadlaneDiff != null ? <span className='days'>{`(${deadlaneDiff} days)`}</span> : "" }
-                </div>
+        <div className="task-item__title">{objTask.title}</div>
+
+        {(0 < objTask.description.trim().length) ?
+            <div className="task-item__descr">{objTask.description}</div> : null
         }
 
-        <div className="task-list__item__onside" onClick={e => e.stopPropagation()}>
-
-            {
-                (objTask.risk && 0 < objTask.risk) ?
-                    <ProgressCircle 
-                        title={`risk ${objTask.risk}`} 
-                        value={objTask.risk} 
-                        Icon={IcoRisk}
-                        onClick={e => {
-                            handleToggleExpanders("risk")
-                            e.stopPropagation()
-                        }}
-                    /> : null
-            }
-
-            {
-                (objTask.impact && 0 < objTask.impact) ?
-                    <ProgressCircle 
-                        title={`impact ${objTask.impact}`} 
-                        value={objTask.impact} 
-                        Icon={IcoImpact}
-                        onClick={e => {
-                            handleToggleExpanders("risk")
-                            e.stopPropagation()
-                        }}
-                    /> : null
-            }
-
-            {
-                (0 < objTask.subtasks?.length) ? <Button 
-                    variant='transparent'
-                    IconComponent={IcoSubTasks}
-                    className="task-list__item__onside__button"
-                    onClick={e => {
-                        handleToggleExpanders("subtask")
-                        e.stopPropagation()
-                    }}
-                    text={(objTask.subtasks ? objTask.subtasks.reduce((prev, cur) => !cur.status ? prev + 1 : prev, 0): 0).toString()}
-                /> : null
-            }
-
-            {
-                hasAtLeastOneFilter(objTask) ? <Button 
-                    variant='transparent'
-                    IconComponent={IcoFilters}
-                    className="task-list__item__onside__button"
-                    onClick={e => {
-                        handleToggleExpanders("filters")
-                        e.stopPropagation()
-                    }}
-                    text={countFilters().toString()}
-                /> : null
-            }
-
-            {
-                (objTask.risk && 0 < objTask.risk || objTask.impact && 0 < objTask.impact || 0 < objTask.subtasks?.length ) ? 
-                <Button 
-                    variant='transparent'
-                    IconComponent={IcoCalendar}
-                    className="task-list__item__onside__button-circle"
-                    onClick={e => {
-                        handleToggleExpanders("dates")
-                        e.stopPropagation()
-                    }}
-                /> : null
-            }
-
-            
-        </div>
-
-        <div className={`task-list__item__extender${isOpenFiters ? " view" : ""}`}>
-            <div className='task-list__item__onside'>
-                {
-                    objTask.filters &&
-                        Object.entries(objTask.filters).map(([key, filter]) => {
-                            if (Array.isArray(filter) && filter.length) {
-                                return filter.map((f) => (
-                                    <Button 
-                                        text={f.name} 
-                                        className="task-list__item__filter-button" 
+        {(0 < objTask.motivation.trim().length) ?
+            <div className="task-item__descr">{objTask.motivation}</div> : null
+        }
+        
+        {(riskValue && 0 < riskValue.value ) &&
+            <div className={`task-item__descr`}>
+                <IcoRisk /> <span>{riskValue.description}</span>
+            </div>
+        }
+        {(impactValue && 0 < impactValue.value ) &&
+            <div className={`task-item__descr`}>
+                <IcoImpact /> <span>{impactValue.description}</span>
+            </div>
+        }
+        {0 < countFilters &&
+            <div className={`task-item__descr`}><span>
+                <IcoFilters /> 
+                {Object.entries(objTask.filters).map(([key, filter]) => {
+                    if (Array.isArray(filter) && filter.length) {
+                        return filter.map((f) => (
+                            <button
+                                onClick={e => {
+                                    e.stopPropagation()
+                                }}
+                                >#{f.name}
+                            </button>
+                        ))
+                    }
+                    if (key === "state" && typeof filter === "object" && filter !== null) {
+                        return Object.entries(filter).map(([, subArr]) =>
+                            Array.isArray(subArr) && subArr.length ? (
+                                subArr.map((f) => (
+                                    <button
                                         onClick={e => {
-                                            console.log(`Filter by ${f.name}`)
                                             e.stopPropagation()
                                         }}
-                                        variant="transparent"
-                                        key={`filter-for-task-item-${f.id}`}
-                                    />
+                                        >#{f.name}
+                                    </button>
                                 ))
-                            }
-                            if (key === "state" && typeof filter === "object" && filter !== null) {
-                                return Object.entries(filter).map(([, subArr]) =>
-                                    Array.isArray(subArr) && subArr.length ? (
-                                        subArr.map((f) => (
-                                            <Button 
-                                                text={f.name} 
-                                                className="task-list__item__filter-button" 
-                                                onClick={e => {
-                                                    console.log(`Filter by ${f.name}`)
-                                                    e.stopPropagation()
-                                                }}
-                                                variant="transparent"
-                                                key={`filter-for-task-item-${f.id}`}
-                                            />
-                                        ))
-                                    ) : null
-                                );
-                            }
-                            return null;
-                        })
-                }
+                            ) : null
+                        )
+                    }
+                    return null
+                })}
+            </span></div>
+        }
+        {objTask.activation &&
+            <div className={`task-item__descr`}>
+                <IcoStart />
+                { activation ? <span>{formatDateString(activation)}</span> : "" }
             </div>
-        </div>
+        }
+        {objTask.deadline &&
+            <div className={`task-item__descr ${deadlineClass} dl`}>
+                <IcoStart />
+                { deadline ? <span>{formatDateString(deadline)}</span> : "" }
+                { deadlaneDiff != null ? <span className='days'> {`(${deadlaneDiff} days)`}</span> : "" }
+            </div>
+        }
 
-        <div className={`task-list__item__extender${isOpenSubTask ? " view" : ""}`}>
-            <div>
-                {
-                    objTask.subtasks?.map((subtask, index) => (
+        { (0 < objTask.subtasks.length) && <>
+            <div className={`task-item__subtasks-btn`}>
+                <button
+                    onClick={e => {
+                        e.stopPropagation()
+                        setIsOpenSubTasks(!isOpenSubTasks)
+                    }}
+                    ><span>{`${doneSubTasksCount} / ${objTask.subtasks.length}`}</span> подзадач
+                </button>
+            </div>
+            <div className={`task-item__subtask-extender${isOpenSubTasks ? " view" : ""}`}>
+                <div>
+                    { objTask.subtasks?.map((subtask, index) => (
                         <BlockSubTask 
                             key={`task-subtask-id${index}`} 
                             subtask={subtask}
-                            onChangeStatus={() => {}}
+                            onChangeStatus={() => {
+                                const st = objTask.subtasks.map(elem => 
+                                    elem.id === subtask.id ? {...elem, status: !elem.status} : elem
+                                )
+                                updateTask({...objTask, subtasks: st})
+                            }}
                         />
-                    ))
-                }
-            </div>
-        </div>
-
-        <div className={`task-list__item__extender${isOpenRist ? " view" : ""}`}>
-            <div className='task-list__item__risk'>
-                {
-                    riskValue ? 
-                        <div>
-                            {/* <span>Risk {riskValue.label}. </span> */}
-                            <span>{riskValue.description}</span>
-                        </div>
-                    : null
-                }
-                {
-                    impactValue ? 
-                        <div>
-                            {/* <span>Risk {impactValue.label}. </span> */}
-                            <span>{impactValue.description}</span>
-                        </div>
-                    : null
-                }
-                <div>{objTask.risk_explanation}</div>
-                <div>{objTask.risk_proposals}</div>
-            </div>
-        </div>
-
-        <div className={`task-list__item__extender${isOpenDates ? " view" : ""}`}>
-            <div className='task-list__item__dates'>
-                <div>
-                    <span>Created at: </span>
-                    {created_at ? formatDateString(created_at) : "N/A"}
-                </div>
-                <div>
-                    <span>Activated at: </span>
-                    {activation ? formatDateString(activation) : "N/A"}
-                </div>
-                <div>
-                    <span>Deadline: </span>
-                    {deadline ? formatDateString(deadline) : "N/A"}
-                </div>
-                <div>
-                    <span>Task checks: </span>
-                    {
-                        objTask.taskchecks.length === 0 ? "N/A" :
-                        objTask.taskchecks.map((check, index) => (
-                            <div key={`task-check-${index}`}>
-                                {formatDateString(new Date(check))}
-                            </div>
-                        ))
-                    }
+                    ))}
                 </div>
             </div>
-        </div>
+        </>}
     </div>
 
-    {
+    { isOpenEditorTask ? 
         // отображение модального окна для задачи
-        isOpenEditorTask ? 
-            <ModalEditorTask 
-                originakTask={objTask}
-                onExit={updatedTask => {
-                    setIsOpenEditorTask(false)
-                    if (taskChangeDetector(updatedTask)) {
-                        setTimeout(() => updateTask(updatedTask), 400)
-                    }
-                }}
-                onDelete={() => {
-                    removeTask(objTask.id)
-                    setIsOpenEditorTask(false)
-                }}
-            /> : null
-    }
+        <ModalEditorTask 
+            originakTask={objTask}
+            onExit={updatedTask => {
+                setIsOpenEditorTask(false)
+                if (taskChangeDetector(updatedTask)) {
+                    setTimeout(() => updateTask(updatedTask), 400)
+                }
+            }}
+            onDelete={() => {
+                removeTask(objTask.id)
+                setIsOpenEditorTask(false)
+            }}
+        />
+    : null }
     </>)
 }
 
 export default Task
-
-
-function hasAtLeastOneFilter(task: TypeViewTask): boolean {
-    const { filters } = task;
-    return (
-        filters?.theme?.length > 0 ||
-        filters?.state?.physical?.length > 0 ||
-        filters?.state?.intellectual?.length > 0 ||
-        filters?.state?.emotional?.length > 0 ||
-        filters?.state?.motivational?.length > 0 ||
-        filters?.state?.social?.length > 0 ||
-        filters?.stress?.length > 0 ||
-        filters?.action_type?.length > 0
-    );
-}

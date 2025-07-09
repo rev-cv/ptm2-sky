@@ -11,7 +11,10 @@ function CheckBoxTask ({state = false, onChangeStatus}: CheckBoxSubTaskProps) {
     return (
         <button
             className={`checkbox-sub${state ? " active" : ""}`}
-            onClick={() => onChangeStatus && onChangeStatus(!state) }
+            onClick={e => {
+                e.stopPropagation()
+                onChangeStatus && onChangeStatus(!state)
+            }}
         >
             <div className="circle"><IcoCircle /></div>
             <div className="check"><IcoCheck /></div>

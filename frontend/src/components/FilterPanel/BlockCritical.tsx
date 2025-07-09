@@ -7,7 +7,7 @@ import IcoRisk from '@asset/risk.svg'
 import Expander from '@comps/Expander/Expander'
 import CheckBox from '@comps/CheckBox/CheckBox'
 
-import values_component from '@comps/NewTask/BlockCriticalityValues.json'
+import values_component from '@api/BlockCriticalityValues.json'
 
 function BlockCritical () {
     
