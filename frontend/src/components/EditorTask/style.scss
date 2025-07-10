@@ -70,12 +70,13 @@
     &__bottom-btns {
         position: relative;
         background-color: var(--color-bg-primary);
-        grid-column: 1 / -1;
+        grid-column: 2 / -1;
         display: flex;
         justify-content: center;
         gap: 1em;
         padding: .5em;
         margin-top: .5em;
+        border-radius: calc(27px / 1.7);
 
         &-clean {
             position: absolute;
@@ -92,8 +93,9 @@
         padding-right: 1.8em;
         overflow-y: auto;
 
-        border-top-left-radius: calc(27px / 1.7);
-        border-bottom-left-radius: calc(27px / 1.7);
+        // border-top-left-radius: calc(27px / 1.7);
+        // border-bottom-left-radius: calc(27px / 1.7);
+        border-radius: calc(27px / 1.7);
     }
 
     &__block {

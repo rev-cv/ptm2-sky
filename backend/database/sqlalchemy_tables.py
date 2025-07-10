@@ -21,6 +21,12 @@ task_associations = Table(
     Column('association_id', Integer, ForeignKey('associations.id'))
 )
 
+query_filters = Table(
+    'query_filters', Base.metadata,
+    Column('query_id', Integer, ForeignKey('queries.id')),
+    Column('filter_id', Integer, ForeignKey('filters.id'))
+)
+
 # --- основные таблицы ---
 
 class Filter(Base):
@@ -88,7 +94,33 @@ class Task(Base):
     subtasks = relationship("SubTask", backref="task", lazy="joined")
     filters = relationship("Association", secondary=task_associations, lazy="joined")
     taskchecks = relationship("TaskCheck", backref="task", lazy="joined")
-    
+
+class Queries(Base):
+    __tablename__ = 'queries'
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    q = Column(String, default="")
+
+    crange = Column(String, default="ignore")
+    arange = Column(String, default="ignore")
+    drange = Column(String, default="ignore")
+    irange = Column(String, default="ignore")
+
+    donerule = Column(String, default="ignore")
+    failrule = Column(String, default="ignore")
+
+    inrisk = Column(String, default="")
+    exrisk = Column(String, default="")
+    inimpact = Column(String, default="")
+    eximpact = Column(String, default="")
+
+    sort = Column(String, default="")
+
+    infilt = relationship("Filter", secondary=query_filters, lazy="joined")
+    exfilt = relationship("Filter", secondary=query_filters, lazy="joined")
+
+    is_default = Column(Boolean, default=False)
+
 # --- инициализация базы данных ---
 
 def init_db():

@@ -5,6 +5,7 @@ import NewTask from '@comps/NewTask/NewTask'
 
 import Button from '@comps/Button/Button'
 import Search from '@comps/Search/Search'
+import QueryPanel from '@comps/QueryPanel/QueryPanel'
 import Tasks from '@comps/Tasks/Tasks'
 import FilterPanel from '@comps/FilterPanel/FilterPanel'
 import ThemeToggle from '@comps/Toggles/ThemeToggle'
@@ -31,15 +32,16 @@ function PageApp() {
             {/* центральная область */}
             <div className="frame-central">
                 <div className="frame-central__page">
-                    <Search />
+                    {/* <Search /> */}
+                    <QueryPanel />
                     <Tasks />
                 </div>
-                <Button
+                {/* <Button
                     className='frame-central__btn-setting'
                     onClick={() => setPanel("setting")}
                     IconComponent={IcoSetting}
                     variant='second'
-                />
+                /> */}
             </div>
 
             {/* выдвижная боковая панель (правая) с фильтрами */}

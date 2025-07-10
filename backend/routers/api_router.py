@@ -10,13 +10,15 @@ from sqlalchemy.orm import Session
 from database.sqlalchemy_tables import get_db
 # from database.create_task import write_new_task_to_database
 from database.get_filters import get_all_filters_dict, get_completed_promt
-from database.get_tasks import get_tasks_by_filters
+# from database.get_tasks import get_tasks_by_filters
 from database.write_task import write_task
 from database.remove_task import remove_task
+from database.get_tasks2 import get_tasks
 
 from schemas.types_new_task import TaskGenerateRequest, NewTaskRequest
-from schemas.types_get_filters import TypeSearchPanel
+# from schemas.types_get_filters import TypeSearchPanel
 from schemas.types_write_task import TypeTask
+from schemas.types_get_tasks import TypeQuery
 
 
 tasks = {}       # Хранилище задач
@@ -207,16 +209,28 @@ async def get_filters(request: Request, db: Session = Depends(get_db)):
     filters = get_all_filters_dict(db, True)
     return filters
 
-@router.post("/search_tasks")
-async def search_tasks(
+# @router.post("/search_tasks")
+# async def search_tasks(
+#     request: Request, 
+#     filters: TypeSearchPanel = Body(...), 
+#     db: Session = Depends(get_db)
+#     ):
+
+#     return {
+#         "status": "success", 
+#         "result": get_tasks_by_filters(db, filters)
+#     }
+
+@router.post("/get_tasks")
+async def router_get_tasks(
     request: Request, 
-    filters: TypeSearchPanel = Body(...), 
+    fields: TypeQuery = Body(...), 
     db: Session = Depends(get_db)
     ):
 
     return {
         "status": "success", 
-        "result": get_tasks_by_filters(db, filters)
+        "result": get_tasks(db, fields)
     }
 
 @router.post("/write_task")
