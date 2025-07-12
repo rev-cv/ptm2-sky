@@ -9,7 +9,7 @@ import { taskChangeDetector } from '@utils/task-change-detector'
 import './style.scss'
 
 import BlockSubTask from './BlockSubTask'
-import ModalEditorTask from '@comps/EditorTask/EditorTask'
+import ModalEditorTask from '@comps/TaskEditor/EditorTask'
 
 import IcoStart from '@asset/start.svg'
 import IcoRisk from '@asset/risk.svg'
@@ -44,7 +44,7 @@ function Task({objTask} : TaskProps) {
 
     const countFilters = getCountFilters()
 
-    const [doneSubTasksCount, waitSubTasksCount] = objTask.subtasks.reduce((prev, cur) => 
+    const [doneSubTasksCount, /*waitSubTasksCount*/] = objTask.subtasks.reduce((prev, cur) => 
 	    cur.status ? [prev[0] + 1, prev[0]] : [prev[0], prev[1] + 1], [0, 0]
     )
 
@@ -99,8 +99,9 @@ function Task({objTask} : TaskProps) {
                 <IcoFilters /> 
                 {Object.entries(objTask.filters).map(([key, filter]) => {
                     if (Array.isArray(filter) && filter.length) {
-                        return filter.map((f) => (
+                        return filter.map((f, i) => (
                             <button
+                                key={`${key}-${i}`}
                                 onClick={e => {
                                     e.stopPropagation()
                                 }}
@@ -111,8 +112,9 @@ function Task({objTask} : TaskProps) {
                     if (key === "state" && typeof filter === "object" && filter !== null) {
                         return Object.entries(filter).map(([, subArr]) =>
                             Array.isArray(subArr) && subArr.length ? (
-                                subArr.map((f) => (
+                                subArr.map((f, i) => (
                                     <button
+                                        key={`${key}-${i}`}
                                         onClick={e => {
                                             e.stopPropagation()
                                         }}
@@ -152,7 +154,7 @@ function Task({objTask} : TaskProps) {
             </div>
             <div className={`task-item__subtask-extender${isOpenSubTasks ? " view" : ""}`}>
                 <div>
-                    { objTask.subtasks?.map((subtask, index) => (
+                    { objTask.subtasks?.sort((a, b) => a.order - b.order).map((subtask, index) => (
                         <BlockSubTask 
                             key={`task-subtask-id${index}`} 
                             subtask={subtask}

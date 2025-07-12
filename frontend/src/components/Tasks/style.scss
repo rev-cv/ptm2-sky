@@ -1,14 +1,12 @@
 
 .task-list {
-    padding: 2em 1em;
+    padding: 1em;
 
     display: flex;
     flex-direction: column;
     align-items: center;
 
     font-size: 1rem;
-
-    // min-height: 100%;
 }
 
 .task-item {
@@ -153,9 +151,11 @@
         gap: .2em .4em;
         position: relative;
 
+        margin-bottom: -1em;
+
         button {
+            flex-grow: 1;
             padding: .3em .8em;
-            margin: -5px 0;
             border-radius: calc(1.2em + .2em * 2);
             transition: 
                 background-color 300ms ease-in-out,
@@ -185,22 +185,8 @@
             }
 
             &:hover::after {
-                // padding-left: 4px;
-                // background-color: var(--color-curtain);
-                // margin-right: -4px;
                 background-color: var(--color-curtain);
             }
-        }
-
-        &::after {
-            content: "";
-            position: absolute;
-            height: .3px;
-            left: calc(50% - 100px);
-            bottom: -1em;
-            background-color: var(--color-button-default);
-            width: 200px;
-            opacity: .4;
         }
     }
 
@@ -218,6 +204,9 @@
         > div {
             overflow: hidden;
             padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: .3em;
         }
 
         &.view {
@@ -230,7 +219,7 @@
     &__subtask {
         display: grid;
         grid-template-columns: 1.4em auto;
-        gap: .3em;
+        gap: .1em .3em;
 
         &-title,
         &-description,
@@ -245,7 +234,7 @@
 
         &-title {
             font-size: .7em;
-            font-weight: 700;
+            font-weight: 600;
             padding: .5em 0 .3em 0;
             color: var(--color-text-primary);
         }

@@ -36,6 +36,8 @@
     --color-button-delete-hover: rgba(244, 67, 54, 0.22);
     --color-button-delete-active: rgba(244, 67, 54, 0.32);
     --color-button-delete-text: #f44336;
+
+    --box-shadow: 0 0 32px 0 rgba(0,0,0,0.14);
 }
 
 :root.dark-theme {
@@ -62,4 +64,6 @@
     --color-button-transparent-disabled: #{rgba(#d1d1d1, .05)};
 
     --color-scrollbar-thumb: #{rgba(#d1d1d1, .1)};
+
+    --box-shadow: 0 0 32px 0 rgba(0,0,0,0.25);
 }

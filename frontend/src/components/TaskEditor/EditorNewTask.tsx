@@ -1,29 +1,30 @@
 import { useState } from 'react'
-import { useAtomValue, filterFromServer } from "@utils/jotai.store"
-import { formatDateString } from '@utils/date-funcs'
-import { TypeViewTask } from '@mytype/typeTask'
+import { currentNewTask2, isOpenNewTaskEditor, openedTabsTaskEditor, filterFromServer, useAtom, useAtomValue } from '@utils/jotai.store'
+import { createTask } from '@api/createTask'
 
+import Button from '@comps/Button/Button'
 import Modal from '@comps/Modal/Modal'
-import BlockMenu, { asideButtons } from './BlockMenu'
+import BlockMenu from './BlockMenu'
 import BlockDescription from './BlockDescr'
 import BlockSubTasks from './BlockSubTasks'
 import BlockTiming from './BlockTiming'
 import BlockRisk from './BlockRisk'
 import BlockFilters, {TypeFilterServer__Tabs} from './BlockFilters'
 
-import './style.scss'
+import IcoAdd from '@asset/add.svg'
+import IcoMagic from '@asset/magic.svg'
+import IcoClean from '@asset/clean.svg'
 
-type TypeProps = {
-    originakTask: TypeViewTask
-    onExit?: (editedTask:TypeViewTask) => void
-    onDelete?: () => void
-}
+import { formatDateString } from '@utils/date-funcs'
 
-function EditorTask ({originakTask, onExit, onDelete}:TypeProps) {
-
-    const [activeTab, setActiveTab] = useState(asideButtons[0][1])
-    const [task, updateTask] = useState({...originakTask})
+function EditorNewTask () {
+    const [visible, setVisible] = useState(true)
+    const [isOpen, setStatus] = useAtom(isOpenNewTaskEditor)
+    const [activeTab, setActiveTab] = useAtom(openedTabsTaskEditor)
+    const [task, updateTask] = useAtom(currentNewTask2)
     const allFilters = useAtomValue(filterFromServer)
+
+    if (!isOpen) return
 
     const getPage = () => {
         switch (activeTab) {
@@ -272,25 +273,50 @@ function EditorTask ({originakTask, onExit, onDelete}:TypeProps) {
         }
     }
 
-    return <Modal 
-        title={`[${task.id}] ${task.title}`}
-        onClose={() => { if (onExit) onExit(task) }}
-    >
-    
+    return <Modal
+        visible={visible}
+        onRequestClose={() => setVisible(false)}
+        onExited={() => {
+            setStatus(false)
+            setVisible(true)
+        }}>
         <div className="editor-task">
             <BlockMenu
-                isEdit={true}
                 activeTab={activeTab}
                 onChangeTab={activeTab => setActiveTab(activeTab)}
-                onDeleteTask={() => onDelete && onDelete()}
             />
 
             <div className="editor-task__content">
                 { getPage() }
+            </div>
+
+            <div className='editor-task__bottom-btns'>
+                <Button
+                    IconComponent={IcoMagic}
+                    onClick={() => {}}
+                    disabled={ task.title.length < 6 }
+                />
+    
+                <Button
+                    text="Create task"
+                    IconComponent={IcoAdd}
+                    onClick={() => {
+                        createTask()
+                        setStatus(false)
+                    }}
+                    disabled={task.title.length < 6}
+                />
+
+                <Button
+                    IconComponent={IcoClean}
+                    className='editor-task__bottom-btns-clean'
+                    variant='second'
+                    onClick={() => {}}
+                />
             </div>
         </div>
 
     </Modal>
 }
 
-export default EditorTask
+export default EditorNewTask

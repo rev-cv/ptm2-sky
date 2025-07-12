@@ -1,0 +1,131 @@
+.modal-query-editor {
+    width: 40vw !important;
+    max-width: 400px !important;
+    min-width: 300px !important;
+    height: 80vh !important;
+    transition: 
+        width 300ms ease-in-out, 
+        max-width 300ms ease-in-out,
+        height 300ms ease-in-out,
+        opacity 300ms ease-in-out,
+        transform 300ms ease-in-out
+    !important;
+
+    .custom-button-transparent {
+        display: none;
+    }
+}
+
+.modal-query-editor--open {
+    width: 98vw !important;
+    max-width: 1200px !important;
+    height: 95% !important;
+
+    .custom-button-transparent {
+        display: block;
+        z-index: 1;
+    }
+}
+
+.query-editor {
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+    grid-template-rows: 1fr;
+    
+    transition: grid-template-columns 300ms ease-in-out;
+    height: 100%;
+
+    &__list {
+        background-color: var(--color-bg-primary);
+        position: relative;
+        padding: 1em;
+        overflow-y: scroll;
+
+        display: flex;
+        flex-direction: column;
+        gap: .2em;
+
+        > span {
+            min-height: .3em;
+            display: flex;
+            align-items: center;
+
+            &::after {
+                content: '';
+                display: block;
+                height: 1px;
+                background-color: red;
+                top: 0;
+                width: 100%;
+            }
+        }
+    }
+
+    &__item {
+        display: flex;
+        transition: grid-template-columns 900ms ease-in-out;
+        gap: .3em;
+        max-width: 100%;
+        overflow: hidden;
+        position: relative;
+        flex-shrink: 0;
+
+        * {
+            color: var(--color-text-primary) !important;
+        }
+
+        &-title {
+            flex-grow: 1;
+            max-width: 100%;
+
+            > span {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+
+        &-edit-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            background-color: transparent;
+            opacity: 0;
+            transition: opacity 300ms ease-in-out;
+        }
+
+        &:hover .query-editor__item-edit-btn {
+            opacity: .5;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    &__new-query {
+        position: sticky;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    &__editor {
+        background-color: lightblue;
+        opacity: 0;
+        transition: opacity 300ms ease-in-out;
+
+        overflow: hidden;
+    }
+}
+
+
+.modal-query-editor--open .query-editor {
+    grid-template-columns: 1fr 2fr;
+    transform: translateY(0);
+
+    .query-editor__editor {
+        opacity: 1;
+    }
+}

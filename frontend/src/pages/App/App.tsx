@@ -1,10 +1,8 @@
 import './style.scss'
 
-import { useAtom, openSidePanel } from '@utils/jotai.store'
+import { useAtomValue, openSidePanel } from '@utils/jotai.store'
 import NewTask from '@comps/NewTask/NewTask'
 
-import Button from '@comps/Button/Button'
-import Search from '@comps/Search/Search'
 import QueryPanel from '@comps/QueryPanel/QueryPanel'
 import Tasks from '@comps/Tasks/Tasks'
 import FilterPanel from '@comps/FilterPanel/FilterPanel'
@@ -12,12 +10,10 @@ import ThemeToggle from '@comps/Toggles/ThemeToggle'
 import Сurtain from '@comps/Сurtain/Сurtain'
 import Toast from '@comps/Toast/Toast'
 
-import EditorNewTask from '@comps/EditorTask/EditorNewTask'
-
-import IcoSetting from '@asset/setting.svg'
+import EditorNewTask from '@comps/TaskEditor/EditorNewTask'
 
 function PageApp() {
-    const [currentOpenPanel, setPanel] = useAtom(openSidePanel)
+    const currentOpenPanel = useAtomValue(openSidePanel)
 
     return (
         <>
@@ -32,16 +28,9 @@ function PageApp() {
             {/* центральная область */}
             <div className="frame-central">
                 <div className="frame-central__page">
-                    {/* <Search /> */}
                     <QueryPanel />
                     <Tasks />
                 </div>
-                {/* <Button
-                    className='frame-central__btn-setting'
-                    onClick={() => setPanel("setting")}
-                    IconComponent={IcoSetting}
-                    variant='second'
-                /> */}
             </div>
 
             {/* выдвижная боковая панель (правая) с фильтрами */}
