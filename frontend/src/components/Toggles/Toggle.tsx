@@ -3,17 +3,17 @@ import './style.scss'
 export type TypeToggleElement = {
     label: string
     value: number
-    isActive: boolean
+    isActive?: boolean
     description?: string
 }
 
-export type TypeToggle = {
+type TypeProps = {
     elements: TypeToggleElement[]
     onChange: (value: number) => void
     activeValue: number
 }
 
-function Toggle({elements, onChange, activeValue=0}:TypeToggle) {
+function Toggle({elements, onChange, activeValue=0}:TypeProps) {
     return (
         <div className="toggle" role="radiogroup" aria-label="Theme switcher">
             {

@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect, useState } from "react";
+import { useRef, useLayoutEffect, useState, useEffect } from "react";
 import './style.scss'
 
 type TypeTextArea = {
@@ -14,8 +14,6 @@ function AutoResizeTextarea({value="", className, placeholder, onChange, isBanOn
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const [empty, setEmpty] = useState(false)
 
-    useLayoutEffect(() => resizeHight(), [])
-
     const resizeHight = () => {
         const textarea = textareaRef.current
         if (textarea) {
@@ -23,6 +21,20 @@ function AutoResizeTextarea({value="", className, placeholder, onChange, isBanOn
             textarea.style.height = textarea.scrollHeight + "px"
         }
     }
+
+    // пересчет высоты при изменении value
+    useLayoutEffect(() => resizeHight(), [value])
+
+    // пересчет высоты при изменении ширины textarea
+    useEffect(() => {
+        const textarea = textareaRef.current
+        if (!textarea) return
+        const observer = new ResizeObserver(() => {
+            resizeHight()
+        })
+        observer.observe(textarea)
+        return () => observer.disconnect()
+    }, [])
 
     const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         resizeHight()
@@ -38,7 +50,7 @@ function AutoResizeTextarea({value="", className, placeholder, onChange, isBanOn
 
     const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
         if (isBanOnEnter) {
-            e.preventDefault();
+            e.preventDefault()
             const text = e.clipboardData.getData('text').replace(/\n/g, ' ')
             const textarea = textareaRef.current
             if (textarea) {
@@ -71,10 +83,9 @@ function AutoResizeTextarea({value="", className, placeholder, onChange, isBanOn
             onPaste={handlePaste}
             value={value}
             placeholder={placeholder}
-            style={{ overflow: "hidden", resize: "none" }}
             rows={1}
         />
-    );
+    )
 }
 
 export default AutoResizeTextarea

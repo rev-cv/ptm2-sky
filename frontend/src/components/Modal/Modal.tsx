@@ -33,8 +33,8 @@ function Modal ({visible, onRequestClose, onExited, children, className}:TypeMod
 
     // сценарий 1: пользователь инициирует закрытие
     const handleClose = () => {
-        setIsClosing(true);
-        onRequestClose(); // родитель ставит visible=false
+        setIsClosing(true)
+        onRequestClose() // родитель ставит visible=false
     }
 
     // сценарий 2: родитель убирает visible
@@ -44,12 +44,10 @@ function Modal ({visible, onRequestClose, onExited, children, className}:TypeMod
             const timeout = setTimeout(() => {
                 setIsClosing(false)
                 onExited()
-            }, 300)
+            }, 900)
             return () => clearTimeout(timeout)
         }
-    }, [visible]);
-
-    if (!visible && !isClosing) return null;
+    }, [visible])
 
     return <div 
         className={`modal-curtain${isOpening && !isClosing ? " modal--open" : ""}`}

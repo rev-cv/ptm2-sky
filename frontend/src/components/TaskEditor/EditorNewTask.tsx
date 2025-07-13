@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { currentNewTask2, isOpenNewTaskEditor, openedTabsTaskEditor, filterFromServer, useAtom, useAtomValue } from '@utils/jotai.store'
+import { currentNewTask2, isOpenNewTaskEditor, openedTabsTaskEditor, atomFilterList, useAtom, useAtomValue } from '@utils/jotai.store'
 import { createTask } from '@api/createTask'
 
 import Button from '@comps/Button/Button'
@@ -22,7 +22,7 @@ function EditorNewTask () {
     const [isOpen, setStatus] = useAtom(isOpenNewTaskEditor)
     const [activeTab, setActiveTab] = useAtom(openedTabsTaskEditor)
     const [task, updateTask] = useAtom(currentNewTask2)
-    const allFilters = useAtomValue(filterFromServer)
+    const allFilters = useAtomValue(atomFilterList)
 
     if (!isOpen) return
 

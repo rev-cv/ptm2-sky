@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAtomValue, filterFromServer } from "@utils/jotai.store"
+import { useAtomValue, atomFilterList } from "@utils/jotai.store"
 import { formatDateString } from '@utils/date-funcs'
 import { TypeViewTask } from '@mytype/typeTask'
 
@@ -23,7 +23,7 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
     const [visible, setVisible] = useState(true)
     const [activeTab, setActiveTab] = useState(asideButtons[0][1])
     const [task, updateTask] = useState({...originakTask})
-    const allFilters = useAtomValue(filterFromServer)
+    const allFilters = useAtomValue(atomFilterList)
 
     const getPage = () => {
         switch (activeTab) {

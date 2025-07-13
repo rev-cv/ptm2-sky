@@ -1,8 +1,7 @@
 import { loadFilters } from '@api/loadFilters'
 import { useEffect } from "react";
 
-import { filterFromServer } from '@utils/jotai.store'
-import { useAtomValue } from "jotai"
+import { useAtomValue, atomFilterList } from '@utils/jotai.store'
 
 import BlockCritical from "./BlockCritical"
 import BlockAssoc from "./BlockAssoc"
@@ -13,7 +12,7 @@ import "./style.scss"
 
 function FilterPanel (){
 
-    const filters = useAtomValue(filterFromServer) 
+    const filters = useAtomValue(atomFilterList) 
 
     useEffect(() => loadFilters(), [])
 

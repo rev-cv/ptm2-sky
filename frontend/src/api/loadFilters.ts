@@ -1,5 +1,5 @@
 const APIURL = import.meta.env.VITE_API_URL;
-import { getDefaultStore, filterFromServer } from '@utils/jotai.store'
+import { getDefaultStore, atomFilterList } from '@utils/jotai.store'
 
 export function loadFilters () {
 
@@ -13,7 +13,7 @@ export function loadFilters () {
         .then(res => res.json())
         .then(data => {
             console.log("filters from API:", data)
-            store.set(filterFromServer, data)
+            store.set(atomFilterList, data)
         })
         .catch(err => {
             console.error("Ошибка загрузки фильтров:", err)

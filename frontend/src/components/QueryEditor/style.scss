@@ -38,25 +38,46 @@
     &__list {
         background-color: var(--color-bg-primary);
         position: relative;
-        padding: 1em;
-        overflow-y: scroll;
-
+        padding: .5em 0 .2em 1em;
+        overflow: hidden;
         display: flex;
         flex-direction: column;
-        gap: .2em;
 
-        > span {
-            min-height: .3em;
+        &-continer {
+            overflow-y: scroll;
+            padding: .5em .7em 1em 0;
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            gap: .1em;
 
-            &::after {
-                content: '';
-                display: block;
-                height: 1px;
-                background-color: red;
-                top: 0;
-                width: 100%;
+            > span {
+                min-height: .3em;
+                height: 0.8em;
+                display: flex;
+                align-items: center;
+
+                &::after {
+                    content: '';
+                    display: block;
+                    height: 1px;
+                    background-color: var(--color-button-transparent-hover);
+                    top: 0;
+                    width: 100%;
+                }
+            }
+        }
+
+        &-continer-menu {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: .3em 0;
+            margin-right: 1em;
+            border-bottom: 1px solid var(--color-button-transparent-hover);
+            gap: .6em;
+
+            .toggle {
+                flex-grow: 1;
             }
         }
     }
@@ -83,6 +104,12 @@
                 text-overflow: ellipsis;
                 white-space: nowrap;
             }
+
+            > svg {
+                width: 1.1em;
+                height: 1.1em;
+                flex-shrink: 0;
+            }
         }
 
         &-edit-btn {
@@ -93,6 +120,7 @@
             background-color: transparent;
             opacity: 0;
             transition: opacity 300ms ease-in-out;
+            flex-shrink: 0;
         }
 
         &:hover .query-editor__item-edit-btn {
@@ -104,19 +132,17 @@
         }
     }
 
-    &__new-query {
-        position: sticky;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
     &__editor {
-        background-color: lightblue;
+        background-color: var(--color-bg-primary);
         opacity: 0;
-        transition: opacity 300ms ease-in-out;
+        transition: 
+            opacity 300ms ease-in-out,
+            padding 300ms ease-in-out
+        ;
 
         overflow: hidden;
+        padding: 0;
+        // border-left: 1px solid var(--color-button-transparent-hover);
     }
 }
 
@@ -127,5 +153,74 @@
 
     .query-editor__editor {
         opacity: 1;
+        padding: 1em;
+    }
+}
+
+.query-block-editor {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: auto;
+    position: relative;
+    max-height: 100%;
+
+    &__block {
+        display: flex;
+        flex-direction: column;
+        max-width: 600px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    &__title {
+        font-size: .6em;
+        font-weight: 700;
+        opacity: .5;
+        user-select: none;
+        
+        &:not(:first-child) {
+            border-top: 1px solid var(--color-button-transparent-hover);
+            margin-top: 1em;
+            padding-top: .7em;
+            margin-bottom: .3em;
+        }
+    }
+
+    &__name {
+        font-size: 1.4em; 
+        font-weight: 700;
+        padding-top: .7em;
+    }
+
+    &__descr {
+        font-size: .7em;
+        line-height: 1.2em !important;
+        border-left: 1px solid var(--color-button-default);
+        padding-left: 1em;
+        opacity: .8;
+        flex-shrink: 0;
+        // margin-bottom: 1em;
+    }
+
+    &__search {
+        font-size: .9em;
+        line-height: 1.2em !important;
+        border-left: 1px solid var(--color-button-default);
+        padding-left: .7em;
+        flex-shrink: 0;
+
+        font-family: "Source Code Pro" !important;
+        font-weight: 300;
+    }
+
+    &__period {
+        display: flex;
+        gap: .5em;
+
+        span {
+            opacity: .6;
+            user-select: none;
+        }
     }
 }

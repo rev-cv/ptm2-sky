@@ -33,6 +33,7 @@ type TypeRule = "ignore" | "" | "exclude" | "tostart" | "toend"
 export type TypeQuery = {
     id: number
     name: string      // отображаемое название запроса
+    descr: string
     q: string         // текст искомый в title, description
 
     infilt: number[]  // id искомых фильтров
