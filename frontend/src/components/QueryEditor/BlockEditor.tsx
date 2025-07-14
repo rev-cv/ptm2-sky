@@ -1,8 +1,13 @@
 import { TypeQuery } from '@mytype/typeSaveQueries'
+import { TypeTasks_RI } from '@mytype/typeTask'
 
 import TextArea from '@comps/TextArea/TextArea'
 import ButtonCalendar from '@comps/ButtonCalendar/ButtonCalendar'
 import Toggle from '@comps/Toggles/Toggle'
+import CheckBox from '@comps/CheckBox/CheckBox'
+import SortControl from '@comps/SortControl/SortControl'
+
+import ci_values from '@api/BlockCriticalityValues.json'
 
 type TypeProps = {
     title: string
@@ -132,12 +137,112 @@ function BlockEditor({title, editable, updateEditable}:TypeProps) {
         <div className='query-block-editor__title'>Исключать из поиска результаты с фильтрами</div>
 
         <div className='query-block-editor__title'>Поиск по рискам невыполнения</div>
+        <div className="query-block-editor__ri">
+            {ci_values.risk.map((elem, index) => (
+                <CheckBox
+                    title={elem.label}
+                    state={editable.inrisk.includes(elem.value as TypeTasks_RI)}
+                    key={`query_editor > query > block_editor > inrisk-${index}`}
+                    onChangeStatus={(newstatus) => {
+                        if (newstatus) {
+                            updateEditable({
+                                ...editable, 
+                                inrisk: [...editable.inrisk, elem.value as TypeTasks_RI],
+                                exrisk: editable.exrisk.filter(v => v !== elem.value as TypeTasks_RI)
+                            })
+                        } else {
+                            updateEditable({
+                                ...editable, 
+                                inrisk: editable.inrisk.filter(v => v !== elem.value as TypeTasks_RI)
+                            })
+                        }
+                    }}
+                />
+            ))}
+        </div>
+        
         <div className='query-block-editor__title'>Исключать из поиска рисками невыполнения</div>
+        <div className="query-block-editor__ri">
+            {ci_values.risk.map((elem, index) => (
+                <CheckBox
+                    title={elem.label}
+                    state={editable.exrisk.includes(elem.value as TypeTasks_RI)}
+                    key={`query_editor > query > block_editor > inrisk-${index}`}
+                    onChangeStatus={(newstatus) => {
+                        if (newstatus) {
+                            updateEditable({
+                                ...editable, 
+                                inrisk: editable.inrisk.filter(v => v !== elem.value as TypeTasks_RI),
+                                exrisk: [...editable.exrisk, elem.value as TypeTasks_RI]
+                            })
+                        } else {
+                            updateEditable({
+                                ...editable, 
+                                exrisk: editable.exrisk.filter(v => v !== elem.value as TypeTasks_RI)
+                            })
+                        }
+                    }}
+                />
+            ))}
+        </div>
 
         <div className='query-block-editor__title'>Поиск по последствиям невыполнения</div>
+        <div className="query-block-editor__ri">
+            {ci_values.impact.map((elem, index) => (
+                <CheckBox
+                    title={elem.label}
+                    state={editable.inimpact.includes(elem.value as TypeTasks_RI)}
+                    key={`query_editor > query > block_editor > inimpact-${index}`}
+                    onChangeStatus={(newstatus) => {
+                        if (newstatus) {
+                            updateEditable({
+                                ...editable, 
+                                inimpact: [...editable.inimpact, elem.value as TypeTasks_RI],
+                                eximpact: editable.eximpact.filter(v => v !== elem.value as TypeTasks_RI)
+                            })
+                        } else {
+                            updateEditable({
+                                ...editable, 
+                                inimpact: editable.inimpact.filter(v => v !== elem.value as TypeTasks_RI)
+                            })
+                        }
+                    }}
+                />
+            ))}
+        </div>
+
         <div className='query-block-editor__title'>Исключать из поиска последствия невыполнения</div>
+        <div className="query-block-editor__ri">
+            {ci_values.impact.map((elem, index) => (
+                <CheckBox
+                    title={elem.label}
+                    state={editable.eximpact.includes(elem.value as TypeTasks_RI)}
+                    key={`query_editor > query > block_editor > inrisk-${index}`}
+                    onChangeStatus={(newstatus) => {
+                        if (newstatus) {
+                            updateEditable({
+                                ...editable, 
+                                inimpact: editable.inimpact.filter(v => v !== elem.value as TypeTasks_RI),
+                                eximpact: [...editable.eximpact, elem.value as TypeTasks_RI]
+                            })
+                        } else {
+                            updateEditable({
+                                ...editable, 
+                                eximpact: editable.eximpact.filter(v => v !== elem.value as TypeTasks_RI)
+                            })
+                        }
+                    }}
+                />
+            ))}
+        </div>
 
         <div className='query-block-editor__title'>Задать сортировку полученных результатов</div>
+        <div className="query-block-editor__sort-control">
+            <SortControl 
+                list={editable.sort}
+                onChange={(newSort) => updateEditable({...editable, sort: newSort})}
+            />
+        </div>
 
 
     </div>

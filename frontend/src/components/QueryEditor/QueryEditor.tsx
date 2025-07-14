@@ -1,5 +1,5 @@
 import './style.scss'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { useAtomValue, queryAllTasks, atomQuerySelect, atomQueryList, atomFilterList } from '@utils/jotai.store'
 import { TypeQuery } from '@mytype/typeSaveQueries'
 import { TypeFilterServer } from '@mytype/typeSearchAndFilter'
@@ -29,11 +29,11 @@ function QueryEditor({onExit}:TypeProps) {
 
     const refEditor = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-        if (editableQuery) {
-            refEditor.current?.scrollTo({ top: 0, behavior: 'smooth' })
+    const scrollToTop = () => {
+        if (refEditor.current) {
+            refEditor.current.scrollTo({ top: 0, behavior: 'smooth' })
         }
-    }, [editableQuery])
+    }
 
     return <Modal
         visible={visible}
@@ -92,7 +92,7 @@ function QueryEditor({onExit}:TypeProps) {
                                     IconComponent={
                                         editableQuery ?
                                             editableQuery.id === query.id ? IcoBack : IcoEdit : IcoQuery
-                                        }
+                                    }
                                     text={query.name}
                                     variant={((querySelect?.id === query.id) || (editableQuery && editableQuery.id === query.id)) ? 'first' : 'second'}
                                     className="query-editor__item-title"
@@ -102,6 +102,7 @@ function QueryEditor({onExit}:TypeProps) {
                                         } else {
                                             setVisible(false)
                                         }
+                                        scrollToTop()
                                     }}
                                 />
                                 { editableQuery ? null :
@@ -109,7 +110,10 @@ function QueryEditor({onExit}:TypeProps) {
                                         IconComponent={IcoEdit}
                                         variant='second'
                                         className={'query-editor__item-edit-btn'}
-                                        onClick={() => setEditableQuery(query)}
+                                        onClick={() => {
+                                            setEditableQuery(query)
+                                            scrollToTop()
+                                        }}
                                     />
                                 }
                             </div>
@@ -123,7 +127,10 @@ function QueryEditor({onExit}:TypeProps) {
                                 className={`query-editor__item`}
                                 >
                                 <Button 
-                                    IconComponent={editableQuery ? IcoEdit : IcoQuery}
+                                    IconComponent={
+                                        editableQuery ?
+                                            editableQuery.id === theme.id ? IcoBack : IcoEdit : IcoQuery
+                                    }
                                     text={theme.name}
                                     variant={((querySelect?.id === theme.id) || (editableQuery && editableQuery.id === theme.id)) ? 'first' : 'second'}
                                     className="query-editor__item-title"
@@ -133,6 +140,7 @@ function QueryEditor({onExit}:TypeProps) {
                                         } else {
                                             setVisible(false)
                                         }
+                                        scrollToTop()
                                     }}
                                 />
                                 { editableQuery ? null :
@@ -140,7 +148,10 @@ function QueryEditor({onExit}:TypeProps) {
                                         IconComponent={IcoEdit}
                                         variant='second'
                                         className={'query-editor__item-edit-btn'}
-                                        onClick={() => setEditableQuery(theme)}
+                                        onClick={() => {
+                                            setEditableQuery(theme)
+                                            scrollToTop()
+                                        }}
                                     />
                                 }
                             </div>

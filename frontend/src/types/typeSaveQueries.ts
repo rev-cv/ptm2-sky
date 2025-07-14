@@ -1,18 +1,18 @@
 import { TypeTasks_RI } from '@mytype/typeTask'
 
-type TypeSortOption =
-    | "CreatedAsc"
-    | "CreatedDesc"
-    | "DeadlineAsc"
-    | "DeadlineDesc"
-    | "ActivationAsc"
-    | "ActivationDesc"
-    | "NameAsc"
-    | "NameDesc"
-    | "RiskAsc"
-    | "RiskDesc"
-    | "ImpactAsc"
-    | "ImpactDesc"
+export type TypeSortOption =
+    | "created_asc"
+    | "created_desc"
+    | "deadline_asc"
+    | "deadline_desc"
+    | "activation_asc"
+    | "activation_desc"
+    | "name_asc"
+    | "name_desc"
+    | "risk_asc"
+    | "risk_desc"
+    | "impact_asc"
+    | "impact_desc"
 
 type TypeRange = string
 // "start…finish" - ищется дата в пределах start - finish. Пример 2025-04-23…2025-05-05

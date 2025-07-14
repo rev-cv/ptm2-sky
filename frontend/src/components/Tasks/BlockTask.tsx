@@ -22,12 +22,14 @@ type TaskProps = {
     objTask: TypeViewTask;
 }
 
+const dayms = 1000 * 60 * 60 * 24; // 1 день в миллисекундах
+
 function Task({objTask} : TaskProps) {
     const [isOpenEditorTask, setIsOpenEditorTask] = useState(false)
     const [isOpenSubTasks, setIsOpenSubTasks] = useState(false)
 
-    const deadline = objTask.deadline ? new Date(objTask.deadline) : null;
-    const deadlaneDiff = deadline ? Math.floor((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24) + 1) : null;
+    const deadline = objTask.deadline ? new Date(objTask.deadline).getTime() : null;
+    const deadlaneDiff = deadline ? Math.floor((deadline + dayms - Date.now()) / dayms) : null;
     const deadlineClass = deadlaneDiff != null && 
         deadlaneDiff < 1 ? "day_1" 
         : deadlaneDiff && deadlaneDiff < 3 ? "days_3"
@@ -35,7 +37,7 @@ function Task({objTask} : TaskProps) {
         : deadlaneDiff && deadlaneDiff < 14 ? "week_2"
         : "in_near_future"
 
-    const isFail = deadline && deadline < new Date()
+    const isFail = deadline && deadline + dayms < Date.now()
 
     const activation = objTask.activation ? new Date(objTask.activation) : null;
 
@@ -68,8 +70,7 @@ function Task({objTask} : TaskProps) {
         return null;
     }
 
-    return (<>
-    
+    return <>
     <div 
         className={`task-item${objTask.status ? " task-done" : isFail ? " task-fail" : ""}`}
         onClick={() => setIsOpenEditorTask(true)}
@@ -137,7 +138,7 @@ function Task({objTask} : TaskProps) {
         {objTask.deadline &&
             <div className={`task-item__descr ${deadlineClass} dl`}>
                 <IcoStart />
-                { deadline ? <span>{formatDateString(deadline)}</span> : "" }
+                { deadline ? <span>{formatDateString(new Date(deadline))}</span> : "" }
                 { deadlaneDiff != null ? <span className='days'> {`(${deadlaneDiff} days)`}</span> : "" }
             </div>
         }
@@ -187,7 +188,7 @@ function Task({objTask} : TaskProps) {
             }}
         />
     : null }
-    </>)
+    </>
 }
 
 export default Task

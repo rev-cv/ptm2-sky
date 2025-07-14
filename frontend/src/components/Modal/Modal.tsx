@@ -44,7 +44,7 @@ function Modal ({visible, onRequestClose, onExited, children, className}:TypeMod
             const timeout = setTimeout(() => {
                 setIsClosing(false)
                 onExited()
-            }, 900)
+            }, 300)
             return () => clearTimeout(timeout)
         }
     }, [visible])

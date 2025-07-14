@@ -1,24 +1,24 @@
-// import { useState } from "react"
 import './style.scss'
 
 type TypeProps = {
     title?: string
     state?: boolean
+    icon?: string
     className?: string
     desciption?: string
     onChangeStatus?: (status:boolean) => void
 }
 
-function CheckBox({ title = "checkbox", state = false, className = "", desciption, onChangeStatus }: TypeProps) {
+function CheckBox({ title = "checkbox", state = false, icon, className = "", desciption, onChangeStatus }: TypeProps) {
+
+    const Icon = icon ? icon : null
+
     return (
         <button
             className={`${className ? className + " " : ""}checkbox${state ? " active" : ""}`}
-            onClick={() => {
-                if (onChangeStatus) onChangeStatus(!state)
-            }}
+            onClick={() => { if (onChangeStatus) onChangeStatus(!state) }}
             title={desciption ? desciption : ""}
-        >
-            {title}
+            >{Icon ? <Icon/> : title}
         </button>
     )
 }
