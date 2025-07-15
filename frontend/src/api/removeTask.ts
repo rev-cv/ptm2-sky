@@ -1,5 +1,5 @@
 const APIURL = import.meta.env.VITE_API_URL
-import { loadTasks } from '@api/loadTasks'
+import { loadTasks } from '@api/loadTasks2'
 import { addToast } from '@utils/jotai.store'
 
 export const removeTask = async (taskid:number) => {

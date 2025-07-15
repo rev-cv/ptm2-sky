@@ -1,8 +1,8 @@
 import './style.scss'
 import { useState, useRef } from 'react'
-import { useAtomValue, queryAllTasks, atomQuerySelect, atomQueryList, atomFilterList } from '@utils/jotai.store'
+import { useAtomValue, queryAllTasks, atomQuerySelect, atomQueryList, atomThemeList } from '@utils/jotai.store'
 import { TypeQuery } from '@mytype/typeSaveQueries'
-import { TypeFilterServer } from '@mytype/typeSearchAndFilter'
+import { TypeFilterNew } from '@mytype/typeFilters'
 
 import Modal from '@comps/Modal/Modal'
 import Button from '@comps/Button/Button'
@@ -22,10 +22,10 @@ type TypeProps = {
 function QueryEditor({onExit}:TypeProps) {
     const [visible, setVisible] = useState(true)
     const [queryOrTheme, setQOrT] = useState<0|1>(0)
-    const [editableQuery, setEditableQuery] = useState<TypeQuery|TypeFilterServer|null>(null)
+    const [editableQuery, setEditableQuery] = useState<TypeQuery|TypeFilterNew|null>(null)
     const queryList = useAtomValue(atomQueryList)
     const querySelect = useAtomValue(atomQuerySelect)
-    const filterList = useAtomValue(atomFilterList)
+    const themeList = useAtomValue(atomThemeList)
 
     const refEditor = useRef<HTMLDivElement>(null)
 
@@ -59,7 +59,7 @@ function QueryEditor({onExit}:TypeProps) {
                         }}
                     />
                     <Button
-                        IconComponent={IcoAdd}
+                        icon={IcoAdd}
                         variant='first'
                         onClick={() => {setEditableQuery(
                             (!editableQuery || 0 < editableQuery.id) ? 
@@ -76,7 +76,7 @@ function QueryEditor({onExit}:TypeProps) {
                                 className={`query-editor__item`}
                                 >
                                 <Button 
-                                    IconComponent={IcoQuery}
+                                    icon={IcoQuery}
                                     text={queryAllTasks.name}
                                     variant={querySelect?.id === queryAllTasks.id ? 'first' : 'second'}
                                     className="query-editor__item-title"
@@ -89,7 +89,7 @@ function QueryEditor({onExit}:TypeProps) {
                                 className={`query-editor__item`}
                                 >
                                 <Button 
-                                    IconComponent={
+                                    icon={
                                         editableQuery ?
                                             editableQuery.id === query.id ? IcoBack : IcoEdit : IcoQuery
                                     }
@@ -107,7 +107,7 @@ function QueryEditor({onExit}:TypeProps) {
                                 />
                                 { editableQuery ? null :
                                     <Button 
-                                        IconComponent={IcoEdit}
+                                        icon={IcoEdit}
                                         variant='second'
                                         className={'query-editor__item-edit-btn'}
                                         onClick={() => {
@@ -121,13 +121,13 @@ function QueryEditor({onExit}:TypeProps) {
                     </> : null }
 
                     {queryOrTheme === 1 ? <>
-                        {filterList?.theme.map((theme, index) => (
+                        {themeList.map((theme, index) => (
                             <div 
                                 key={`query-${index}-with-id-${theme.id}`}
                                 className={`query-editor__item`}
                                 >
                                 <Button 
-                                    IconComponent={
+                                    icon={
                                         editableQuery ?
                                             editableQuery.id === theme.id ? IcoBack : IcoEdit : IcoQuery
                                     }
@@ -145,7 +145,7 @@ function QueryEditor({onExit}:TypeProps) {
                                 />
                                 { editableQuery ? null :
                                     <Button 
-                                        IconComponent={IcoEdit}
+                                        icon={IcoEdit}
                                         variant='second'
                                         className={'query-editor__item-edit-btn'}
                                         onClick={() => {
@@ -170,8 +170,8 @@ function QueryEditor({onExit}:TypeProps) {
                 { (editableQuery && queryOrTheme === 1) ?
                     <BlockThemeEditor 
                         title={editableQuery.id < 0 ? 'new theme' : `edit theme : ${editableQuery.id}`}
-                        editable={editableQuery as TypeFilterServer}
-                        updateEditable={(query: TypeFilterServer) => setEditableQuery(query)}
+                        editable={editableQuery as TypeFilterNew}
+                        updateEditable={(query: TypeFilterNew) => setEditableQuery(query)}
                     />:null
                 }
             </div>

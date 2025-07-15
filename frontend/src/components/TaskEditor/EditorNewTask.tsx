@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { currentNewTask2, isOpenNewTaskEditor, openedTabsTaskEditor, atomFilterList, useAtom, useAtomValue } from '@utils/jotai.store'
+import { currentNewTask2, isOpenNewTaskEditor, openedTabsTaskEditor, atomThemeList, atomStressList, atomActionList, atomStateDict, useAtom, useAtomValue } from '@utils/jotai.store'
 import { createTask } from '@api/createTask'
 
 import Button from '@comps/Button/Button'
@@ -9,7 +9,7 @@ import BlockDescription from './BlockDescr'
 import BlockSubTasks from './BlockSubTasks'
 import BlockTiming from './BlockTiming'
 import BlockRisk from './BlockRisk'
-import BlockFilters, {TypeFilterServer__Tabs} from './BlockFilters'
+import BlockFilters, {TypeFilterNew__Tabs} from './BlockFilters'
 
 import IcoAdd from '@asset/add.svg'
 import IcoMagic from '@asset/magic.svg'
@@ -22,7 +22,11 @@ function EditorNewTask () {
     const [isOpen, setStatus] = useAtom(isOpenNewTaskEditor)
     const [activeTab, setActiveTab] = useAtom(openedTabsTaskEditor)
     const [task, updateTask] = useAtom(currentNewTask2)
-    const allFilters = useAtomValue(atomFilterList)
+
+    const themeList = useAtomValue(atomThemeList)
+    const stressList = useAtomValue(atomStressList)
+    const actionList = useAtomValue(atomActionList)
+    const stateDict = useAtomValue(atomStateDict)
 
     if (!isOpen) return
 
@@ -68,7 +72,7 @@ function EditorNewTask () {
                 />
             case "themes":
                 return <BlockFilters 
-                    allList={allFilters?.theme}
+                    allList={themeList}
                     curList={task.filters.theme}
                     tt="темы"
                     description="Категории или области, к которым относится задача, например, работа, учеба или личные проекты."
@@ -102,7 +106,7 @@ function EditorNewTask () {
                 />
             case "stress":
                 return <BlockFilters 
-                    allList={allFilters?.stress}
+                    allList={stressList}
                     curList={task.filters.stress}
                     tt="эмоциональные состояния"
                     description="Эмоции и уровень энергии, которые вызывает процесс выполнения задачи, влияющие на восприятие и мотивацию."
@@ -136,7 +140,7 @@ function EditorNewTask () {
                 />
             case "actions":
                 return <BlockFilters 
-                    allList={allFilters?.action_type}
+                    allList={actionList}
                     curList={task.filters.action_type}
                     tt="события"
                     description="Характер действий, необходимых для выполнения задачи, таких как анализ, творчество или рутинные операции."
@@ -169,36 +173,36 @@ function EditorNewTask () {
                     }}
                 />
             case "states":
-                const statelist:TypeFilterServer__Tabs[] = [
+                const statelist:TypeFilterNew__Tabs[] = [
                     {
                         tabname: "Эмоциональное",
                         sysname: "emotional",
                         descr: "Состояние, связанное с чувствами и настроением, влияющее на восприятие и выполнение задачи.",
-                        allList: allFilters?.state.emotional
+                        allList: stateDict.emotional
                     },
                     {
                         tabname: "Интеллектуальное",
                         sysname: "intellectual",
                         descr: "Состояние, требующее умственной активности, анализа и логического мышления для решения задачи.",
-                        allList: allFilters?.state.intellectual
+                        allList: stateDict.intellectual
                     },
                     {
                         tabname: "Мотивационное",
                         sysname: "motivational",
                         descr: "Состояние, характеризующееся уровнем вдохновения и желания активно работать над задачей.",
-                        allList: allFilters?.state.motivational
+                        allList: stateDict.motivational
                     },
                     {
                         tabname: "Физическое",
                         sysname: "physical",
                         descr: "Состояние, связанное с физической энергией и самочувствием, необходимым для выполнения задачи.",
-                        allList: allFilters?.state.physical
+                        allList: stateDict.physical
                     },
                     {
                         tabname: "Социальное",
                         sysname: "social",
                         descr: "Состояние, связанное с взаимодействием с другими людьми, влияющее на выполнение задачи в группе или обществе.",
-                        allList: allFilters?.state.social
+                        allList: stateDict.social
                     }
                 ]
 
@@ -292,14 +296,14 @@ function EditorNewTask () {
 
             <div className='editor-task__bottom-btns'>
                 <Button
-                    IconComponent={IcoMagic}
+                    icon={IcoMagic}
                     onClick={() => {}}
                     disabled={ task.title.length < 6 }
                 />
     
                 <Button
                     text="Create task"
-                    IconComponent={IcoAdd}
+                    icon={IcoAdd}
                     onClick={() => {
                         createTask()
                         setStatus(false)
@@ -308,7 +312,7 @@ function EditorNewTask () {
                 />
 
                 <Button
-                    IconComponent={IcoClean}
+                    icon={IcoClean}
                     className='editor-task__bottom-btns-clean'
                     variant='second'
                     onClick={() => {}}

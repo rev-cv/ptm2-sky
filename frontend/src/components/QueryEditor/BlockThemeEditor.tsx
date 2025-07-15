@@ -1,11 +1,11 @@
-import { TypeFilterServer } from '@mytype/typeSearchAndFilter'
+import { TypeFilterNew } from '@mytype/typeFilters'
 
 import TextArea from '@comps/TextArea/TextArea'
 
 type TypeProps = {
     title: string
-    editable: TypeFilterServer
-    updateEditable: (query: TypeFilterServer) => void
+    editable: TypeFilterNew
+    updateEditable: (query: TypeFilterNew) => void
 }
 
 function BlockThemeEditor ({title, editable, updateEditable}:TypeProps) {
@@ -20,10 +20,10 @@ function BlockThemeEditor ({title, editable, updateEditable}:TypeProps) {
             isBanOnEnter={true}
         />
         <TextArea 
-            value={editable.description}
+            value={editable.desc}
             placeholder="Description"
             className='query-block-editor__descr'
-            onChange={e => updateEditable({...editable, description: e.target.value})}
+            onChange={e => updateEditable({...editable, desc: e.target.value})}
             isBanOnEnter={false}
         />
     </div>

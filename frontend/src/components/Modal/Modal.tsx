@@ -58,7 +58,7 @@ function Modal ({visible, onRequestClose, onExited, children, className}:TypeMod
             onClick={e => e.stopPropagation()}
             >
             <Button
-                IconComponent={IcoClose}
+                icon={IcoClose}
                 variant='transparent'
                 onClick={() => handleClose()}
             />

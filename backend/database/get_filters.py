@@ -34,6 +34,20 @@ def get_all_filters_dict(db, is_ai_promt=False):
 
     return result
 
+def get_all_filters_list(db):
+    filters = db.query(Filter).all()
+    result = [
+        {
+            "id": f.id,
+            "name": f.name,
+            "desc": f.description,
+            "type": f.filter_type
+        }
+        for f in filters
+    ] if filters else []
+
+    return result
+
 
 def get_completed_promt(promt, db):
     filters = get_all_filters_dict(db)

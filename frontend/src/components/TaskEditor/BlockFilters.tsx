@@ -1,5 +1,5 @@
 
-import { TypeFilterServer } from '@mytype/typeSearchAndFilter'
+import { TypeFilterNew } from '@mytype/typeFilters'
 import { TypeTasks_Filter, TypeStates } from '@mytype/typeTask'
 
 import Button from '@comps/Button/Button'
@@ -7,16 +7,16 @@ import TextArea from '@comps/TextArea/TextArea'
 
 import IcoRemove from '@asset/close.svg'
 
-export type TypeFilterServer__Tabs = {
+export type TypeFilterNew__Tabs = {
     tabname: string
     sysname: TypeStates | undefined
     descr: string
-    allList: TypeFilterServer[] | null | undefined
+    allList: TypeFilterNew[] | null | undefined
 }
 
 type TypeProps = {
-    allList?: TypeFilterServer[] | null | undefined // чистый список с фильтрами
-    tabList?: TypeFilterServer__Tabs[] // фильтры переданные в вкладках
+    allList?: TypeFilterNew[] | null | undefined // чистый список с фильтрами
+    tabList?: TypeFilterNew__Tabs[] // фильтры переданные в вкладках
     curList: TypeTasks_Filter[]
     onAddElement: (elem:TypeTasks_Filter, sub:TypeStates|undefined) => void
     onDelElement: (id:number) => void
@@ -29,7 +29,7 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
 
     const curListID = curList.map(elem => elem.idf)
 
-    const toogleFilter = (elem:TypeFilterServer, sub:TypeStates|undefined=undefined) => {
+    const toogleFilter = (elem:TypeFilterNew, sub:TypeStates|undefined=undefined) => {
         if (curListID.includes(elem.id)) {
             onDelElement(elem.id)
         } else {
@@ -37,7 +37,7 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
                 id: -1, // id еще не добавленной ассоциации с фильтром < 0
                 idf: elem.id, // id фильтра с котором будет ассоциирована ассоциация
                 name: elem.name,
-                description: elem.description, 
+                description: elem.desc, 
                 reason: "",
                 proposals: null
             } as TypeTasks_Filter, sub)
@@ -62,7 +62,7 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
                         </div>
 
                         <Button
-                            IconComponent={IcoRemove}
+                            icon={IcoRemove}
                             variant='remove'
                             onClick={() => onDelElement(filter.idf)}
                             className="editor-current-filter__remove"
@@ -101,7 +101,7 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
                                 {filter.name}
                             </div>
                             <div className="editor-current-filter-btn__descr">
-                                {filter.description}
+                                {filter.desc}
                             </div>
                     </button>
                 ))
@@ -123,7 +123,7 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
                                         {filter.name}
                                     </div>
                                     <div className="editor-current-filter-btn__descr">
-                                        {filter.description}
+                                        {filter.desc}
                                     </div>
                             </button>
                         ))

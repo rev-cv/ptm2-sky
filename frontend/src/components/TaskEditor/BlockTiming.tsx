@@ -99,7 +99,7 @@ function BlockTiming ({deadline, activation, taskchecks,
         }
 
         <Button
-            IconComponent={IcoAdd}
+            icon={IcoAdd}
             onClick={ () => setEmptyTaskChecks([...emptyTaskChecks, ""])}
             title='add new subtask'
         />

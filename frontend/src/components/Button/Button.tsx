@@ -3,14 +3,16 @@ import './style.scss'
 type TypeProps = {
     text?: string | null
     title?: string
-    IconComponent?: string | null | React.FunctionComponent<React.SVGProps<SVGSVGElement>> | React.ComponentType<React.SVGProps<SVGSVGElement>>
+    icon?: string | null | React.FunctionComponent<React.SVGProps<SVGSVGElement>> | React.ComponentType<React.SVGProps<SVGSVGElement>>
     className?: string | null
     variant?: 'first' | 'second' | 'transparent' | 'remove'
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void
     disabled?: boolean
 }
 
-function Button({ text=null, title="", IconComponent=null, className, onClick, disabled=false, variant="first" }: TypeProps) {
+function Button({ text=null, title="", icon=null, className, onClick, disabled=false, variant="first" }: TypeProps) {
+
+    const Icon = icon
 
     const handleClick: React.MouseEventHandler<HTMLButtonElement> = (event) => {
         if (!disabled && onClick) {
@@ -31,11 +33,11 @@ function Button({ text=null, title="", IconComponent=null, className, onClick, d
             result += "custom-button-remove"
         }
 
-        if (text && IconComponent) {
+        if (text && Icon) {
             result += " custom-button-ico-text"
         } else if (text) {
             result += " custom-button-text"
-        } else if (IconComponent) {
+        } else if (Icon) {
             result += " custom-button-ico"
         }
 
@@ -49,7 +51,7 @@ function Button({ text=null, title="", IconComponent=null, className, onClick, d
             disabled={disabled}
             title={title}
             >
-            {IconComponent && <IconComponent />}
+            {Icon && <Icon />}
             {text && <span>{text}</span>}
         </button>
     )

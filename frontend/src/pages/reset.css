@@ -74,12 +74,12 @@ select {
 }
 
 *::-webkit-scrollbar-track {
-	background-color: var(--color-bg-primary);
+	background: transparent;
 }
 
 *::-webkit-scrollbar-thumb {
-	background-color: var(--color-scrollbar-thumb);
 	border-radius: 8px;
+	background: var(--color-scrollbar-thumb);
 }
 
 *::selection {

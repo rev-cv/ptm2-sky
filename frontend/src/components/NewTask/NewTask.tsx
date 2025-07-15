@@ -215,7 +215,7 @@ function NewTask () {
 
         <div className='new-task__btns'>
             <Button
-                IconComponent={status === 'running' || status === 'starting' ? Loader : IcoMagic }
+                icon={status === 'running' || status === 'starting' ? Loader : IcoMagic }
                 onClick={generateOptionsForTask}
                 disabled={
                     status === 'running' || status === 'starting'
@@ -225,13 +225,13 @@ function NewTask () {
 
             <Button
                 text="Create task"
-                IconComponent={status === 'creating' ? Loader : IcoAdd }
+                icon={status === 'creating' ? Loader : IcoAdd }
                 onClick={createNewTask}
                 disabled={(status === 'creating' || fillingNewTask.title.length < 6)}
             />
 
             <Button
-                IconComponent={IcoClean}
+                icon={IcoClean}
                 className='new-task__btns-clean'
                 variant='second'
                 onClick={clearForm}

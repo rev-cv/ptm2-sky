@@ -469,3 +469,6 @@ export const queryAllTasks:TypeQuery = {
 
 export const atomQuerySelect = atom<TypeQuery|null>({...queryAllTasks})
 
+type TypeSamplingStatus = 'idle' | 'loading' | 'success' | 'error'
+
+export const samplingStatus = atom<TypeSamplingStatus>("idle")

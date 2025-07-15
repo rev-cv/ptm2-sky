@@ -30,6 +30,8 @@ type TypeRule = "ignore" | "" | "exclude" | "tostart" | "toend"
 // "tostart" - поместить в начало
 // "toend" - поместить в конец
 
+export const ruleDoneFailList:TypeRule[] = ["ignore", "exclude", "tostart", "toend"]
+
 export type TypeQuery = {
     id: number
     name: string      // отображаемое название запроса

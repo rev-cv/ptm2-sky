@@ -23,7 +23,7 @@ function QueryPanel () {
     return <>
     <div className="query-panel">
         <Button 
-            IconComponent={IcoAdd}
+            icon={IcoAdd}
             onClick={() => setStatusNewTaskEditor(true)}
         />
         <div className="query-panel__query">
@@ -35,13 +35,13 @@ function QueryPanel () {
             <Button
                 className='query-panel__query-reload'
                 onClick={() => loadTasks(true)}
-                IconComponent={IcoReload}
+                icon={IcoReload}
                 variant='transparent'
             />
         </div>
         <Button
             onClick={() => setPanel("setting")}
-            IconComponent={IcoSetting}
+            icon={IcoSetting}
             variant='transparent'
         />
     </div>

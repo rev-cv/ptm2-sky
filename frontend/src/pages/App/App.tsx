@@ -5,15 +5,19 @@ import NewTask from '@comps/NewTask/NewTask'
 
 import QueryPanel from '@comps/QueryPanel/QueryPanel'
 import Tasks from '@comps/Tasks/Tasks'
-import FilterPanel from '@comps/FilterPanel/FilterPanel'
 import ThemeToggle from '@comps/Toggles/ThemeToggle'
 import Сurtain from '@comps/Сurtain/Сurtain'
 import Toast from '@comps/Toast/Toast'
 
 import EditorNewTask from '@comps/TaskEditor/EditorNewTask'
+import { useEffect } from 'react'
+
+import { loadFilters } from '@api/loadFilters'
 
 function PageApp() {
     const currentOpenPanel = useAtomValue(openSidePanel)
+
+    useEffect(() => loadFilters())
 
     return (
         <>
@@ -31,15 +35,6 @@ function PageApp() {
                     <QueryPanel />
                     <Tasks />
                 </div>
-            </div>
-
-            {/* выдвижная боковая панель (правая) с фильтрами */}
-            <div 
-                className={
-                    `frame-right${currentOpenPanel !== "right" ? " hide" : ""}`
-                }>
-                    <div className="frame-right__h3">Filters</div>
-                    <FilterPanel />
             </div>
 
             {/* выдвижная боковая панель (правая) с настройками */}

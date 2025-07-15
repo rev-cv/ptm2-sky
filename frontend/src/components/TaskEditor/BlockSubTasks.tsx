@@ -126,7 +126,7 @@ function BlockSubTasks({ subtasks, onUpdate }: TypeProps) {
                         <span>hours</span>
                     </div>
                     <Button
-                        IconComponent={IcoRemove}
+                        icon={IcoRemove}
                         variant='remove'
                         onClick={() => onUpdate(subtasks.filter(subtask => subtask.id != item.id))}
                         className="editor-subtask__remove"
@@ -140,7 +140,7 @@ function BlockSubTasks({ subtasks, onUpdate }: TypeProps) {
                 onDrop={e => handleDrop(sortedSubtasks.length, e)}
             >
                 <Button
-                    IconComponent={IcoAdd}
+                    icon={IcoAdd}
                     onClick={addNewSubTask}
                     title='add new subtask'
                 />

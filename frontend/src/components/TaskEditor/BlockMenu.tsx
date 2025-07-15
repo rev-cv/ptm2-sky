@@ -47,7 +47,7 @@ function BlockMenu ({activeTab, isEdit=false, onChangeTab, onDeleteTask}:TypePro
             isEdit ? <div className='editor-task__menu__bottom'>
                 <Button
                     text='Delete'
-                    IconComponent={IcoDelete}
+                    icon={IcoDelete}
                     variant='remove'
                     onClick={() => onDeleteTask && onDeleteTask()}
                 />
