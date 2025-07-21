@@ -1,18 +1,11 @@
 
-import { TypeFilterNew } from '@mytype/typeFilters'
+import { TypeFilterNew, TypeFilterNew__Tabs } from '@mytype/typeFilters'
 import { TypeTasks_Filter, TypeStates } from '@mytype/typeTask'
 
 import Button from '@comps/Button/Button'
 import TextArea from '@comps/TextArea/TextArea'
 
 import IcoRemove from '@asset/close.svg'
-
-export type TypeFilterNew__Tabs = {
-    tabname: string
-    sysname: TypeStates | undefined
-    descr: string
-    allList: TypeFilterNew[] | null | undefined
-}
 
 type TypeProps = {
     allList?: TypeFilterNew[] | null | undefined // чистый список с фильтрами

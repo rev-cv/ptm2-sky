@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAtomValue, atomActionList, atomThemeList, atomStressList, atomStateDict } from "@utils/jotai.store"
 import { formatDateString } from '@utils/date-funcs'
 import { TypeViewTask } from '@mytype/typeTask'
+import { TypeFilterNew__Tabs } from '@mytype/typeFilters'
 
 import Modal from '@comps/Modal/Modal'
 import BlockMenu, { asideButtons } from './BlockMenu'
@@ -9,7 +10,7 @@ import BlockDescription from './BlockDescr'
 import BlockSubTasks from './BlockSubTasks'
 import BlockTiming from './BlockTiming'
 import BlockRisk from './BlockRisk'
-import BlockFilters, {TypeFilterNew__Tabs} from './BlockFilters'
+import BlockFilters from './BlockFilters'
 
 import './style.scss'
 

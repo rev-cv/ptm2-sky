@@ -15,8 +15,6 @@ export const loadTasks = async (isSubstitution=false) => {
     // инициализация запроса и обработка результата
     store.set(samplingStatus, 'loading')
 
-    
-
     try {
         const res = await fetch(`${APIURL}/api/get_tasks`, {
             method: 'POST',
@@ -32,7 +30,7 @@ export const loadTasks = async (isSubstitution=false) => {
         setTimeout(() => {
             store.set(viewTasks, data.result)
             store.set(samplingStatus, 'success')
-        }, 3000) // имитация задержки для отладки
+        }, 0) // имитация задержки для отладки
 
         
     } catch (err) {

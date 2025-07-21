@@ -2,19 +2,19 @@ import { TypeQuery, ruleDoneFailList } from '@mytype/typeSaveQueries'
 import { TypeTasks_RI } from '@mytype/typeTask'
 
 import ci_values from '@api/BlockCriticalityValues.json'
-import { atomThemeList, useAtomValue } from '@utils/jotai.store'
+
+import { createTask } from '@api/createQuery'
 
 import TextArea from '@comps/TextArea/TextArea'
-import ButtonCalendar from '@comps/ButtonCalendar/ButtonCalendar'
+import ButtonRangeCalendar from '@comps/ButtonCalendar/ButtonRangeCalendar'
 import Toggle from '@comps/Toggles/Toggle'
 import CheckBox from '@comps/CheckBox/CheckBox'
 import SortControl from '@comps/SortControl/SortControl'
+import FilterSelector from '@comps/FilterSelector/FilterSelector'
 import Button from '@comps/Button/Button'
 
-import IcoList from '@asset/list.svg'
-import IconClose from '@asset/close.svg'
-
-import { useState } from 'react'
+import IcoDelete from '@asset/delete.svg'
+import IcoUpdate from '@asset/save.svg'
 
 type TypeProps = {
     title: string
@@ -23,22 +23,6 @@ type TypeProps = {
 }
 
 function BlockEditor({title, editable, updateEditable}:TypeProps) {
-
-    const themeList = useAtomValue(atomThemeList)
-    const themeListCurrent = themeList
-        .filter(f => editable.infilt.includes(f.id))
-        .sort((a, b) => editable.infilt.indexOf(a.id) - editable.infilt.indexOf(b.id))
-
-    const [filterCarusels, setStatusCarusels] = useState({
-        isTheme: false,
-        isThemeNO: false,
-        isStress: false,
-        isStressNO: false,
-        isState: false,
-        isStateNO: false,
-        isAction: false,
-        isActionNO: false,
-    })
 
     return <div className='query-block-editor__block'>
         <div className='query-block-editor__title'>{title}</div>
@@ -67,18 +51,82 @@ function BlockEditor({title, editable, updateEditable}:TypeProps) {
             onChange={e => updateEditable({...editable, q: e.target.value})}
         />
 
+        <FilterSelector 
+            type_filter='theme'
+
+            intitle='Поиск по темам'
+            extitle='Исключать задачи с темами'
+
+            infilt={editable.infilt}
+            exfilt={editable.exfilt}
+
+            titleClass='query-block-editor__title'
+
+            updateFilters={(infilt, exfilt) => updateEditable(
+                {...editable, infilt, exfilt}
+            )}
+        />
+
+        <FilterSelector 
+            type_filter='state'
+
+            intitle='Поиск по текущему состоянию'
+            extitle='Исключать задачи не соответствующие текущему состоянию'
+
+            infilt={editable.infilt}
+            exfilt={editable.exfilt}
+
+            titleClass='query-block-editor__title'
+
+            updateFilters={(infilt, exfilt) => updateEditable(
+                {...editable, infilt, exfilt}
+            )}
+        />
+
+        <FilterSelector 
+            type_filter='action'
+
+            intitle='Поиск по типу деятельности'
+            extitle='Исключать задачи с типами действий'
+
+            infilt={editable.infilt}
+            exfilt={editable.exfilt}
+
+            titleClass='query-block-editor__title'
+
+            updateFilters={(infilt, exfilt) => updateEditable(
+                {...editable, infilt, exfilt}
+            )}
+        />
+
+        <FilterSelector 
+            type_filter='stress'
+
+            intitle='Поиск по эмоциональной нагрузке'
+            extitle='Исключать задачи с эмоциональной нагрузкой'
+
+            infilt={editable.infilt}
+            exfilt={editable.exfilt}
+
+            titleClass='query-block-editor__title'
+
+            updateFilters={(infilt, exfilt) => updateEditable(
+                {...editable, infilt, exfilt}
+            )}
+        />
+
         <div className='query-block-editor__title'>Поиск по вхождению даты создания в период</div>
 
         <div className='query-block-editor__period'>
-            <ButtonCalendar 
-                date={""}
-                onClickDay={value => {}}
+            <ButtonRangeCalendar 
+                date={editable.crange[0]}
+                onClickDay={value => updateEditable({...editable, crange: [value, editable.crange[1]]})}
                 noDate='ignore'
             />
             <span>-</span>
-            <ButtonCalendar 
-                date={""}
-                onClickDay={value => {}}
+            <ButtonRangeCalendar 
+                date={editable.crange[1]}
+                onClickDay={value => updateEditable({...editable, crange: [editable.crange[0], value]})}
                 noDate='ignore'
             />
         </div>
@@ -86,15 +134,15 @@ function BlockEditor({title, editable, updateEditable}:TypeProps) {
         <div className='query-block-editor__title'>Поиск по вхождению даты активации в период</div>
 
         <div className='query-block-editor__period'>
-            <ButtonCalendar 
-                date={""}
-                onClickDay={value => {}}
+            <ButtonRangeCalendar 
+                date={editable.arange[0]}
+                onClickDay={value => updateEditable({...editable, arange: [value, editable.arange[1]]})}
                 noDate='ignore'
             />
             <span>-</span>
-            <ButtonCalendar 
-                date={""}
-                onClickDay={value => {}}
+            <ButtonRangeCalendar 
+                date={editable.arange[1]}
+                onClickDay={value => updateEditable({...editable, arange: [editable.arange[0], value]})}
                 noDate='ignore'
             />
         </div>
@@ -102,15 +150,15 @@ function BlockEditor({title, editable, updateEditable}:TypeProps) {
         <div className='query-block-editor__title'>Поиск по вхождению дат проверок в период</div>
 
         <div className='query-block-editor__period'>
-            <ButtonCalendar 
-                date={""}
-                onClickDay={value => {}}
+            <ButtonRangeCalendar 
+                date={editable.irange[0]}
+                onClickDay={value => updateEditable({...editable, irange: [value, editable.irange[1]]})}
                 noDate='ignore'
             />
             <span>-</span>
-            <ButtonCalendar 
-                date={""}
-                onClickDay={value => {}}
+            <ButtonRangeCalendar 
+                date={editable.irange[1]}
+                onClickDay={value => updateEditable({...editable, irange: [editable.irange[0], value]})}
                 noDate='ignore'
             />
         </div>
@@ -118,15 +166,15 @@ function BlockEditor({title, editable, updateEditable}:TypeProps) {
         <div className='query-block-editor__title'>Поиск по вхождению даты дедлайна в период</div>
 
         <div className='query-block-editor__period'>
-            <ButtonCalendar 
-                date={""}
-                onClickDay={value => {}}
+            <ButtonRangeCalendar 
+                date={editable.drange[0]}
+                onClickDay={value => updateEditable({...editable, drange: [value, editable.drange[1]]})}
                 noDate='ignore'
             />
             <span>-</span>
-            <ButtonCalendar 
-                date={""}
-                onClickDay={value => {}}
+            <ButtonRangeCalendar 
+                date={editable.drange[1]}
+                onClickDay={value => updateEditable({...editable, drange: [editable.drange[0], value]})}
                 noDate='ignore'
             />
         </div>
@@ -156,55 +204,6 @@ function BlockEditor({title, editable, updateEditable}:TypeProps) {
             onChange={v => updateEditable({...editable, failrule: ruleDoneFailList[v]})}
         />
 
-        <div className='query-block-editor__title'>Поиск по темам</div>
-        
-        <div className='query-block-editor__current-filters'>
-            <div className="query-block-editor__current-filters__list">
-                {0 < themeListCurrent.length ? themeListCurrent.map(elem => (
-                    <div className='query-block-editor__current-filters__item'>
-                        <div>{elem.name}</div>
-                        <button
-                            onClick={() => {
-                                updateEditable({
-                                    ...editable, infilt: editable.infilt.filter(id => id != elem.id)
-                                })
-                            }}
-                            ><IconClose/></button>
-                    </div>
-                )) : "-"}
-            </div>
-            <Button
-                variant='second'
-                icon={IcoList}
-                className={'query-block-editor__current-filters__btn'}
-                onClick={() => setStatusCarusels({...filterCarusels, isTheme: ! filterCarusels.isTheme})}
-            />
-        </div>
-
-        <div className={`query-block-editor__all-filters${filterCarusels.isTheme ? " view" : ""}`}>
-            <div>
-                {themeList.map((elem, index) => 
-                    <div 
-                        className={`query-block-editor__all-filters__item${editable.infilt.includes(elem.id) ? " active" : ""}`}
-                        onClick={() => {
-                            updateEditable({
-                                ...editable, 
-                                infilt: editable.infilt.includes(elem.id) ?
-                                    editable.infilt.filter(id => id != elem.id)
-                                    :
-                                    [...editable.infilt, elem.id]
-                            })
-                        }}
-                        >
-                        <div className='query-block-editor__all-filters__item__name'>{elem.name}</div>
-                        <div className='query-block-editor__all-filters__item__descr'>{elem.desc}</div>
-                    </div>
-                )}
-            </div>
-        </div>
-
-        <div className='query-block-editor__title'>Исключать из поиска результаты с темами</div>
-
         <div className='query-block-editor__title'>Поиск по рискам невыполнения</div>
         <div className="query-block-editor__ri">
             {ci_values.risk.map((elem, index) => (
@@ -230,7 +229,7 @@ function BlockEditor({title, editable, updateEditable}:TypeProps) {
             ))}
         </div>
         
-        <div className='query-block-editor__title'>Исключать из поиска рисками невыполнения</div>
+        <div className='query-block-editor__title'>Исключать из поиска риски невыполнения</div>
         <div className="query-block-editor__ri">
             {ci_values.risk.map((elem, index) => (
                 <CheckBox
@@ -313,6 +312,30 @@ function BlockEditor({title, editable, updateEditable}:TypeProps) {
             />
         </div>
 
+        <div className='query-block-editor__bottom'>
+            {
+                editable.id < 0 ?
+
+                <Button 
+                    text="create"
+                    icon={IcoUpdate}
+                    onClick={() => createTask(editable)}
+                /> : <>
+                    <Button 
+                        text="delete"
+                        icon={IcoDelete}
+                        variant='remove'
+                    />
+                    <Button 
+                        text="update"
+                        icon={IcoUpdate}
+                    />
+                </>
+            }
+            
+
+            
+        </div>
 
     </div>
 }

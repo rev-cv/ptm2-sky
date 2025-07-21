@@ -1,3 +1,4 @@
+import { TypeStates } from '@mytype/typeTask'
 
 export type TypeFilterNew = {
     id: number
@@ -12,4 +13,11 @@ export type TypeSchemeStates = {
     emotional: TypeFilterNew[]
     motivational: TypeFilterNew[]
     social: TypeFilterNew[]
+}
+
+export type TypeFilterNew__Tabs = {
+    tabname: string
+    sysname: TypeStates | undefined
+    descr: string
+    allList: TypeFilterNew[] | null | undefined
 }

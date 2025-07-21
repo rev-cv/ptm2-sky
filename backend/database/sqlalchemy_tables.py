@@ -99,6 +99,7 @@ class Queries(Base):
     __tablename__ = 'queries'
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
+    descr = Column(String, default="")
     q = Column(String, default="")
 
     crange = Column(String, default="ignore")
@@ -116,8 +117,16 @@ class Queries(Base):
 
     sort = Column(String, default="")
 
-    infilt = relationship("Filter", secondary=query_filters, lazy="joined")
-    exfilt = relationship("Filter", secondary=query_filters, lazy="joined")
+    infilt = relationship("Filter", 
+        secondary=query_filters, 
+        lazy="joined",
+        overlaps="infilt"
+    )
+    exfilt = relationship("Filter", 
+        secondary=query_filters,
+        lazy="joined",
+        overlaps="exfilt"
+    )
 
     is_default = Column(Boolean, default=False)
 

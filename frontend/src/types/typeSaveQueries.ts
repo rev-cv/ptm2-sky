@@ -14,15 +14,15 @@ export type TypeSortOption =
     | "impact_asc"
     | "impact_desc"
 
-type TypeRange = string
+export type TypeRange = [string, string]
 // "start…finish" - ищется дата в пределах start - finish. Пример 2025-04-23…2025-05-05
 // "null…finish" - ищется дата вплоть до finish. Пример null…2025-05-05
 // "start…null" - ищется дата от start
 // "ignore" - фильтер игнорируется
 // "availability" - отбор, если имеется дата впринципе
 // "absence" - отбор, если дата отсутствует
-// "NEXT#3" - от начала сегоднешнего дня и до #[число] кол-во дней
-// "LAST#10" - 10 дней в прошлом начиная от конца вчерашнего дня 
+// "NEXT 3" - от начала сегоднешнего дня и до #[число] кол-во дней
+// "LAST 10" - 10 дней в прошлом начиная от конца вчерашнего дня 
 
 type TypeRule = "ignore" | "" | "exclude" | "tostart" | "toend"
 // "ignore" | "" - игнорировать правило

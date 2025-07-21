@@ -61,9 +61,12 @@ function QueryEditor({onExit}:TypeProps) {
                     <Button
                         icon={IcoAdd}
                         variant='first'
-                        onClick={() => {setEditableQuery(
-                            (!editableQuery || 0 < editableQuery.id) ? 
-                            {...queryAllTasks, name:"", descr:""} : null)
+                        onClick={() => {
+                            setEditableQuery(
+                                (!editableQuery || 0 < editableQuery.id) ? 
+                                {...queryAllTasks, name:"", descr:""} : null
+                            )
+                            scrollToTop()
                         }}
                     />
                 </div>

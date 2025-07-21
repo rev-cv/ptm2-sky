@@ -13,11 +13,15 @@ import EditorNewTask from '@comps/TaskEditor/EditorNewTask'
 import { useEffect } from 'react'
 
 import { loadFilters } from '@api/loadFilters'
+import { loadQueries } from '@api/loadQueries'
 
 function PageApp() {
     const currentOpenPanel = useAtomValue(openSidePanel)
 
-    useEffect(() => loadFilters())
+    useEffect(() => {
+        loadFilters()
+        loadQueries()
+    }, [])
 
     return (
         <>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { currentNewTask2, isOpenNewTaskEditor, openedTabsTaskEditor, atomThemeList, atomStressList, atomActionList, atomStateDict, useAtom, useAtomValue } from '@utils/jotai.store'
 import { createTask } from '@api/createTask'
+import { TypeFilterNew__Tabs } from '@mytype/typeFilters'
 
 import Button from '@comps/Button/Button'
 import Modal from '@comps/Modal/Modal'
@@ -9,7 +10,7 @@ import BlockDescription from './BlockDescr'
 import BlockSubTasks from './BlockSubTasks'
 import BlockTiming from './BlockTiming'
 import BlockRisk from './BlockRisk'
-import BlockFilters, {TypeFilterNew__Tabs} from './BlockFilters'
+import BlockFilters from './BlockFilters'
 
 import IcoAdd from '@asset/add.svg'
 import IcoMagic from '@asset/magic.svg'

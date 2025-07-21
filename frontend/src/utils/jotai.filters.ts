@@ -4,15 +4,27 @@ import { TypeFilterNew, TypeSchemeStates } from '@mytype/typeFilters'
 export const atomFilterList = atom<TypeFilterNew[]>([])
 
 export const atomThemeList = atom((get) =>
-    get(atomFilterList).filter(elem => elem.type === "theme")
+    get(atomFilterList)
+        .filter(elem => elem.type === "theme")
+        .sort((a, b) => a.name.localeCompare(b.name))
 )
 
 export const atomActionList = atom((get) =>
-    get(atomFilterList).filter(elem => elem.type === "action_type")
+    get(atomFilterList)
+        .filter(elem => elem.type === "action_type")
+        .sort((a, b) => a.name.localeCompare(b.name))
 )
 
 export const atomStressList = atom((get) =>
-    get(atomFilterList).filter(elem => elem.type === "stress")
+    get(atomFilterList)
+        .filter(elem => elem.type === "stress")
+        .sort((a, b) => a.name.localeCompare(b.name))
+)
+
+export const atomStateList = atom((get) =>
+    get(atomFilterList)
+        .filter(elem => elem.type.slice(0,5) === "state")
+        .sort((a, b) => a.name.localeCompare(b.name))
 )
 
 const schemeStates:TypeSchemeStates = {

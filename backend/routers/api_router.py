@@ -12,6 +12,8 @@ from database.get_filters import get_all_filters_dict, get_all_filters_list, get
 from database.write_task import write_task
 from database.remove_task import remove_task
 from database.get_tasks2 import get_tasks
+from database.write_query import write_query
+from database.get_queries import get_all_queries
 
 from schemas.types_new_task import TaskGenerateRequest, NewTaskRequest
 from schemas.types_write_task import TypeTask
@@ -247,3 +249,21 @@ async def delete_task(
         "status": "success",
         "message": body["taskid"]
     }
+
+@router.post("/write_query")
+async def create_and_update_query(
+    request: Request, 
+    query: TypeQuery = Body(...), 
+    db: Session = Depends(get_db)
+    ):
+    
+    updateable = write_query(db, query)
+
+    return {
+        "status": "success", 
+        "updateable": updateable
+    }
+
+@router.post("/get_query_all")
+async def create_and_update_query(request: Request, db: Session = Depends(get_db)):
+    return {"status": "success", "list_queries": get_all_queries(db)}
