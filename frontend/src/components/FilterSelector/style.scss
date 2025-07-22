@@ -37,6 +37,10 @@
             font-weight: 600;
         }
 
+         * {
+            color: var(--color-button-text) !important;
+        }
+
         > button {
             width: 1em;
             height: 1em;

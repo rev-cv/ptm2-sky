@@ -1,7 +1,6 @@
 from typing import Optional, List, Dict, Any
 from typing import List, Optional, Literal
 from pydantic import BaseModel
-from datetime import datetime
 
 class TypeSubTask(BaseModel):
     id: int

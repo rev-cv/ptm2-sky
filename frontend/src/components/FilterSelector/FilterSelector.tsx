@@ -1,5 +1,5 @@
 import './style.scss'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { atomThemeList, atomActionList, atomStressList, atomStateDict, atomStateList, useAtomValue } from '@utils/jotai.store'
 import { TypeFilterNew, TypeFilterNew__Tabs } from '@mytype/typeFilters'
 
@@ -117,20 +117,21 @@ function FilterSelector ({
             }
         ]
 
-        return statelist.map((tab) => <>
-            <div className='filter-all-list__tab'>{tab.tabname}</div>
-            {tab.allList?.map((elem, index) => (
-                <div 
-                    className={`filter-all-list__item${exfilt.includes(elem.id) ? " active" : ""}`}
-                    onClick={() => toogleActionByFilter(action, elem)}
-                    key={`filter-all-list__item-${elem.id}-${index}`}
-                    >
-                    <div className='filter-all-list__item__name'>{elem.name}</div>
-                    <div className='filter-all-list__item__descr'>{elem.desc}</div>
-                </div>
-            ))}
-        </>)
-    }
+        return statelist.map((tab, tabindex) => (
+            <React.Fragment 
+                key={`all filter for ${action} > block with item (${tabindex})`}>
+                <div className='filter-all-list__tab'>{tab.tabname}</div>
+                {tab.allList?.map((elem, index) => (
+                    <div 
+                        className={`filter-all-list__item${exfilt.includes(elem.id) ? " active" : ""}`}
+                        onClick={() => toogleActionByFilter(action, elem)}
+                        key={`all filter for ${action} > item ID ${elem.id} (${index})`}>
+                        <div className='filter-all-list__item__name'>{elem.name}</div>
+                        <div className='filter-all-list__item__descr'>{elem.desc}</div>
+                    </div>
+                ))}
+            </React.Fragment>)
+    )}
     
     return <>
         {intitle ? <div className={titleClass ? titleClass : ""}>{intitle}</div> : null}
@@ -141,7 +142,7 @@ function FilterSelector ({
                 {0 < selectInList.length ? selectInList.map((elem, index) => (
                     <div 
                         className='filter-selected__item' 
-                        key={`filter-selected-#${elem.id}-${index}`}>
+                        key={`selected filter for infilt > item ID ${elem.id} (${index})`}>
                         <div>{elem.name}</div>
                         <button
                             onClick={() => updateFilters(
@@ -166,8 +167,7 @@ function FilterSelector ({
                     <div 
                         className={`filter-all-list__item${infilt.includes(elem.id) ? " active" : ""}`}
                         onClick={() => toogleActionByFilter("in", elem)}
-                        key={`filter-all-list__item-${elem.id}-${index}`}
-                        >
+                        key={`all filter for infilt > item ID ${elem.id} (${index})`}>
                         <div className='filter-all-list__item__name'>{elem.name}</div>
                         <div className='filter-all-list__item__descr'>{elem.desc}</div>
                     </div>
@@ -183,7 +183,7 @@ function FilterSelector ({
                 {0 < selectExList.length ? selectExList.map((elem, index) => (
                     <div 
                         className='filter-selected__item' 
-                        key={`filter-selected-#${elem.id}-${index}`}>
+                        key={`selected filter for exfilt > item ID ${elem.id} (${index})`}>
                         <div>{elem.name}</div>
                         <button
                             onClick={() => updateFilters(
@@ -208,8 +208,7 @@ function FilterSelector ({
                     <div 
                         className={`filter-all-list__item${exfilt.includes(elem.id) ? " active" : ""}`}
                         onClick={() => toogleActionByFilter("ex", elem)}
-                        key={`filter-all-list__item-${elem.id}-${index}`}
-                        >
+                        key={`all filter for exfilt > item ID ${elem.id} (${index})`}>
                         <div className='filter-all-list__item__name'>{elem.name}</div>
                         <div className='filter-all-list__item__descr'>{elem.desc}</div>
                     </div>

@@ -1,9 +1,9 @@
 from database.sqlalchemy_tables import Queries, Filter
-from schemas.types_get_tasks import TypeQuery
+from schemas.types_queries import TypeQuery
 from sqlalchemy.orm import Session
 from serializers.returned_query import serialize_query
 
-def write_query(db: Session, q: TypeQuery):
+def db_upsert_query(db:Session, q:TypeQuery):
     if q.id < 0:
         # создание нового запроса
         query = Queries(name="")
@@ -27,6 +27,9 @@ def write_query(db: Session, q: TypeQuery):
     query.exrisk = ','.join(str(x) for x in q.exrisk)
     query.inimpact = ','.join(str(x) for x in q.inimpact)
     query.eximpact = ','.join(str(x) for x in q.eximpact)
+
+    query.donerule = q.donerule
+    query.failrule = q.failrule
 
     query.sort = ','.join(q.sort)
 

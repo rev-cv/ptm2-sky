@@ -5,18 +5,16 @@ export async function loadFilters () {
 
     const store = getDefaultStore()
 
-    window.addEventListener('load', () => {
-        fetch(`${APIURL}/api/get_filters`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        })
-        .then(res => res.json())
-        .then(data => {
-            // console.log("filters from API:", data)
-            store.set(atomFilterList, data)
-        })
-        .catch(err => {
-            console.error("Ошибка загрузки фильтров:", err)
-        })
+    fetch(`${APIURL}/api/get_all_filters`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        // console.log("filters from API:", data)
+        store.set(atomFilterList, data.result)
+    })
+    .catch(err => {
+        console.error("Ошибка загрузки фильтров:", err)
     })
 }

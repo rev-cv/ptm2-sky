@@ -1,14 +1,13 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { TypeQuery } from '@mytype/typeSaveQueries'
 import { addToast, atomQueryList, getDefaultStore } from '@utils/jotai.store'
-// import { loadQueries } from '@api/loadQueries'
 
-export const createTask = async (newquery:TypeQuery) => {
+export const createQuery = async (newquery:TypeQuery) => {
 
     const store = getDefaultStore()
 
     try {
-        const res = await fetch(`${APIURL}/api/write_query`, {
+        const res = await fetch(`${APIURL}/api/upsert_query`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newquery)

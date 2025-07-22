@@ -2,7 +2,7 @@
 from typing import List, Tuple, Optional
 from pydantic import BaseModel
 
-from schemas.types_get_filters import TypeRiskImpact
+from schemas.types_filters import TypeRiskImpact
 
 class TypeQuery(BaseModel):
     id: int
@@ -30,4 +30,7 @@ class TypeQuery(BaseModel):
     sort: List[str]
 
     is_default: bool
+
+    # поля заполняемые непосредственно при отправке запроса
     page: Optional[int] = None
+    tz: Optional[int] = 0 # смещение часового пояса в минутах

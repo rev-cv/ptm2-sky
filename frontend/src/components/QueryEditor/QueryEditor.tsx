@@ -1,6 +1,6 @@
 import './style.scss'
 import { useState, useRef } from 'react'
-import { useAtomValue, queryAllTasks, atomQuerySelect, atomQueryList, atomThemeList } from '@utils/jotai.store'
+import { useAtomValue, useAtom, queryAllTasks, atomQuerySelect, atomQueryList, atomThemeList } from '@utils/jotai.store'
 import { TypeQuery } from '@mytype/typeSaveQueries'
 import { TypeFilterNew } from '@mytype/typeFilters'
 
@@ -24,7 +24,7 @@ function QueryEditor({onExit}:TypeProps) {
     const [queryOrTheme, setQOrT] = useState<0|1>(0)
     const [editableQuery, setEditableQuery] = useState<TypeQuery|TypeFilterNew|null>(null)
     const queryList = useAtomValue(atomQueryList)
-    const querySelect = useAtomValue(atomQuerySelect)
+    const [querySelect, setQuerySelect] = useAtom(atomQuerySelect)
     const themeList = useAtomValue(atomThemeList)
 
     const refEditor = useRef<HTMLDivElement>(null)
@@ -62,9 +62,11 @@ function QueryEditor({onExit}:TypeProps) {
                         icon={IcoAdd}
                         variant='first'
                         onClick={() => {
+                            const newform = (queryOrTheme === 0) ? 
+                                {...queryAllTasks, name:"", descr:""} : 
+                                {id:-1, name:"", desc:"", type:"theme"}
                             setEditableQuery(
-                                (!editableQuery || 0 < editableQuery.id) ? 
-                                {...queryAllTasks, name:"", descr:""} : null
+                                (!editableQuery || 0 < editableQuery.id) ? newform : null
                             )
                             scrollToTop()
                         }}
@@ -83,6 +85,10 @@ function QueryEditor({onExit}:TypeProps) {
                                     text={queryAllTasks.name}
                                     variant={querySelect?.id === queryAllTasks.id ? 'first' : 'second'}
                                     className="query-editor__item-title"
+                                    onClick={() => {
+                                        setVisible(false)
+                                        setQuerySelect({...queryAllTasks})
+                                    }}
                                 />
                             </div>
                         }
@@ -92,9 +98,8 @@ function QueryEditor({onExit}:TypeProps) {
                                 className={`query-editor__item`}
                                 >
                                 <Button 
-                                    icon={
-                                        editableQuery ?
-                                            editableQuery.id === query.id ? IcoBack : IcoEdit : IcoQuery
+                                    icon={editableQuery ?
+                                        editableQuery.id === query.id ? IcoBack : IcoEdit : IcoQuery
                                     }
                                     text={query.name}
                                     variant={((querySelect?.id === query.id) || (editableQuery && editableQuery.id === query.id)) ? 'first' : 'second'}
@@ -104,6 +109,7 @@ function QueryEditor({onExit}:TypeProps) {
                                             setEditableQuery(editableQuery.id === query.id ? null : query)
                                         } else {
                                             setVisible(false)
+                                            setQuerySelect(query)
                                         }
                                         scrollToTop()
                                     }}
@@ -130,9 +136,8 @@ function QueryEditor({onExit}:TypeProps) {
                                 className={`query-editor__item`}
                                 >
                                 <Button 
-                                    icon={
-                                        editableQuery ?
-                                            editableQuery.id === theme.id ? IcoBack : IcoEdit : IcoQuery
+                                    icon={editableQuery ?
+                                        editableQuery.id === theme.id ? IcoBack : IcoEdit : IcoQuery
                                     }
                                     text={theme.name}
                                     variant={((querySelect?.id === theme.id) || (editableQuery && editableQuery.id === theme.id)) ? 'first' : 'second'}
@@ -168,6 +173,7 @@ function QueryEditor({onExit}:TypeProps) {
                         title={editableQuery.id < 0 ? 'new query' : `edit query : ${editableQuery.id}`}
                         editable={editableQuery as TypeQuery}
                         updateEditable={(query: TypeQuery) => setEditableQuery(query)}
+                        setEditableQuery={value => setEditableQuery(value)}
                     />:null
                 }
                 { (editableQuery && queryOrTheme === 1) ?
@@ -175,6 +181,7 @@ function QueryEditor({onExit}:TypeProps) {
                         title={editableQuery.id < 0 ? 'new theme' : `edit theme : ${editableQuery.id}`}
                         editable={editableQuery as TypeFilterNew}
                         updateEditable={(query: TypeFilterNew) => setEditableQuery(query)}
+                        setEditableQuery={value => setEditableQuery(value)}
                     />:null
                 }
             </div>

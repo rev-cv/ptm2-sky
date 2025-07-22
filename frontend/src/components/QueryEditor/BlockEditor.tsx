@@ -1,9 +1,12 @@
 import { TypeQuery, ruleDoneFailList } from '@mytype/typeSaveQueries'
 import { TypeTasks_RI } from '@mytype/typeTask'
+import { TypeFilterNew } from '@mytype/typeFilters'
 
 import ci_values from '@api/BlockCriticalityValues.json'
 
-import { createTask } from '@api/createQuery'
+import { createQuery } from '@api/createQuery'
+import { removeQuery } from '@api/removeQuery'
+import { updateQuery } from '@api/updateQuery'
 
 import TextArea from '@comps/TextArea/TextArea'
 import ButtonRangeCalendar from '@comps/ButtonCalendar/ButtonRangeCalendar'
@@ -20,9 +23,10 @@ type TypeProps = {
     title: string
     editable: TypeQuery
     updateEditable: (query: TypeQuery) => void
+    setEditableQuery: (value:TypeQuery|TypeFilterNew|null) => void
 }
 
-function BlockEditor({title, editable, updateEditable}:TypeProps) {
+function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypeProps) {
 
     return <div className='query-block-editor__block'>
         <div className='query-block-editor__title'>{title}</div>
@@ -313,30 +317,35 @@ function BlockEditor({title, editable, updateEditable}:TypeProps) {
         </div>
 
         <div className='query-block-editor__bottom'>
-            {
-                editable.id < 0 ?
-
+            {editable.id < 0 ?
                 <Button 
                     text="create"
                     icon={IcoUpdate}
-                    onClick={() => createTask(editable)}
+                    onClick={() => {
+                        createQuery(editable)
+                        setEditableQuery(null)
+                    }}
                 /> : <>
                     <Button 
                         text="delete"
                         icon={IcoDelete}
                         variant='remove'
+                        onClick={() => {
+                            removeQuery(editable.id)
+                            setEditableQuery(null)
+                        }}
                     />
                     <Button 
                         text="update"
                         icon={IcoUpdate}
+                        onClick={() => {
+                            updateQuery(editable)
+                            setEditableQuery(null)
+                        }}
                     />
                 </>
             }
-            
-
-            
         </div>
-
     </div>
 }
 

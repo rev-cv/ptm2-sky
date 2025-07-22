@@ -1,4 +1,3 @@
-from schemas.types_get_tasks import TypeQuery
 
 def serialize_query(query):
 
@@ -18,12 +17,12 @@ def serialize_query(query):
         "exfilt": [x.id for x in query.exfilt],
 
         "crange": query.crange.split("__"),
-        "arange": query.crange.split("__"),
-        "drange": query.crange.split("__"),
-        "irange": query.crange.split("__"),
+        "arange": query.arange.split("__"),
+        "drange": query.drange.split("__"),
+        "irange": query.irange.split("__"),
 
-        "donerule": [x for x in query.donerule.split(",")],
-        "failrule": [x for x in query.failrule.split(",")],
+        "donerule": query.donerule,
+        "failrule": query.failrule,
         
         "inrisk": get_risk_impact(query.inrisk),
         "exrisk": get_risk_impact(query.exrisk),

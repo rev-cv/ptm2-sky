@@ -114,7 +114,7 @@ function ButtonCalendar ({ onClickDay, date=null, noDate="No Date" }:TypeProps) 
         setShowContext(false)
         if (onClickDay) {
             if (value === null) return onClickDay("")
-            onClickDay(value.toUTCString())
+            onClickDay(value.toISOString())
         }
     }
 

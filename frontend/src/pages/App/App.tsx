@@ -19,8 +19,10 @@ function PageApp() {
     const currentOpenPanel = useAtomValue(openSidePanel)
 
     useEffect(() => {
-        loadFilters()
-        loadQueries()
+        window.addEventListener('load', () => {
+            loadFilters()
+            loadQueries()
+        })
     }, [])
 
     return (

@@ -95,6 +95,10 @@
             color: var(--color-text-primary) !important;
         }
 
+        .custom-button-first * {
+            color: var(--color-button-text) !important;
+        }
+
         &-title {
             flex-grow: 1;
             max-width: 100%;
@@ -103,6 +107,7 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+                font-weight: 600;
             }
 
             > svg {

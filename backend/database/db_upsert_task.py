@@ -1,11 +1,11 @@
 from database.sqlalchemy_tables import Task, Association, TaskCheck, Filter, SubTask
-from schemas.types_write_task import TypeTask
+from schemas.types_tasks import TypeTask
 from sqlalchemy.orm import Session
 from serializers.returned_task import serialize_task
-from datetime import datetime, timezone
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
-def write_task(db: Session, t: TypeTask):
+def db_upsert_task(db: Session, t: TypeTask):
     if t.id < 0:
         # создание новой задачи
         task = Task(title="")
@@ -33,7 +33,7 @@ def write_task(db: Session, t: TypeTask):
             task.activation = None
         else:
             try:
-                activation_time = datetime.strptime(t.activation, "%a, %d %b %Y %H:%M:%S GMT")
+                activation_time = datetime.fromisoformat(t.activation)
                 task.activation = activation_time.replace(tzinfo=ZoneInfo("UTC"))
             except ValueError as e:
                 raise ValueError("Invalid UTC string format in activation") from e
@@ -43,7 +43,7 @@ def write_task(db: Session, t: TypeTask):
             task.deadline = None
         else:
             try:
-                deadline_time = datetime.strptime(t.deadline, "%a, %d %b %Y %H:%M:%S GMT")
+                deadline_time = datetime.fromisoformat(t.deadline)
                 task.deadline = deadline_time.replace(tzinfo=ZoneInfo("UTC"))
             except ValueError as e:
                 raise ValueError("Invalid UTC string format in deadline") from e
@@ -53,10 +53,7 @@ def write_task(db: Session, t: TypeTask):
             db.query(TaskCheck).filter(TaskCheck.task_id == t.id).delete()
         else:
             try:
-                new_dates = [
-                    datetime.strptime(utc_string, "%a, %d %b %Y %H:%M:%S GMT").replace(tzinfo=ZoneInfo("UTC"))
-                    for utc_string in t.taskchecks
-                ]
+                new_dates = [datetime.fromisoformat(utc_string) for utc_string in t.taskchecks]
             except ValueError as e:
                 raise ValueError("Invalid UTC string format in taskchecks") from e
             

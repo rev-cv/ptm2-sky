@@ -15,14 +15,20 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # --- вспомогательные таблицы для ManyToMany ---
 
-task_associations = Table(
-    'task_associations', Base.metadata,
+assoс__tasks_and_associations = Table(
+    'assoс__tasks_and_associations', Base.metadata,
     Column('task_id', Integer, ForeignKey('tasks.id')),
     Column('association_id', Integer, ForeignKey('associations.id'))
 )
 
-query_filters = Table(
-    'query_filters', Base.metadata,
+assoc__queries_infilt_and_filters = Table(
+    'assoc__queries_infilt_and_filters', Base.metadata,
+    Column('query_id', Integer, ForeignKey('queries.id')),
+    Column('filter_id', Integer, ForeignKey('filters.id'))
+)
+
+assoc__queries_exfilt_and_filters = Table(
+    'assoc__queries_exfilt_and_filters', Base.metadata,
     Column('query_id', Integer, ForeignKey('queries.id')),
     Column('filter_id', Integer, ForeignKey('filters.id'))
 )
@@ -92,7 +98,7 @@ class Task(Base):
     # --- relationships ---
     
     subtasks = relationship("SubTask", backref="task", lazy="joined")
-    filters = relationship("Association", secondary=task_associations, lazy="joined")
+    filters = relationship("Association", secondary=assoс__tasks_and_associations, lazy="joined")
     taskchecks = relationship("TaskCheck", backref="task", lazy="joined")
 
 class Queries(Base):
@@ -118,14 +124,12 @@ class Queries(Base):
     sort = Column(String, default="")
 
     infilt = relationship("Filter", 
-        secondary=query_filters, 
+        secondary=assoc__queries_infilt_and_filters, 
         lazy="joined",
-        overlaps="infilt"
     )
     exfilt = relationship("Filter", 
-        secondary=query_filters,
+        secondary=assoc__queries_exfilt_and_filters,
         lazy="joined",
-        overlaps="exfilt"
     )
 
     is_default = Column(Boolean, default=False)

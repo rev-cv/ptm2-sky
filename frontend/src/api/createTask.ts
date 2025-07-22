@@ -8,7 +8,7 @@ export const createTask = async () => {
     const inTask = {...originalTask}
 
     try {
-        const res = await fetch(`${APIURL}/api/write_task`, {
+        const res = await fetch(`${APIURL}/api/upsert_task`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(inTask)

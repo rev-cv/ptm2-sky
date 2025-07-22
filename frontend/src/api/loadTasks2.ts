@@ -5,10 +5,14 @@ export const loadTasks = async (isSubstitution=false) => {
     const store = getDefaultStore()
 
     // очистка текущих отображаемых задач, если это не запрос для пагинации
-
     if (isSubstitution) {
         store.set(viewTasks, [])
     }
+
+    // все даты в базе данных хранятся в UTC
+    // при этом если в запросе имеются относительные указания даты
+    // то необходимо иметь представление о реальном времени у пользователя
+    const offsetMinutes = new Date().getTimezoneOffset()
 
     const body = store.get(atomQuerySelect)
 
@@ -19,12 +23,14 @@ export const loadTasks = async (isSubstitution=false) => {
         const res = await fetch(`${APIURL}/api/get_tasks`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({...body})
+            body: JSON.stringify({...body, tz: offsetMinutes})
         })
+        
         if (!res.ok) {
             const errText = await res.text();
             throw new Error(`Ошибка поиска: ${errText}`);
         }
+
         const data = await res.json()
 
         setTimeout(() => {
@@ -32,7 +38,6 @@ export const loadTasks = async (isSubstitution=false) => {
             store.set(samplingStatus, 'success')
         }, 0) // имитация задержки для отладки
 
-        
     } catch (err) {
         store.set(samplingStatus, 'error')
         console.error('Ошибка поиска задач:', err)

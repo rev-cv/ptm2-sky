@@ -108,7 +108,7 @@ export function formatPeriod(start?: mydate, finish?: mydate): string {
 export const newTaskCheck = () => {
     const tomorrow = new Date(Date.now() + 86400000)
     tomorrow.setUTCHours(0, 0, 0, 0)
-    return tomorrow.toUTCString()
+    return tomorrow.toISOString()
 }
 
 export function sortDateStrings(dateStrings: string[]): string[] {
