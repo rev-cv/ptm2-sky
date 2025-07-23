@@ -32,6 +32,9 @@ export type TypeViewTask = {
     subtasks: TypeTasks_SubTask[]
 
     created_at: string // дата создания задачи
+    finished_at: string | null
+    // дата успешного выполнения задачи (когда status установлен в значение True)
+    // дата провала - deadline, если он меньше текущего времени
     deadline: string | null // время дедлайна
     activation: string | null // время активации задачи
     taskchecks: string[] // даты проверки задачи
@@ -71,6 +74,7 @@ export type TypeReturnTask = {
     deadline?: string | null // время дедлайна
     activation?: string | null // время активации задачи
     taskchecks?: string[] // даты проверки задачи
+    finished_at?: string | null // дата успешного выполнения задачи (когда status установлен в значение True)
 
     risk?: TypeTasks_RI
     impact?: TypeTasks_RI

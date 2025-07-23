@@ -20,9 +20,11 @@ def serialize_query(query):
         "arange": query.arange.split("__"),
         "drange": query.drange.split("__"),
         "irange": query.irange.split("__"),
+        "frange": query.frange.split("__"),
 
         "donerule": query.donerule,
         "failrule": query.failrule,
+        "statusrule": query.statusrule.split(","),
         
         "inrisk": get_risk_impact(query.inrisk),
         "exrisk": get_risk_impact(query.exrisk),
@@ -30,7 +32,7 @@ def serialize_query(query):
         "inimpact": get_risk_impact(query.inimpact),
         "eximpact": get_risk_impact(query.eximpact),
 
-        "sort": query.sort.split(","),
+        "sort": query.order_by.split(","),
 
         "is_default": False,
         "page": 1

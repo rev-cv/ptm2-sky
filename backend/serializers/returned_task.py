@@ -1,4 +1,3 @@
-from zoneinfo import ZoneInfo
 
 def serialize_task(task):
 
@@ -44,18 +43,19 @@ def serialize_task(task):
         "status": task.status,
         "title": task.title,
         "description": task.description,
-        "activation": task.activation.strftime("%a, %d %b %Y %H:%M:%S GMT") if task.activation else task.activation,
-        "deadline": task.deadline.strftime("%a, %d %b %Y %H:%M:%S GMT") if task.deadline else task.deadline,
+        "activation": task.activation.strftime("%Y-%m-%dT%H:%M:%S%z") if task.activation else task.activation,
+        "deadline": task.deadline.strftime("%Y-%m-%dT%H:%M:%S%z") if task.deadline else task.deadline,
         "impact": task.impact,
         "subtasks" : task.subtasks,
         "risk": task.risk,
         "risk_explanation": task.risk_explanation,
         "risk_proposals": task.risk_proposals,
         "motivation": task.motivation,
-        "created_at": task.created_at.strftime("%a, %d %b %Y %H:%M:%S GMT"),
+        "created_at": task.created_at.strftime("%Y-%m-%dT%H:%M:%S%z"),
+        "finished_at": task.finished_at.strftime("%Y-%m-%dT%H:%M:%S%z") if task.finished_at else task.finished_at,
         "filters": filters_by_type,
         "taskchecks": [
-            tc.date.strftime("%a, %d %b %Y %H:%M:%S GMT") if tc.date else tc.date
+            tc.date.strftime("%Y-%m-%dT%H:%M:%S%z") if tc.date else tc.date
             for tc in task.taskchecks
         ],
     }

@@ -50,5 +50,35 @@
             "description": "Высокая вероятность невыполнения из-за критических ограничений или непреодолимых препятствий.", 
             "isActive": false
         }
+    ],
+    "status": [
+        { 
+            "label": "игнорировать", 
+            "value": 0,
+            "description": "", 
+            "isActive": true,
+            "code": ""
+        },
+        { 
+            "label": "выполненные", 
+            "value": 1,
+            "description": "", 
+            "isActive": true,
+            "code": "done"
+        },
+        { 
+            "label": "ожидающие", 
+            "value": 2,
+            "description": "", 
+            "isActive": true,
+            "code": "wait"
+        },
+        { 
+            "label": "проваленные", 
+            "value": 3,
+            "description": "", 
+            "isActive": true,
+            "code": "fail"
+        }
     ]
 }

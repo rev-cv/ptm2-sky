@@ -38,3 +38,4 @@ class TypeTask(BaseModel):
 
     # никак не учавствующие, но могут передаваться при создании задачи
     created_at: Optional[str] = None
+    finished_at: Optional[str] = None

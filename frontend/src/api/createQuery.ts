@@ -1,5 +1,5 @@
 const APIURL = import.meta.env.VITE_API_URL
-import { TypeQuery } from '@mytype/typeSaveQueries'
+import { TypeQuery } from '@mytype/typeQueries'
 import { addToast, atomQueryList, getDefaultStore } from '@utils/jotai.store'
 
 export const createQuery = async (newquery:TypeQuery) => {

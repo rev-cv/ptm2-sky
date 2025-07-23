@@ -48,6 +48,16 @@ def db_upsert_task(db: Session, t: TypeTask):
             except ValueError as e:
                 raise ValueError("Invalid UTC string format in deadline") from e
             
+    if t.finished_at is not None:
+        if t.finished_at == "":
+            task.finished_at = None
+        else:
+            try:
+                finished_at_time = datetime.fromisoformat(t.finished_at)
+                task.finished_at = finished_at_time.replace(tzinfo=ZoneInfo("UTC"))
+            except ValueError as e:
+                raise ValueError("Invalid UTC string format in finished_at") from e
+            
     if t.taskchecks is not None:
         if len(t.taskchecks) == 0:
             db.query(TaskCheck).filter(TaskCheck.task_id == t.id).delete()

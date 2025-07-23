@@ -17,9 +17,11 @@ class TypeQuery(BaseModel):
     arange: Tuple[str, str]
     drange: Tuple[str, str]
     irange: Tuple[str, str]
+    frange: Tuple[str, str]
 
     donerule: str  # "ignore" | "exclude" | "tostart" | "toend"
     failrule: str  # "ignore" | "exclude" | "tostart" | "toend"
+    statusrule: List[str]
 
     inrisk: List[TypeRiskImpact]
     exrisk: List[TypeRiskImpact]
@@ -27,7 +29,7 @@ class TypeQuery(BaseModel):
     inimpact: List[TypeRiskImpact]
     eximpact: List[TypeRiskImpact]
 
-    sort: List[str]
+    order_by: List[str]
 
     is_default: bool
 

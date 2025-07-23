@@ -77,10 +77,16 @@ class Task(Base):
     title = Column(String, nullable=False)
     description = Column(Text)
 
+    created_at = Column(
+        DateTime(timezone=True), 
+        nullable=False, 
+        default=datetime.datetime.now(datetime.timezone.utc)
+    )
     activation = Column(DateTime(timezone=True))
     deadline = Column(DateTime(timezone=True))
 
     status = Column(Boolean, default=False)
+    finished_at = Column(DateTime(timezone=True))
 
     impact = Column(Integer)
     risk = Column(Integer)
@@ -88,12 +94,6 @@ class Task(Base):
     risk_explanation = Column(Text)
     risk_proposals = Column(Text)
     motivation = Column(Text)
-
-    created_at = Column(
-        DateTime(timezone=True), 
-        nullable=False, 
-        default=datetime.datetime.now(datetime.timezone.utc)
-    )
 
     # --- relationships ---
     
@@ -108,20 +108,22 @@ class Queries(Base):
     descr = Column(String, default="")
     q = Column(String, default="")
 
-    crange = Column(String, default="ignore")
-    arange = Column(String, default="ignore")
-    drange = Column(String, default="ignore")
-    irange = Column(String, default="ignore")
+    crange = Column(String, default="__")
+    arange = Column(String, default="__")
+    drange = Column(String, default="__")
+    irange = Column(String, default="__")
+    frange = Column(String, default="__")
 
-    donerule = Column(String, default="ignore")
-    failrule = Column(String, default="ignore")
+    donerule = Column(String, default="ignore") # "ignore" | "" | "exclude" | "tostart" | "toend"
+    failrule = Column(String, default="ignore") # "ignore" | "" | "exclude" | "tostart" | "toend"
+    statusrule = Column(String, default="") # "ignore" | "" | "done" | "fail" | "wait"
 
     inrisk = Column(String, default="")
     exrisk = Column(String, default="")
     inimpact = Column(String, default="")
     eximpact = Column(String, default="")
 
-    sort = Column(String, default="")
+    order_by = Column(String, default="")
 
     infilt = relationship("Filter", 
         secondary=assoc__queries_infilt_and_filters, 

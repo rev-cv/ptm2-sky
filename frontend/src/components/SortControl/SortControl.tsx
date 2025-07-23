@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './style.scss'
 
-import { TypeSortOption } from '@mytype/typeSaveQueries'
+import { TypeSortOption } from '@mytype/typeQueries'
 
 import CheckBox from '@comps/CheckBox/CheckBox'
 

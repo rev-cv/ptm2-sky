@@ -1,5 +1,5 @@
 import { TypeFilterNew } from '@mytype/typeFilters'
-import { TypeQuery } from '@mytype/typeSaveQueries'
+import { TypeQuery } from '@mytype/typeQueries'
 
 import { createFilter } from '@api/createFilter'
 import { updateFilter } from '@api/updateFilter'

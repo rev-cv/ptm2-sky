@@ -1,6 +1,7 @@
-import { TypeQuery, ruleDoneFailList } from '@mytype/typeSaveQueries'
+import { TypeQuery, ruleDoneFailList } from '@mytype/typeQueries'
 import { TypeTasks_RI } from '@mytype/typeTask'
 import { TypeFilterNew } from '@mytype/typeFilters'
+import { TypeRuleStatus } from '@mytype/typeQueries'
 
 import ci_values from '@api/BlockCriticalityValues.json'
 
@@ -54,6 +55,35 @@ function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypePro
             className='query-block-editor__search'
             onChange={e => updateEditable({...editable, q: e.target.value})}
         />
+
+        <div className='query-block-editor__title'>Поиск по статусу задач</div>
+        <div className="query-block-editor__ri">
+            {ci_values?.status.map((elem, index) => (
+                <CheckBox
+                    title={elem.label}
+                    state={
+                        editable.statusrule.includes(elem.code as TypeRuleStatus) || 
+                        (editable.statusrule.length === 0 && elem.code === "")
+                    }
+                    key={`query_editor > query > block_editor > inrisk-${index}`}
+                    onChangeStatus={(newrule) => {
+                        if (newrule && elem.code === "") {
+                            updateEditable({...editable, statusrule: []})
+                        } else if (newrule) {
+                            updateEditable({
+                                ...editable, 
+                                statusrule: [...editable.statusrule.filter(v => v !== ""), elem.code as TypeRuleStatus],
+                            })
+                        } else {
+                            updateEditable({
+                                ...editable, 
+                                statusrule: editable.statusrule.filter(v => v !== elem.code as TypeRuleStatus)
+                            })
+                        }
+                    }}
+                />
+            ))}
+        </div>
 
         <FilterSelector 
             type_filter='theme'
@@ -183,6 +213,22 @@ function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypePro
             />
         </div>
 
+        <div className='query-block-editor__title'>Поиск по вхождению даты успешного завершения задачи в период</div>
+
+        <div className='query-block-editor__period'>
+            <ButtonRangeCalendar 
+                date={editable.frange[0]}
+                onClickDay={value => updateEditable({...editable, frange: [value, editable.frange[1]]})}
+                noDate='ignore'
+            />
+            <span>-</span>
+            <ButtonRangeCalendar 
+                date={editable.frange[1]}
+                onClickDay={value => updateEditable({...editable, frange: [editable.frange[0], value]})}
+                noDate='ignore'
+            />
+        </div>
+
         <div className='query-block-editor__title'>Как поступать с выполненными задачами?</div>
 
         <Toggle
@@ -235,7 +281,7 @@ function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypePro
         
         <div className='query-block-editor__title'>Исключать из поиска риски невыполнения</div>
         <div className="query-block-editor__ri">
-            {ci_values.risk.map((elem, index) => (
+            {ci_values?.risk.map((elem, index) => (
                 <CheckBox
                     title={elem.label}
                     state={editable.exrisk.includes(elem.value as TypeTasks_RI)}
@@ -260,7 +306,7 @@ function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypePro
 
         <div className='query-block-editor__title'>Поиск по последствиям невыполнения</div>
         <div className="query-block-editor__ri">
-            {ci_values.impact.map((elem, index) => (
+            {ci_values?.impact.map((elem, index) => (
                 <CheckBox
                     title={elem.label}
                     state={editable.inimpact.includes(elem.value as TypeTasks_RI)}
@@ -285,7 +331,7 @@ function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypePro
 
         <div className='query-block-editor__title'>Исключать из поиска последствия невыполнения</div>
         <div className="query-block-editor__ri">
-            {ci_values.impact.map((elem, index) => (
+            {ci_values?.impact.map((elem, index) => (
                 <CheckBox
                     title={elem.label}
                     state={editable.eximpact.includes(elem.value as TypeTasks_RI)}
@@ -311,8 +357,8 @@ function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypePro
         <div className='query-block-editor__title'>Задать сортировку полученных результатов</div>
         <div className="query-block-editor__sort-control">
             <SortControl 
-                list={editable.sort}
-                onChange={(newSort) => updateEditable({...editable, sort: newSort})}
+                list={editable.order_by}
+                onChange={(newSort) => updateEditable({...editable, order_by: newSort})}
             />
         </div>
 

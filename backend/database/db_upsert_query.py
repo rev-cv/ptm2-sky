@@ -30,6 +30,7 @@ def db_upsert_query(db:Session, q:TypeQuery):
 
     query.donerule = q.donerule
     query.failrule = q.failrule
+    query.statusrule = ','.join(str(x) for x in q.statusrule)
 
     query.sort = ','.join(q.sort)
 

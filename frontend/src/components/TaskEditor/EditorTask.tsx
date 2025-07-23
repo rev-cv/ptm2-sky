@@ -40,6 +40,7 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                     motiv={task.motivation}
                     status={task.status}
                     created={formatDateString(task.created_at)}
+                    finished={task.finished_at ? formatDateString(task.finished_at, true) : ""}
                     onChangeTitle={s => updateTask({...task, title: s})}
                     onChangeDescr={s => updateTask({...task, description: s})}
                     onChangeMotiv={s => updateTask({...task, motivation: s})}

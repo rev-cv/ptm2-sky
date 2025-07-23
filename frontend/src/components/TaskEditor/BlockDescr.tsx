@@ -8,13 +8,14 @@ type TypeDescrTask = {
     status?: boolean
     id: number
     created?: string
+    finished?: string
     onChangeTitle: (title:string) => void
     onChangeDescr: (descr:string) => void
     onChangeMotiv: (descr:string) => void
     onChangeStatus: (status:boolean) => void
 }
 
-function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/A", onChangeTitle, onChangeDescr, onChangeMotiv, onChangeStatus}:TypeDescrTask) {
+function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/A", finished, onChangeTitle, onChangeDescr, onChangeMotiv, onChangeStatus}:TypeDescrTask) {
 
     return <div className="editor-task__block editor-task__block-descr">
 
@@ -32,7 +33,7 @@ function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/
         }
 
         <div className='editor-task__block-descr__id'>
-            {id < 0 ? `Сreating a new task…` : `${id}: created ${created}`}
+            {id < 0 ? `Сreating a new task…` : `${id}: created ${created} ${finished ? "- finished " + finished : ""}`}
         </div>
 
         <TextArea 

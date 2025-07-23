@@ -7,6 +7,8 @@ export type TypeSortOption =
     | "deadline_desc"
     | "activation_asc"
     | "activation_desc"
+    | "finished_asc"
+    | "finished_desc"
     | "name_asc"
     | "name_desc"
     | "risk_asc"
@@ -18,17 +20,23 @@ export type TypeRange = [string, string]
 // "start…finish" - ищется дата в пределах start - finish. Пример 2025-04-23…2025-05-05
 // "null…finish" - ищется дата вплоть до finish. Пример null…2025-05-05
 // "start…null" - ищется дата от start
-// "ignore" - фильтр игнорируется
+// "" - фильтр игнорируется
 // "availability" - отбор, если имеется дата впринципе
 // "absence" - отбор, если дата отсутствует
 // "NEXT 3" - от начала сегоднешнего дня и до #[число] кол-во дней
 // "LAST 10" - 10 дней в прошлом начиная от конца вчерашнего дня 
 
 type TypeRule = "ignore" | "" | "exclude" | "tostart" | "toend"
-// "ignore" | "" - игнорировать правило
+// "" | "" - игнорировать правило
 // "exclude" - исключить из выдачи
 // "tostart" - поместить в начало
 // "toend" - поместить в конец
+
+export type TypeRuleStatus = "" | "done" | "fail" | "wait"
+// "" - игнорировать правило
+// "done" - только завершенные задачи
+// "fail" - только проваленные задачи
+// "wait" - только НЕ завершенные задачи
 
 export const ruleDoneFailList:TypeRule[] = ["ignore", "exclude", "tostart", "toend"]
 
@@ -45,9 +53,11 @@ export type TypeQuery = {
     arange: TypeRange
     drange: TypeRange
     irange: TypeRange // inspections - проверки, направленные на анализ и контроль
+    frange: TypeRange
 
     donerule: TypeRule
     failrule: TypeRule
+    statusrule: TypeRuleStatus[]
     
     inrisk: TypeTasks_RI[] // присоединить задачи с заданным риском
     exrisk: TypeTasks_RI[] // исключить задачи с заданным риском
@@ -55,7 +65,7 @@ export type TypeQuery = {
     inimpact: TypeTasks_RI[] // присоединить задачи с заданными последствиями
     eximpact: TypeTasks_RI[] // исключить задачи с заданными последствиями
 
-    sort: TypeSortOption[]
+    order_by: TypeSortOption[]
 
     is_default: boolean // в любой непонятной ситуации выполняется запрос с is_default == true
     page: 1

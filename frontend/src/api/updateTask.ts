@@ -14,8 +14,14 @@ export const updateTask = async (editingTask:TypeViewTask) => {
 
     if (!o) return false
 
-    if (o.status != e.status)
+    if (o.status != e.status) {
+        if (!o.status && e.status) {
+            changesInTask.finished_at = new Date().toISOString()
+        } else {
+            changesInTask.finished_at = ""
+        }
         changesInTask.status = e.status
+    }
 
     if (o.title.trim() != e.title.trim())
         changesInTask.title = e.title.trim().replace(/\n{3,}/g, '\n\n')

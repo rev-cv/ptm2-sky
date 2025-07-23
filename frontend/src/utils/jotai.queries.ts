@@ -1,5 +1,5 @@
 import { atom } from 'jotai'
-import { TypeQuery } from '@mytype/typeSaveQueries'
+import { TypeQuery } from '@mytype/typeQueries'
 
 export const atomQueryList = atom<TypeQuery[]>([])
 
@@ -14,13 +14,15 @@ export const queryAllTasks:TypeQuery = {
     arange: ["",""],
     drange: ["",""],
     irange: ["",""],
+    frange: ["",""],
     donerule: "",
     failrule: "",
+    statusrule: [],
     inrisk: [],
     exrisk: [],
     inimpact: [],
     eximpact: [],
-    sort: [],
+    order_by: [],
     is_default: false,
     page: 1
 }

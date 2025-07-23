@@ -1,7 +1,7 @@
 import './style.scss'
 import { useState, useRef } from 'react'
 import { useAtomValue, useAtom, queryAllTasks, atomQuerySelect, atomQueryList, atomThemeList } from '@utils/jotai.store'
-import { TypeQuery } from '@mytype/typeSaveQueries'
+import { TypeQuery } from '@mytype/typeQueries'
 import { TypeFilterNew } from '@mytype/typeFilters'
 
 import Modal from '@comps/Modal/Modal'
