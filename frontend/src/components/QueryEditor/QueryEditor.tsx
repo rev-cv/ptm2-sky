@@ -4,6 +4,8 @@ import { useAtomValue, useAtom, queryAllTasks, atomQuerySelect, atomQueryList, a
 import { TypeQuery } from '@mytype/typeQueries'
 import { TypeFilterNew } from '@mytype/typeFilters'
 
+import { loadTasksByTheme } from '@api/loadTasksByTheme'
+
 import Modal from '@comps/Modal/Modal'
 import Button from '@comps/Button/Button'
 import Toggle from '@comps/Toggles/Toggle'
@@ -13,6 +15,7 @@ import BlockThemeEditor from './BlockThemeEditor'
 import IcoQuery from '@asset/query.svg'
 import IcoEdit from '@asset/edit.svg'
 import IcoAdd from '@asset/add.svg'
+import IcoTag from '@asset/tag.svg'
 import IcoBack from '@asset/back.svg'
 
 type TypeProps = {
@@ -49,8 +52,8 @@ function QueryEditor({onExit}:TypeProps) {
                 <div className="query-editor__list-continer-menu">
                     <Toggle 
                         elements={[
-                            {label: "запросы", value: 0},
-                            {label: "темы", value: 1}
+                            {label: "темы", value: 1},
+                            {label: "запросы", value: 0}
                         ]}
                         activeValue={queryOrTheme}
                         onChange={v => {
@@ -137,7 +140,7 @@ function QueryEditor({onExit}:TypeProps) {
                                 >
                                 <Button 
                                     icon={editableQuery ?
-                                        editableQuery.id === theme.id ? IcoBack : IcoEdit : IcoQuery
+                                        editableQuery.id === theme.id ? IcoBack : IcoEdit : IcoTag
                                     }
                                     text={theme.name}
                                     variant={((querySelect?.id === theme.id) || (editableQuery && editableQuery.id === theme.id)) ? 'first' : 'second'}
@@ -147,6 +150,7 @@ function QueryEditor({onExit}:TypeProps) {
                                             setEditableQuery(editableQuery.id === theme.id ? null : theme)
                                         } else {
                                             setVisible(false)
+                                            loadTasksByTheme(`#${theme.name}`, theme.id)
                                         }
                                         scrollToTop()
                                     }}

@@ -4,8 +4,6 @@ import { addToast, atomFilterList, getDefaultStore } from '@utils/jotai.store'
 
 export const createFilter = async (newfilter:TypeFilterNew) => {
 
-    console.log(newfilter)
-
     const store = getDefaultStore()
 
     try {
@@ -16,7 +14,6 @@ export const createFilter = async (newfilter:TypeFilterNew) => {
         })
         if (res.ok) {
             const data = await res.json()
-            // console.log(data)
             const queryList = store.get(atomFilterList)
             store.set(atomFilterList, [...queryList, data.updateable])
             addToast("Добавлен новый фильтр!")

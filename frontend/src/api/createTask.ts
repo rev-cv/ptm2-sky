@@ -1,11 +1,35 @@
 const APIURL = import.meta.env.VITE_API_URL
+import { TypeReturnTask, TypeTasks_Filter } from '@mytype/typeTask'
 import { loadTasks } from '@api/loadTasks2'
 import { currentNewTask2, resetTask2, getDefaultStore, addToast } from '@utils/jotai.store'
 
 export const createTask = async () => {
     const store = getDefaultStore()
     const originalTask = store.get(currentNewTask2)
-    const inTask = {...originalTask}
+
+    const { filters, ...rest } = originalTask;
+
+    let filts:TypeTasks_Filter[] = []
+
+    filters.theme.forEach(filter => {
+        filts.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
+    })
+
+    Object.values(filters.state).forEach(filters => {
+        filters.forEach(filter => {
+            filts.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
+        })
+    })
+
+    filters.stress.forEach(filter => {
+        filts.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
+    })
+
+    filters.action_type.forEach(filter => {
+        filts.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
+    })
+
+    const inTask:TypeReturnTask = {...rest, filter_list: filts}
 
     try {
         const res = await fetch(`${APIURL}/api/upsert_task`, {
@@ -14,8 +38,6 @@ export const createTask = async () => {
             body: JSON.stringify(inTask)
         })
         if (res.ok) {
-            // const data = await res.json()
-            // console.log(data)
             loadTasks()
             store.set(currentNewTask2, resetTask2)
             addToast("Добавлена новая задача!")

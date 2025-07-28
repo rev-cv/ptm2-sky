@@ -67,21 +67,21 @@ export const updateTask = async (editingTask:TypeViewTask) => {
 
         e.filters.theme.forEach(filter => {
             result.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
-        });
+        })
 
         Object.values(e.filters.state).forEach(filters => {
             filters.forEach(filter => {
                 result.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
-            });
-        });
+            })
+        })
 
         e.filters.stress.forEach(filter => {
             result.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
-        });
+        })
 
         e.filters.action_type.forEach(filter => {
             result.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
-        });
+        })
 
         changesInTask.filter_list = result
     }
@@ -102,7 +102,6 @@ export const updateTask = async (editingTask:TypeViewTask) => {
             store.set(viewTasks, tasks.map(elem => 
                 elem.id === updateable.id ? updateable : elem
             ))
-            console.log(updateable.deadline)
 
             addToast("Задача обновлена!")
         } else {

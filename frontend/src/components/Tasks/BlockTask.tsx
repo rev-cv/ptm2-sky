@@ -2,6 +2,7 @@ import { useState } from 'react'
 
 import { updateTask } from '@api/updateTask'
 import { removeTask } from '@api/removeTask'
+import { loadTasksByTheme } from '@api/loadTasksByTheme'
 
 import { TypeViewTask } from '@mytype/typeTask'
 import { formatDateString } from '@utils/date-funcs'
@@ -105,6 +106,7 @@ function Task({objTask} : TaskProps) {
                                 key={`${key}-${i}`}
                                 onClick={e => {
                                     e.stopPropagation()
+                                    loadTasksByTheme(`#${f.name}`, f.idf)
                                 }}
                                 >#{f.name}
                             </button>
@@ -118,6 +120,7 @@ function Task({objTask} : TaskProps) {
                                         key={`${key}-${i}`}
                                         onClick={e => {
                                             e.stopPropagation()
+                                            loadTasksByTheme(`#${f.name}`, f.idf)
                                         }}
                                         >#{f.name}
                                     </button>

@@ -1,4 +1,4 @@
-from sqlalchemy import or_, and_
+from sqlalchemy import or_, and_, not_
 from sqlalchemy.sql import case
 from database.sqlalchemy_tables import Task, Association, TaskCheck
 from datetime import datetime, timezone, timedelta
@@ -8,29 +8,31 @@ import re
 
 pattern = re.compile(r'\d{1,3}')
 
-sorting_paramentrs = {
-    "created_asc": Task.created_at.asc(),
-    "created_desc": Task.created_at.desc(),
-    "deadline_asc": Task.deadline.asc(),
-    "deadline_desc": Task.deadline.asc(),
-    "activation_asc": Task.activation.asc(),
-    "activation_desc": Task.activation.asc(),
-    "finished_asc": Task.finished_at.asc(),
-    "finished_desc": Task.finished_at.asc(),
-    "name_asc": Task.title.asc(),
-    "name_desc": Task.title.asc(),
-    "risk_asc": Task.risk.asc(),
-    "risk_desc": Task.risk.asc(),
-    "impact_asc": Task.impact.asc(),
-    "impact_asc": Task.impact.asc(),
-}
-
 def extract_first_match(text):
     match = pattern.search(text)
     return match.group(0) if match else None
 
+sorting_paramentrs = {
+    "created_asc": Task.created_at.asc(),
+    "created_desc": Task.created_at.desc(),
+    "deadline_asc": Task.deadline.asc(),
+    "deadline_desc": Task.deadline.desc(),
+    "activation_asc": Task.activation.asc(),
+    "activation_desc": Task.activation.desc(),
+    "finished_asc": Task.finished_at.asc(),
+    "finished_desc": Task.finished_at.desc(),
+    "name_asc": Task.title.asc(),
+    "name_desc": Task.title.desc(),
+    "risk_asc": Task.risk.asc(),
+    "risk_desc": Task.risk.desc(),
+    "impact_asc": Task.impact.asc(),
+    "impact_asc": Task.impact.desc(),
+}
+
 
 def db_get_tasks(db, fields):
+
+    cdt = datetime.now().astimezone(timezone.utc)
 
     query = db.query(Task)
 
@@ -44,26 +46,26 @@ def db_get_tasks(db, fields):
     if fields.statusrule and "" not in fields.statusrule:
         if "done" in fields.statusrule:
             query = query.filter(Task.status == True)
-
-        cdt = datetime.now().astimezone(timezone.utc)
         
         if "wait" in fields.statusrule and "fail" in fields.statusrule:
             query = query.filter(Task.status == False)
         elif "fail" in fields.statusrule:
             query = query.filter(and_(Task.status == False, Task.deadline < cdt))
         elif "wait" in fields.statusrule:
-            query = query.filter(and_(Task.status == False, cdt < Task.deadline))
+            query = query.filter(Task.status == False)
+            query = query.filter(or_(Task.deadline == None, cdt < Task.deadline))
+
 
     if fields.infilt:
-        query = query.join(Task.filters).filter(
-            Association.filter_id.in_(fields.infilt)
+        query = query.filter(
+            Task.filters.any(Association.filter_id.in_(fields.infilt))
         )
 
     if fields.exfilt:
-        query = query.join(Task.filters).filter(
-            ~Association.filter_id.in_(fields.exfilt)
-        )
-
+        query = query.filter(
+            ~Task.filters.any(Association.filter_id.in_(fields.exfilt))
+    )
+ 
     if fields.inrisk:
         query = query.filter(
             Task.risk.in_(fields.inrisk)
@@ -115,106 +117,84 @@ def db_get_tasks(db, fields):
             query = query.filter(Task.deadline < dt)
 
     # проверки
-    if fields.irange[0]:
-        dt = getDate(fields.irange[0], offset=fields.tz)
-        if dt:
-            query = query.join(TaskCheck).filter(dt <= TaskCheck.date)
-    if fields.irange[1]:
-        dt = getDate(fields.irange[1], offset=fields.tz, is_finish=True)
-        if dt:
-            query = query.join(TaskCheck).filter(TaskCheck.date < dt)
+    if fields.irange[0] or fields.irange[1]:
+        query = query.join(TaskCheck)
+        if fields.irange[0]:
+            dt_start = getDate(fields.irange[0], offset=fields.tz)
+            if dt_start:
+                query = query.filter(dt_start <= TaskCheck.date)
+        if fields.irange[1]:
+            dt_end = getDate(fields.irange[1], offset=fields.tz, is_finish=True)
+            if dt_end:
+                query = query.filter(TaskCheck.date < dt_end)
     
     # дата успешного завершения
     if fields.frange[0]:
         dt = getDate(fields.frange[0], offset=fields.tz)
         if dt:
-            query = query.join(TaskCheck).filter(dt <= TaskCheck.date)
+            query = query.filter(dt <= Task.finished_at)
     if fields.frange[1]:
         dt = getDate(fields.frange[1], offset=fields.tz, is_finish=True)
         if dt:
-            query = query.join(TaskCheck).filter(TaskCheck.date < dt)
+            query = query.filter(Task.finished_at < dt)
 
 
     order_by = []
     for s in fields.order_by:
         st = sorting_paramentrs.get(s, None)
-        if st:
+        if st is not None:
             order_by.insert(0, st)
 
 
     # -----------------
     # НАЧАЛО блока кода отвечающего за группировку задач по статусу выполнения
-
-    isDone = None # False - в конец True - в начало
-    isFail = None # False - в конец True - в начало
-
-    if fields.donerule:
+    if fields.donerule or fields.failrule:
         if fields.donerule == "exclude":
-            # исключить из выдачи выполненные задачи
-            query = query.filter(Task.status == False)
-        elif fields.donerule == "tostart":
-            isDone = True
-        elif fields.donerule == "toend":
-            isDone = False
+            query = query.filter(~Task.status == True)
 
-    if fields.failrule:
         if fields.failrule == "exclude":
-            # исключить из выдачи проваленные задачи
-            query = query.filter(~and_(Task.status == False, Task.deadline < cdt))
+            query = query.filter(or_(Task.deadline > cdt, Task.deadline == None))
+
+        if fields.donerule == "toend" and fields.failrule == "toend":
+            order_by.insert(0,
+                    case(
+                        (and_(Task.status == False, Task.deadline < cdt), 2),
+                        (Task.status == True, 1),
+                        else_=0
+                    ).asc()
+                )
+        elif fields.donerule == "tostart" and fields.failrule == "toend":
+            order_by.insert(0,
+                    case(
+                        (and_(Task.status == False, Task.deadline < cdt), 2),
+                        (Task.status == True, 0),
+                        else_=1
+                    ).asc()
+                )
+        elif fields.donerule == "toend" and fields.failrule == "tostart":
+            order_by.insert(0,
+                    case(
+                        (and_(Task.status == False, Task.deadline < cdt), 0),
+                        (Task.status == True, 2),
+                        else_=1
+                    ).asc()
+                )
+        elif fields.donerule == "tostart" and fields.failrule == "tostart":
+            order_by.insert(0,
+                    case(
+                        (and_(Task.status == False, Task.deadline < cdt), 0),
+                        (Task.status == True, 1),
+                        else_=2
+                    ).asc()
+                )
+        elif fields.donerule == "tostart":
+            order_by.insert(0, case((Task.status == True, 0), else_=1).asc())
+        elif fields.donerule == "toend":
+            order_by.insert(0, case((Task.status == True, 1), else_=0).asc())
         elif fields.failrule == "tostart":
-            isDone = True
+            order_by.insert(0, case((and_(Task.status == False, Task.deadline < cdt), 0), else_=1).asc())
         elif fields.failrule == "toend":
-            isDone = False
-            
-    if isDone is not None and isFail is not None:
-        if isDone is False and isFail is False: # поместить в конец
-            order_by.insert(0,
-                case(
-                    (and_(Task.status == False, Task.deadline < cdt), 2),
-                    (Task.status == True, 1),
-                    else_=0
-                ).asc()
-            )
-        elif isDone is True and isFail is False:
-            order_by.insert(0,
-                case(
-                    (and_(Task.status == False, Task.deadline < cdt), 2),
-                    (Task.status == True, 0),
-                    else_=1
-                ).asc()
-            )
-        elif isDone is True and isFail is True:
-            order_by.insert(0,
-                case(
-                    (and_(Task.status == False, Task.deadline < cdt), 1),
-                    (Task.status == True, 0),
-                    else_=2
-                ).asc()
-            )
-        elif isDone is False and isFail is True:
-            order_by.insert(0,
-                case(
-                    (and_(Task.status == False, Task.deadline < cdt), 0),
-                    (Task.status == True, 2),
-                    else_=1
-                ).asc()
-            )
-    elif isDone is not True:
-        order_by.insert(0,
-            case((Task.status == True, 0), else_=1).asc()
-        )
-    elif isDone is not False:
-        order_by.insert(0,
-            case((Task.status == True, 1), else_=0).asc()
-        )
-    elif isFail is not True:
-        order_by.insert(0,
-            case((and_(Task.status == False, Task.deadline < cdt), 0), else_=1).asc()
-        )
-    elif isFail is not False:
-        order_by.insert(0,
-            case((and_(Task.status == False, Task.deadline < cdt), 1), else_=0).asc()
-        )
+            order_by.insert(0, case((and_(Task.status == False, Task.deadline < cdt), 1), else_=0).asc())
     
     # КОНЕЦ блока кода оотвечающего за группировку задач по статусу выполнения
     # -----------------

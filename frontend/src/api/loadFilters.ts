@@ -11,7 +11,6 @@ export async function loadFilters () {
     })
     .then(res => res.json())
     .then(data => {
-        // console.log("filters from API:", data)
         store.set(atomFilterList, data.result)
     })
     .catch(err => {

@@ -98,7 +98,7 @@ class Task(Base):
     # --- relationships ---
     
     subtasks = relationship("SubTask", backref="task", lazy="joined")
-    filters = relationship("Association", secondary=assoс__tasks_and_associations, lazy="joined")
+    filters = relationship("Association", backref="task", secondary=assoс__tasks_and_associations, lazy="joined")
     taskchecks = relationship("TaskCheck", backref="task", lazy="joined")
 
 class Queries(Base):

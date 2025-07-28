@@ -6,8 +6,6 @@ export const updateQuery = async (editingQuery:TypeQuery) => {
     const store = getDefaultStore()
     const queryList = store.get(atomQueryList)
 
-    console.log(editingQuery)
-
     try {
         const res = await fetch(`${APIURL}/api/upsert_query`, {
             method: 'POST',

@@ -38,7 +38,7 @@ export type TypeRuleStatus = "" | "done" | "fail" | "wait"
 // "fail" - только проваленные задачи
 // "wait" - только НЕ завершенные задачи
 
-export const ruleDoneFailList:TypeRule[] = ["ignore", "exclude", "tostart", "toend"]
+export const ruleDoneFailList:TypeRule[] = ["", "exclude", "tostart", "toend"]
 
 export type TypeQuery = {
     id: number

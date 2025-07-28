@@ -23,9 +23,10 @@ export const resetTask2:TypeViewTask = {
     subtasks: [],
 
     created_at: "",
-    deadline: null,
     activation: null,
     taskchecks: [],
+    deadline: null,
+    finished_at: null,
 
     risk: 0,
     impact: 0,

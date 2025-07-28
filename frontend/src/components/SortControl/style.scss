@@ -117,11 +117,11 @@
         }
 
         &.asc svg {
-            transform: rotateX(0deg);
+            transform: rotate(-90deg);
         }
 
         &.desc svg {
-            transform: rotateX(180deg);
+            transform: rotate(90deg);
         }
     }
 }

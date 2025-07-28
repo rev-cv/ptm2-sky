@@ -133,7 +133,6 @@ function ButtonRangeCalendar ({ onClickDay, date="", noDate="No Date" }:TypeProp
         setShowContext(false)
         if (onClickDay) {
             if (value === null) return onClickDay("")
-            console.log(value.toISOString())
             onClickDay(value.toISOString())
         }
     }

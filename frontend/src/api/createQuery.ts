@@ -14,8 +14,6 @@ export const createQuery = async (newquery:TypeQuery) => {
         })
         if (res.ok) {
             const data = await res.json()
-            // console.log(data)
-            // loadQueries()
             const queryList = store.get(atomQueryList)
             store.set(atomQueryList, [...queryList, data.updateable])
             addToast("Добавлен новый запрос!")

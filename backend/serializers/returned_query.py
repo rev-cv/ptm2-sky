@@ -32,7 +32,7 @@ def serialize_query(query):
         "inimpact": get_risk_impact(query.inimpact),
         "eximpact": get_risk_impact(query.eximpact),
 
-        "sort": query.order_by.split(","),
+        "order_by": query.order_by.split(","),
 
         "is_default": False,
         "page": 1

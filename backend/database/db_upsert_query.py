@@ -22,6 +22,7 @@ def db_upsert_query(db:Session, q:TypeQuery):
     query.arange = f"{q.arange[0]}__{q.arange[1]}"
     query.irange = f"{q.irange[0]}__{q.irange[1]}"
     query.drange = f"{q.drange[0]}__{q.drange[1]}"
+    query.frange = f"{q.frange[0]}__{q.frange[1]}"
 
     query.inrisk = ','.join(str(x) for x in q.inrisk)
     query.exrisk = ','.join(str(x) for x in q.exrisk)
@@ -32,7 +33,7 @@ def db_upsert_query(db:Session, q:TypeQuery):
     query.failrule = q.failrule
     query.statusrule = ','.join(str(x) for x in q.statusrule)
 
-    query.sort = ','.join(q.sort)
+    query.order_by = ','.join(q.order_by)
 
     query.infilt = db.query(Filter).filter(Filter.id.in_(q.infilt)).all()
     query.exfilt = db.query(Filter).filter(Filter.id.in_(q.exfilt)).all()

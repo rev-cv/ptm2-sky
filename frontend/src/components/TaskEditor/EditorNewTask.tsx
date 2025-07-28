@@ -308,6 +308,7 @@ function EditorNewTask () {
                     onClick={() => {
                         createTask()
                         setStatus(false)
+                        setActiveTab("")
                     }}
                     disabled={task.title.length < 6}
                 />
