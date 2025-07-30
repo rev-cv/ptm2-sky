@@ -1,11 +1,22 @@
-import { StrictMode } from 'react'
+import { StrictMode, lazy, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import '@pages/reset.css'
 import '@pages/colors.scss'
-import PageApp from '@pages/App/App'
+import ProtectedRoute from '@pages/ProtectedRoute'
+
+// import Auth from '@pages/Auth/Auth'
+const Auth = lazy(() => import('@pages/Auth/Auth'))
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <PageApp />
-  </StrictMode>,
+    <StrictMode>
+        <BrowserRouter>
+            <Suspense fallback={<div>Loading...</div>}>
+                <Routes>
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/" element={<ProtectedRoute />} />
+                </Routes>
+            </Suspense>
+        </BrowserRouter>
+    </StrictMode>
 )

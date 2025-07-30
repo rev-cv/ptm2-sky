@@ -80,7 +80,7 @@ class Task(Base):
     created_at = Column(
         DateTime(timezone=True), 
         nullable=False, 
-        default=datetime.datetime.now(datetime.timezone.utc)
+        default=lambda: datetime.datetime.now(datetime.timezone.utc)
     )
     activation = Column(DateTime(timezone=True))
     deadline = Column(DateTime(timezone=True))
@@ -106,6 +106,13 @@ class Queries(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     descr = Column(String, default="")
+
+    created_at = Column(
+        DateTime(timezone=True), 
+        nullable=False, 
+        default=lambda: datetime.datetime.now(datetime.timezone.utc)
+    )
+
     q = Column(String, default="")
 
     crange = Column(String, default="__")
@@ -136,6 +143,48 @@ class Queries(Base):
 
     is_default = Column(Boolean, default=False)
 
+class Role(Base):
+    __tablename__ = "roles"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, index=True)
+    permissions = Column(String, nullable=True)
+    users = relationship("User", back_populates="role")
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, index=True)
+    password_hash = Column(String, nullable=False)
+    role_id = Column(Integer, ForeignKey("roles.id"))
+    role = relationship("Role", back_populates="users")
+    profile = relationship("UserProfile", uselist=False, back_populates="user")
+    transactions = relationship("TokenTransaction", back_populates="user")
+    registered = Column(
+        DateTime(timezone=True), 
+        nullable=False, 
+        default=lambda: datetime.datetime.now(datetime.timezone.utc)
+    )
+
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True)
+    full_name = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
+    address = Column(String, nullable=True)
+    date_of_birth = Column(String, nullable=True)
+    user = relationship("User", back_populates="profile")
+
+class TokenTransaction(Base):
+    __tablename__ = "token_transactions"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    amount = Column(Integer)  # положительное для начисления, отрицательное для списания
+    balance = Column(Integer)  # баланс после транзакции
+    description = Column(String, nullable=True)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    user = relationship("User", back_populates="transactions")
+
 # --- инициализация базы данных ---
 
 def init_db():
@@ -146,6 +195,15 @@ def init_db():
     from database.initial__db import initialize_filters_from_json
     with SessionLocal() as db:
         initialize_filters_from_json(db)
+
+    if not db.query(Role).first():
+        db.add_all([
+            Role(name="admin", permissions='{"can_manage_users": true}'),
+            Role(name="premium", permissions='{"can_manage_users": true}'),
+            Role(name="user", permissions='{"can_send_messages": true}'),
+            Role(name="banned", permissions='{"can_send_messages": true}')
+        ])
+        db.commit()
 
 
 # --- функция получения сессии (для dependency injection) ---

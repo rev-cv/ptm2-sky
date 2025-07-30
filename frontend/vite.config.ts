@@ -28,4 +28,13 @@ export default defineConfig({
             '@api':  path.resolve(__dirname, './src/api')
         },
     },
+    server: {
+        proxy: {
+            '/api': {
+                target: 'https://localhost:3000',  // API-сервер
+                changeOrigin: true,
+                secure: false,
+            },
+        },
+    },
 })
