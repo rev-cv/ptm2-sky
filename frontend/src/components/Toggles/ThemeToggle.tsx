@@ -1,28 +1,28 @@
-import { useEffect } from 'react';
-import { useAtom, themeWithStorageAtom } from '@utils/jotai.store';
+import { useEffect } from 'react'
+import { useAtom, themeWithStorageAtom } from '@utils/jotai.store'
 import './style.scss'
 
 function ThemeToggle() {
-    const [theme, setTheme] = useAtom(themeWithStorageAtom);
+    const [theme, setTheme] = useAtom(themeWithStorageAtom)
 
     const handleThemeChange = (newTheme: 'light' | 'auto' | 'dark') => {
-        setTheme(newTheme);
-    };
+        setTheme(newTheme)
+    }
 
     // синхронизация с prefers-color-scheme и классом .dark-theme
     useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
         const handleChange = () => {
-            const isDark = mediaQuery.matches;
-            document.documentElement.classList.toggle('dark-theme', theme === 'dark' || (theme === 'auto' && isDark));
-        };
+            const isDark = mediaQuery.matches
+            document.documentElement.classList.toggle('dark-theme', theme === 'dark' || (theme === 'auto' && isDark))
+        }
 
-        handleChange();
+        handleChange()
         
-        mediaQuery.addEventListener('change', handleChange);
+        mediaQuery.addEventListener('change', handleChange)
 
-        return () => mediaQuery.removeEventListener('change', handleChange);
-    }, [theme]);
+        return () => mediaQuery.removeEventListener('change', handleChange)
+    }, [theme])
 
     return (
         <div className="toggle" role="radiogroup" aria-label="Theme switcher">
@@ -56,7 +56,7 @@ function ThemeToggle() {
                 <span>Dark</span>
             </div>
         </div>
-    );
+    )
 }
 
-export default ThemeToggle;
+export default ThemeToggle

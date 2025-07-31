@@ -1,7 +1,9 @@
 const APIURL = import.meta.env.VITE_API_URL
 import './style.scss'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { useAtomValue, themeWithStorageAtom } from '@utils/jotai.store'
+import IcoEnter from '@asset/enter.svg'
 
 const Auth = () => {
     const [isLogin, setIsLogin] = useState(true) // true для входа, false для регистрации
@@ -10,6 +12,23 @@ const Auth = () => {
         password: '',
         name: '',
     })
+
+    const theme = useAtomValue(themeWithStorageAtom)
+    
+    // синхронизация с prefers-color-scheme и классом .dark-theme
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+        const handleChange = () => {
+            const isDark = mediaQuery.matches
+            document.documentElement.classList.toggle('dark-theme', theme === 'dark' || (theme === 'auto' && isDark))
+        }
+
+        handleChange()
+        
+        mediaQuery.addEventListener('change', handleChange)
+
+        return () => mediaQuery.removeEventListener('change', handleChange)
+    }, [theme])
 
     const [error, setError] = useState('')
     const navigate = useNavigate()
@@ -36,8 +55,15 @@ const Auth = () => {
                 body: JSON.stringify(body),
             })
 
+            if (response.status === 401) {
+                const data = await response.json()
+                setError(data.detail)
+                return
+            }
+
             if (!response.ok) {
                 const data = await response.json()
+                setError(data.detail)
                 throw new Error(data.detail || 'Ошибка на сервере')
             }
 
@@ -55,9 +81,9 @@ const Auth = () => {
         setFormData({ email: '', password: '', name: '' })
     }
 
-  return <div className="auth-form">
-        <div className="">
-            <h2 className="auth-form__h2">
+  return <div className="auth-page">
+        <div className="auth-page__modal">
+            <h2 className="auth-page__h2">
                 {isLogin ? 'Вход' : 'Регистрация'}
             </h2>
 
@@ -65,48 +91,53 @@ const Auth = () => {
                 <div className="mb-4 text-red-500 text-center">{error}</div>
             )}
 
-            <form onSubmit={handleSubmit} className="auth-form__form">
-                {!isLogin && ( <div>
-                        <label className="auth-form__label">Имя</label>
+            <form onSubmit={handleSubmit} className="auth-form">
+                {!isLogin && ( <div className="auth-form__line">
                         <input
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
                             className="auth-form__input"
+                            placeholder=' '
                             required={!isLogin}
                         />
+                        <label className="auth-form__label">Name</label>
                 </div>)}
-                <div>
-                    <label className="auth-form__label">Email</label>
+                <div className="auth-form__line">
                     <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
                         className="auth-form__input"
+                        placeholder=' '
                         required
                     />
+                    <label className="auth-form__label">Email</label>
                 </div>
-                <div>
-                    <label className="auth-form__label">Пароль</label>
+                <div className="auth-form__line">
                     <input
                         type="password"
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
                         className="auth-form__input"
+                        placeholder=' '
                         required
                     />
+                    <label className="auth-form__label">Password</label>
+                    <button
+                        type="submit"
+                        className="auth-form__submit"
+                        // >{isLogin ? 'Войти' : 'Зарегистрироваться'}
+                        > <IcoEnter/>
+                    </button>
                 </div>
-                <button
-                    type="submit"
-                    className="auth-form__submit"
-                    >{isLogin ? 'Войти' : 'Зарегистрироваться'}
-                </button>
+                
             </form>
 
-            <p className="mt-4 text-center text-sm text-gray-600">
+            <p className="auth-page__bottom">
                 {isLogin ? 'Нет аккаунта?' : 'Уже есть аккаунт?'}{' '}
                 <button
                     onClick={toggleForm}

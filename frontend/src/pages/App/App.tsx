@@ -1,7 +1,7 @@
 import './style.scss'
 
 import { useAtomValue, openSidePanel } from '@utils/jotai.store'
-import NewTask from '@comps/NewTask/NewTask'
+// import NewTask from '@comps/NewTask/NewTask'
 
 import QueryPanel from '@comps/QueryPanel/QueryPanel'
 import Tasks from '@comps/Tasks/Tasks'
@@ -19,21 +19,24 @@ function PageApp() {
     const currentOpenPanel = useAtomValue(openSidePanel)
 
     useEffect(() => {
-        window.addEventListener('load', () => {
-            loadFilters()
-            loadQueries()
-        })
+        // window.addEventListener('load', () => {
+        //     loadFilters()
+        //     loadQueries()
+        // })
+        // после добавления ProtectedRoute window.addEventListener потерял смысл
+        loadFilters()
+        loadQueries()
     }, [])
 
     return (
         <>
             {/* выдвижная боковая панель (левая) с новой задачей */}
-            <div 
+            {/* <div 
                 className={`frame-left${currentOpenPanel !== "left" ? " hide" : ""} new-task`}>
                 <div className="frame-left__h3">New Task</div>
 
                 <NewTask />  
-            </div>
+            </div> */}
 
             {/* центральная область */}
             <div className="frame-central">

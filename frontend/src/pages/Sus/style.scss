@@ -1,0 +1,28 @@
+.suspense-page {
+    background-color: var(--color-bg-primary);
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    // svg {
+    //     animation: rotateAnimation 1000ms linear infinite;
+    //     display: none;
+    // }
+
+    > span {
+        transform: scale(2);
+    }
+}
+
+
+// @keyframes rotateAnimation {
+//     0% { transform: rotate(0deg); }
+//     20% { 
+//         transform: rotate(-5deg) scale(.95); 
+//     }
+//     40% { transform: rotate(0deg); }
+//     60% { transform: rotate(5deg) scale(.95); }
+//     100% { transform: rotate(0deg); }
+// }
