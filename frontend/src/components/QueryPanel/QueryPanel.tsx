@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useAtomValue, useSetAtom, isOpenNewTaskEditor, atomQuerySelect, openSidePanel } from '@utils/jotai.store'
+import { useAtomValue, useSetAtom, isOpenNewTaskEditor, atomQuerySelect, atomIsOpenSidePanel } from '@utils/jotai.store'
 
 import { loadTasks } from '@api/loadTasks2'
 
@@ -13,7 +13,7 @@ import IcoSetting from '@asset/setting.svg'
 import IcoReload from '@asset/reload.svg'
 
 function QueryPanel () {
-    const setPanel = useSetAtom(openSidePanel)
+    const setPanel = useSetAtom(atomIsOpenSidePanel)
     const setStatusNewTaskEditor = useSetAtom(isOpenNewTaskEditor)
     const querySelect = useAtomValue(atomQuerySelect)
     const [isOpenFilterList, setFilterListStatus] = useState(false)

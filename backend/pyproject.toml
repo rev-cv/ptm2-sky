@@ -10,6 +10,7 @@ dependencies = [
     "llama-cpp-python>=0.3.8",
     "openai>=1.77.0",
     "passlib>=1.7.4",
+    "python-dotenv>=1.1.1",
     "python-jose>=3.5.0",
     "sqlalchemy>=2.0.41",
     "uvicorn>=0.34.2",

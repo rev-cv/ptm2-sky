@@ -1,6 +1,6 @@
 import './style.scss'
 
-import { useAtomValue, openSidePanel } from '@utils/jotai.store'
+import { useAtomValue, atomIsOpenSidePanel } from '@utils/jotai.store'
 // import NewTask from '@comps/NewTask/NewTask'
 
 import QueryPanel from '@comps/QueryPanel/QueryPanel'
@@ -16,16 +16,11 @@ import { loadFilters } from '@api/loadFilters'
 import { loadQueries } from '@api/loadQueries'
 
 function PageApp() {
-    const currentOpenPanel = useAtomValue(openSidePanel)
+    const currentOpenPanel = useAtomValue(atomIsOpenSidePanel)
 
     useEffect(() => {
-        // window.addEventListener('load', () => {
-        //     loadFilters()
-        //     loadQueries()
-        // })
-        // после добавления ProtectedRoute window.addEventListener потерял смысл
-        loadFilters()
         loadQueries()
+        loadFilters()
     }, [])
 
     return (

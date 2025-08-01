@@ -1,10 +1,13 @@
+from sqlalchemy.orm import Session
 from sqlalchemy import or_, and_, not_
 from sqlalchemy.sql import case
 from database.sqlalchemy_tables import Task, Association, TaskCheck
 from datetime import datetime, timezone, timedelta
 from serializers.returned_task import serialize_task
 import re
+from schemas.types_queries import TypeQuery
 
+from sqlalchemy.orm import Session
 
 pattern = re.compile(r'\d{1,3}')
 
@@ -30,11 +33,11 @@ sorting_paramentrs = {
 }
 
 
-def db_get_tasks(db, fields):
+def db_get_tasks(db: Session, fields: TypeQuery, user_id: int):
 
     cdt = datetime.now().astimezone(timezone.utc)
 
-    query = db.query(Task)
+    query = db.query(Task).filter(Task.user_id == user_id)
 
     if fields.q:
         text = f"%{fields.q}%"

@@ -1,9 +1,9 @@
 import './style.scss'
 import { useState, useEffect } from "react"
-import { useAtom, openSidePanel } from '@utils/jotai.store'
+import { useAtom, atomIsOpenSidePanel } from '@utils/jotai.store'
 
 function Сurtain() {
-    const [currentOpenPanel, setPanel] = useAtom(openSidePanel)
+    const [currentOpenPanel, setPanel] = useAtom(atomIsOpenSidePanel)
     const [isShow, setStatusShow] = useState(false)
 
     const [shouldRender, setShouldRender] = useState(currentOpenPanel !== 'none')

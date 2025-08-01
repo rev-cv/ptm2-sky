@@ -1,8 +1,8 @@
 const APIURL = import.meta.env.VITE_API_URL
 import './style.scss'
-import React, { useState, useEffect } from 'react'
+import { useSetAtom, atomIsAuthenticated } from '@utils/jotai.store'
+import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useAtomValue, themeWithStorageAtom } from '@utils/jotai.store'
 import IcoEnter from '@asset/enter.svg'
 
 const Auth = () => {
@@ -12,23 +12,7 @@ const Auth = () => {
         password: '',
         name: '',
     })
-
-    const theme = useAtomValue(themeWithStorageAtom)
-    
-    // синхронизация с prefers-color-scheme и классом .dark-theme
-    useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-        const handleChange = () => {
-            const isDark = mediaQuery.matches
-            document.documentElement.classList.toggle('dark-theme', theme === 'dark' || (theme === 'auto' && isDark))
-        }
-
-        handleChange()
-        
-        mediaQuery.addEventListener('change', handleChange)
-
-        return () => mediaQuery.removeEventListener('change', handleChange)
-    }, [theme])
+    const setAuthStatus = useSetAtom(atomIsAuthenticated)
 
     const [error, setError] = useState('')
     const navigate = useNavigate()
@@ -36,6 +20,7 @@ const Auth = () => {
 
     const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
+        setError('')
     }
 
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
@@ -68,6 +53,7 @@ const Auth = () => {
             }
 
             // успешная авторизация/регистрация
+            setAuthStatus(true)
             const from = location.state?.from || '/' // возврат на исходный маршрут
             navigate(from, { replace: true })
         } catch (err) {
@@ -87,9 +73,7 @@ const Auth = () => {
                 {isLogin ? 'Вход' : 'Регистрация'}
             </h2>
 
-            {error && (
-                <div className="mb-4 text-red-500 text-center">{error}</div>
-            )}
+            
 
             <form onSubmit={handleSubmit} className="auth-form">
                 {!isLogin && ( <div className="auth-form__line">
@@ -134,6 +118,10 @@ const Auth = () => {
                         > <IcoEnter/>
                     </button>
                 </div>
+
+                {error && (
+                    <div className="auth-form__line error">{error}</div>
+                )}
                 
             </form>
 

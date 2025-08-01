@@ -7,15 +7,20 @@ from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from typing import Optional
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter()
 
-SECRET_KEY = "your_jwt_secret_key"
-ALGORITHM = "HS256"
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 15
-REFRESH_TOKEN_EXPIRE_DAYS = 7
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+ALGORITHM = os.getenv("JWT_ALGORITHM")
+
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES"))
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("JWT_REFRESH_TOKEN_EXPIRE_DAYS"))
 
 
 # === Генерация токенов ===
@@ -24,6 +29,27 @@ def create_token(data: dict, expires_delta: timedelta) -> str:
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+# === Валидация и распаковка токена ===
+def unpack_token(token, type_token="a", is_return_id=False):
+    tt = 'Refresh' if type_token=='r' else 'Access'
+
+    if not token:
+        raise HTTPException(status_code=401, detail=f"Отсутствует {tt} Token")
+    
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except JWTError:
+        raise HTTPException(status_code=401, detail=f"Недействительный {tt} Token")
+    
+    email = payload.get("sub")
+    user_id = payload.get("id")
+
+    if not email or not user_id:
+        raise HTTPException(status_code=401, detail=f"Недействительный {tt} Token")
+    
+    return payload if not is_return_id else user_id
 
 
 # === Регистрация ===
@@ -93,16 +119,9 @@ def set_tokens_in_response(response: Response, user: User):
 @router.get("/check-token")
 async def check_token(request: Request, db: Session = Depends(get_db)):
     token = request.cookies.get("access_token")
-    if not token:
-        raise HTTPException(status_code=401, detail="Access Token отсутствует")
-
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Недействительный Access Token")
-
+    payload = unpack_token(token,"a")
     email = payload.get("sub")
-    if not email or not db.query(exists().where(User.email == email)).scalar():
+    if not db.query(exists().where(User.email == email)).scalar():
         raise HTTPException(status_code=401, detail="Пользователь не найден")
 
     return {"valid": True, "user": email}
@@ -112,21 +131,9 @@ async def check_token(request: Request, db: Session = Depends(get_db)):
 @router.post("/refresh")
 async def refresh_token(request: Request, response: Response):
     token = request.cookies.get("refresh_token")
-    print(token)
-    if not token:
-        raise HTTPException(status_code=401, detail="Отсутствует Refresh Token")
-
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Недействительный Refresh Token")
-    
+    payload = unpack_token(token,"r")
     email = payload.get("sub")
     user_id = payload.get("id")
-
-    if not email or not user_id:
-        raise HTTPException(status_code=401, detail="Недействительный Refresh Token")
-
     new_access_token = create_token({"sub": email, "id": user_id}, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     response.set_cookie(
         key="access_token",

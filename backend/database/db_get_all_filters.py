@@ -1,3 +1,5 @@
+from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from database.sqlalchemy_tables import Filter
 import json
 
@@ -34,8 +36,10 @@ def get_all_filters_dict(db, is_ai_promt=False):
 
     return result
 
-def get_all_filters_list(db):
-    filters = db.query(Filter).all()
+def get_all_filters_list(db: Session, user_id: int):
+    filters = db.query(Filter).filter(
+        or_(Filter.user_id == user_id, Filter.user_id == None)
+    ).all()
     result = [
         {
             "id": f.id,

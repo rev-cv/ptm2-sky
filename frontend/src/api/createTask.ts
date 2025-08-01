@@ -2,6 +2,7 @@ const APIURL = import.meta.env.VITE_API_URL
 import { TypeReturnTask, TypeTasks_Filter } from '@mytype/typeTask'
 import { loadTasks } from '@api/loadTasks2'
 import { currentNewTask2, resetTask2, getDefaultStore, addToast } from '@utils/jotai.store'
+import { fetchAuth } from '@api/authFetch'
 
 export const createTask = async () => {
     const store = getDefaultStore()
@@ -32,9 +33,8 @@ export const createTask = async () => {
     const inTask:TypeReturnTask = {...rest, filter_list: filts}
 
     try {
-        const res = await fetch(`${APIURL}/api/upsert_task`, {
+        const res = await fetchAuth(`${APIURL}/api/upsert_task`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(inTask)
         })
         if (res.ok) {

@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useAtom, themeWithStorageAtom } from '@utils/jotai.store'
 import './style.scss'
 
@@ -8,21 +7,6 @@ function ThemeToggle() {
     const handleThemeChange = (newTheme: 'light' | 'auto' | 'dark') => {
         setTheme(newTheme)
     }
-
-    // синхронизация с prefers-color-scheme и классом .dark-theme
-    useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-        const handleChange = () => {
-            const isDark = mediaQuery.matches
-            document.documentElement.classList.toggle('dark-theme', theme === 'dark' || (theme === 'auto' && isDark))
-        }
-
-        handleChange()
-        
-        mediaQuery.addEventListener('change', handleChange)
-
-        return () => mediaQuery.removeEventListener('change', handleChange)
-    }, [theme])
 
     return (
         <div className="toggle" role="radiogroup" aria-label="Theme switcher">

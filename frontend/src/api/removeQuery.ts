@@ -1,12 +1,12 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { addToast } from '@utils/jotai.store'
 import { loadQueries } from '@api/loadQueries'
+import { fetchAuth } from '@api/authFetch'
 
 export const removeQuery = async (queryid:number) => {
     try {
-        const res = await fetch(`${APIURL}/api/remove_query`, {
+        const res = await fetchAuth(`${APIURL}/api/remove_query`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({queryid})
         })
         if (res.ok) {

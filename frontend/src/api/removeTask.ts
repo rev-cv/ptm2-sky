@@ -1,12 +1,12 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { loadTasks } from '@api/loadTasks2'
 import { addToast } from '@utils/jotai.store'
+import { fetchAuth } from '@api/authFetch'
 
 export const removeTask = async (taskid:number) => {
     try {
-        const res = await fetch(`${APIURL}/api/remove_task`, {
+        const res = await fetchAuth(`${APIURL}/api/remove_task`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({taskid})
         })
         if (res.ok) {

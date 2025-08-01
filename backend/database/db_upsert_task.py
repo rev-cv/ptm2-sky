@@ -1,14 +1,20 @@
-from database.sqlalchemy_tables import Task, Association, TaskCheck, Filter, SubTask
+from database.sqlalchemy_tables import Task, Association, TaskCheck, Filter, SubTask, User
 from schemas.types_tasks import TypeTask
 from sqlalchemy.orm import Session
 from serializers.returned_task import serialize_task
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from fastapi import HTTPException
 
-def db_upsert_task(db: Session, t: TypeTask):
+def db_upsert_task(db: Session, t: TypeTask, user_id: int):
+
+    user = db.query(User).get(user_id)
+    if not user:
+        HTTPException(status_code=401, detail=f"Пользователь не найден")
+
     if t.id < 0:
         # создание новой задачи
-        task = Task(title="")
+        task = Task(title="", user=user)
         db.add(task)
         db.commit() # нужно получить id
         db.refresh(task)

@@ -39,6 +39,8 @@ class Filter(Base):
     __tablename__ = 'filters'
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User", back_populates="custom_filters")
     filter_type = Column(String, nullable=False)  # theme, state__physical, state__intellectual, stress, energy_level и т.д.
     description = Column(Text)
     is_user_defined = Column(Boolean, default=False)  # флаг для пользовательских фильтров
@@ -77,6 +79,9 @@ class Task(Base):
     title = Column(String, nullable=False)
     description = Column(Text)
 
+    user_id = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User", back_populates="tasks")
+
     created_at = Column(
         DateTime(timezone=True), 
         nullable=False, 
@@ -106,6 +111,9 @@ class Queries(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     descr = Column(String, default="")
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    user = relationship("User", back_populates="queries")
 
     created_at = Column(
         DateTime(timezone=True), 
@@ -147,6 +155,7 @@ class Role(Base):
     __tablename__ = "roles"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
+    description = Column(String, nullable=True)
     permissions = Column(String, nullable=True)
     users = relationship("User", back_populates="role")
 
@@ -164,6 +173,10 @@ class User(Base):
         nullable=False, 
         default=lambda: datetime.datetime.now(datetime.timezone.utc)
     )
+
+    custom_filters = relationship("Filter", back_populates="user")
+    tasks = relationship("Task", back_populates="user")
+    queries = relationship("Queries", back_populates="user")
 
 class UserProfile(Base):
     __tablename__ = "user_profiles"
@@ -198,10 +211,31 @@ def init_db():
 
     if not db.query(Role).first():
         db.add_all([
-            Role(name="admin", permissions='{"can_manage_users": true}'),
-            Role(name="premium", permissions='{"can_manage_users": true}'),
-            Role(name="user", permissions='{"can_send_messages": true}'),
-            Role(name="banned", permissions='{"can_send_messages": true}')
+            Role(
+                name="admin", 
+                permissions='{"can_manage_users": true}',
+                description="Пользователь с доступом в админку"
+            ),
+            Role(
+                name="premium", 
+                permissions='{"can_manage_users": true}',
+                description="Пользователь с повышенной лояльностью"
+            ),
+            Role(
+                name="user", 
+                permissions='{"can_manage_users": true}',
+                description="Стандартный пользователь"
+            ),
+            Role(
+                name="banned", 
+                permissions='{"can_manage_users": true}',
+                description="Существующий пользователь с запрещенным доступом"
+            ),
+            Role(
+                name="not_activated", 
+                permissions='{"can_manage_users": true}',
+                description="Человек подавший запрос на регистрацию, но запрос еще не принят. Необходимо для бета-тестирования."
+            )
         ])
         db.commit()
 

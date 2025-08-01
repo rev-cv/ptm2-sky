@@ -1,12 +1,17 @@
-from database.sqlalchemy_tables import Queries, Filter
+from database.sqlalchemy_tables import Queries, Filter, User
 from schemas.types_queries import TypeQuery
 from sqlalchemy.orm import Session
 from serializers.returned_query import serialize_query
+from fastapi import HTTPException
 
-def db_upsert_query(db:Session, q:TypeQuery):
+def db_upsert_query(db:Session, q:TypeQuery, user_id:int):
+    user = db.query(User).get(user_id)
+    if not user:
+        HTTPException(status_code=401, detail=f"Пользователь не найден")
+
     if q.id < 0:
         # создание нового запроса
-        query = Queries(name="")
+        query = Queries(name="", user=user)
         db.add(query)
         db.commit() # нужно получить id
         db.refresh(query)

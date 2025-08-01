@@ -1,15 +1,15 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { getDefaultStore, atomFilterList, addToast } from "@utils/jotai.store"
 import { TypeFilterNew } from '@mytype/typeFilters'
+import { fetchAuth } from '@api/authFetch'
 
 export const updateFilter = async (editingFilter:TypeFilterNew) => {
     const store = getDefaultStore()
     const queryList = store.get(atomFilterList)
 
     try {
-        const res = await fetch(`${APIURL}/api/upsert_filter`, {
+        const res = await fetchAuth(`${APIURL}/api/upsert_filter`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(editingFilter)
         })
         if (res.ok) {

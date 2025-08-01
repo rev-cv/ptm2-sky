@@ -1,12 +1,12 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { loadFilters } from '@api/loadFilters'
 import { addToast } from '@utils/jotai.store'
+import { fetchAuth } from '@api/authFetch'
 
 export const removeFilter = async (filterid:number) => {
     try {
-        const res = await fetch(`${APIURL}/api/remove_filter`, {
+        const res = await fetchAuth(`${APIURL}/api/remove_filter`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({filterid})
         })
         if (res.ok) {

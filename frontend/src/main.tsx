@@ -3,22 +3,24 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import '@pages/reset.css'
 import '@pages/colors.scss'
-import ProtectedRoute from '@pages/ProtectedRoute'
-import Sus from '@pages/Sus/Sus'
 
-// import Auth from '@pages/Auth/Auth'
+import AppInitializer from '@pages/AppInitializer'
+const App = lazy(() => import('@pages/App/App'))
+const Sus = lazy(() => import('@pages/Sus/Sus'))
 const Auth = lazy(() => import('@pages/Auth/Auth'))
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <BrowserRouter>
-            <Suspense fallback={<div>Loading...</div>}>
-                <Routes>
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/sus" element={<Sus />} />
-                    <Route path="/" element={<ProtectedRoute />} />
-                </Routes>
-            </Suspense>
+            <AppInitializer>
+                <Suspense fallback={<Sus/>}>
+                    <Routes>
+                        <Route path="/auth" element={<Auth />} />
+                        <Route path="/sus" element={<Sus />} />
+                        <Route path="/" element={<App />} />
+                    </Routes>
+                </Suspense>
+            </AppInitializer>
         </BrowserRouter>
     </StrictMode>
 )

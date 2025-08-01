@@ -2,6 +2,7 @@ const APIURL = import.meta.env.VITE_API_URL
 import { TypeViewTask, TypeReturnTask, TypeTasks_Filter } from '@mytype/typeTask'
 import { getDefaultStore, viewTasks, addToast } from "@utils/jotai.store"
 import { taskChangeFIltersDetector, taskChangeSubtasksDetector } from '@utils/task-change-detector'
+import { fetchAuth } from '@api/authFetch'
 
 export const updateTask = async (editingTask:TypeViewTask) => {
     const changesInTask:TypeReturnTask = { id: editingTask.id }
@@ -91,9 +92,8 @@ export const updateTask = async (editingTask:TypeViewTask) => {
     }
 
     try {
-        const res = await fetch(`${APIURL}/api/upsert_task`, {
+        const res = await fetchAuth(`${APIURL}/api/upsert_task`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(changesInTask)
         })
         if (res.ok) {

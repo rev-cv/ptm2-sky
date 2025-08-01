@@ -1,15 +1,15 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { getDefaultStore, atomQueryList, addToast } from "@utils/jotai.store"
 import { TypeQuery } from '@mytype/typeQueries'
+import { fetchAuth } from '@api/authFetch'
 
 export const updateQuery = async (editingQuery:TypeQuery) => {
     const store = getDefaultStore()
     const queryList = store.get(atomQueryList)
 
     try {
-        const res = await fetch(`${APIURL}/api/upsert_query`, {
+        const res = await fetchAuth(`${APIURL}/api/upsert_query`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(editingQuery)
         })
         if (res.ok) {

@@ -1,5 +1,6 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { getDefaultStore, atomQuerySelect, viewTasks, samplingStatus } from '@utils/jotai.store'
+import { fetchAuth } from '@api/authFetch'
 
 export const loadTasks = async (isSubstitution=false) => {
     const store = getDefaultStore()
@@ -20,9 +21,8 @@ export const loadTasks = async (isSubstitution=false) => {
     store.set(samplingStatus, 'loading')
 
     try {
-        const res = await fetch(`${APIURL}/api/get_tasks`, {
+        const res = await fetchAuth(`${APIURL}/api/get_tasks`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({...body, tz: offsetMinutes})
         })
         
