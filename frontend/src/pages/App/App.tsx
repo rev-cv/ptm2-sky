@@ -1,16 +1,16 @@
 import './style.scss'
-
+import { useEffect } from 'react'
 import { useAtomValue, atomIsOpenSidePanel } from '@utils/jotai.store'
-// import NewTask from '@comps/NewTask/NewTask'
 
+// import NewTask from '@comps/NewTask/NewTask'
+import User from '@comps/User/User'
+import TokenMagicCounter from '@comps/TokenMagicCounter/TokenMagicCounter'
 import QueryPanel from '@comps/QueryPanel/QueryPanel'
 import Tasks from '@comps/Tasks/Tasks'
 import ThemeToggle from '@comps/Toggles/ThemeToggle'
 import Сurtain from '@comps/Сurtain/Сurtain'
 import Toast from '@comps/Toast/Toast'
-
 import EditorNewTask from '@comps/TaskEditor/EditorNewTask'
-import { useEffect } from 'react'
 
 import { loadFilters } from '@api/loadFilters'
 import { loadQueries } from '@api/loadQueries'
@@ -43,7 +43,9 @@ function PageApp() {
 
             {/* выдвижная боковая панель (правая) с настройками */}
             <div className={`frame-setting${currentOpenPanel !== "setting" ? " hide" : ""}`}>
-                <div className="frame-setting__h2">Setting</div>
+                <User />
+                <div className="frame-setting__h3">Magic Tokens</div>
+                <TokenMagicCounter />
                 <div className="frame-setting__h3">Theme</div>
                 <ThemeToggle />
             </div>

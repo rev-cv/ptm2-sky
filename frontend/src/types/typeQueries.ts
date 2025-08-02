@@ -68,6 +68,6 @@ export type TypeQuery = {
     order_by: TypeSortOption[]
 
     is_default: boolean // в любой непонятной ситуации выполняется запрос с is_default == true
-    page: 1
+    page: number
 }
 

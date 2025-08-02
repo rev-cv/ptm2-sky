@@ -1,0 +1,52 @@
+
+.user-profile {
+    display: grid;
+    grid-template-columns: 4em 1fr;
+    grid-template-areas: 
+        "avatar name"
+        "avatar role"
+        "avatar mail"
+    ;
+    gap: .2em 1em;
+    user-select: none;
+
+
+    &__avatar {
+        grid-area: avatar;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        border-radius: 50%;
+    }
+
+    &__role {
+        grid-area: role;
+        font-size: .7em;
+        font-weight: 700;
+        color: var(--color-text-secondary);
+        margin-top: -1.6em;
+    }
+
+    &__name {
+        grid-area: name;
+        font-weight: 700;
+        font-size: 1.1em;
+        line-height: 1.6em;
+        display: flex;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    &__email {
+        grid-area: mail;
+        font-size: .7em;
+        font-weight: 600;
+        color: var(--color-text-secondary);
+        transition: color 300ms ease-in-out;
+        cursor: default;
+
+        &:hover {
+            color: var(--color-button-default)
+        }
+    }
+}

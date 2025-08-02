@@ -45,6 +45,16 @@
             cursor: pointer;
             height: 100%;
             outline: none !important;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            span {
+                font-size: .5em;
+                opacity: .7;
+                padding-left: 1em;
+            }
         }
 
         &-reload {

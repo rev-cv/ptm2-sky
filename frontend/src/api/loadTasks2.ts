@@ -1,14 +1,30 @@
 const APIURL = import.meta.env.VITE_API_URL
-import { getDefaultStore, atomQuerySelect, viewTasks, samplingStatus } from '@utils/jotai.store'
+import { getDefaultStore, atomQuerySelect, atomViewTasks, atomViewTasksPage, atomViewTasksAllCount, atomSamplingStatus } from '@utils/jotai.store'
 import { fetchAuth } from '@api/authFetch'
 
-export const loadTasks = async (isSubstitution=false) => {
+let isLoading = false;
+// ↑ глобальный флаг внутри модуля
+// защита от двойного вызова StrictMode
+// предотвращает гонки и повторную загрузку
+
+export const loadTasks = async (isSubstitution=true) => {
+    if (isLoading) return; // предотвращение повторного вызова
+    isLoading = true;
+
     const store = getDefaultStore()
+
+    let page;
 
     // очистка текущих отображаемых задач, если это не запрос для пагинации
     if (isSubstitution) {
-        store.set(viewTasks, [])
+        store.set(atomViewTasks, [])
+        page = 1
+    } else {
+        page = store.get(atomViewTasksPage) + 1
+        // ↑ вызов с isSubstitution===true предполагает, что нужна следующая страница
     }
+
+    store.set(atomViewTasksPage, page)
 
     // все даты в базе данных хранятся в UTC
     // при этом если в запросе имеются относительные указания даты
@@ -18,12 +34,12 @@ export const loadTasks = async (isSubstitution=false) => {
     const body = store.get(atomQuerySelect)
 
     // инициализация запроса и обработка результата
-    store.set(samplingStatus, 'loading')
+    store.set(atomSamplingStatus, 'loading')
 
     try {
         const res = await fetchAuth(`${APIURL}/api/get_tasks`, {
             method: 'POST',
-            body: JSON.stringify({...body, tz: offsetMinutes})
+            body: JSON.stringify({...body, tz: offsetMinutes, page})
         })
         
         if (!res.ok) {
@@ -33,13 +49,14 @@ export const loadTasks = async (isSubstitution=false) => {
 
         const data = await res.json()
 
-        setTimeout(() => {
-            store.set(viewTasks, data.result)
-            store.set(samplingStatus, 'success')
-        }, 0) // имитация задержки для отладки
+        store.set(atomViewTasks, prev => [...prev, ...data.result])
+        store.set(atomViewTasksAllCount, data.count)
+        store.set(atomSamplingStatus, 'success')
 
     } catch (err) {
-        store.set(samplingStatus, 'error')
+        store.set(atomSamplingStatus, 'error')
         console.error('Ошибка поиска задач:', err)
+    } finally {
+        isLoading = false;
     }
 }

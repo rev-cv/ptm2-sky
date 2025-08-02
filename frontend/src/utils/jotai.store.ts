@@ -1,4 +1,5 @@
 export * from './jotai.auth'
+export * from './jotai.user'
 
 export * from './jotai.newtask'
 export * from './jotai.view-tasks'

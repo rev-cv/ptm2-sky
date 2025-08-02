@@ -1,10 +1,10 @@
 import { TypeViewTask } from '@mytype/typeTask'
-import { getDefaultStore, viewTasks } from "@utils/jotai.store"
+import { getDefaultStore, atomViewTasks } from "@utils/jotai.store"
 
 export function taskChangeDetector (editingTask:TypeViewTask) : boolean {
     const e = editingTask
     const o = getDefaultStore()
-        .get(viewTasks)
+        .get(atomViewTasks)
         .find(obj => obj.id === e.id)
 
     if (!o) return false

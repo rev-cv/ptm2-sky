@@ -24,11 +24,11 @@ export const queryAllTasks:TypeQuery = {
     eximpact: [],
     order_by: [],
     is_default: false,
-    page: 1
+    page: 0
 }
 
 export const atomQuerySelect = atom<TypeQuery|null>({...queryAllTasks})
 
 type TypeSamplingStatus = 'idle' | 'loading' | 'success' | 'error'
 
-export const samplingStatus = atom<TypeSamplingStatus>("idle")
+export const atomSamplingStatus = atom<TypeSamplingStatus>("loading")

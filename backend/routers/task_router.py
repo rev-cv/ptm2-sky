@@ -20,8 +20,8 @@ async def get_tasks(request:Request, fields:TypeQuery = Body(...), db:Session = 
     """
     token = request.cookies.get("access_token")
     user_id = unpack_token(token, is_return_id=True)
-    result = db_get_tasks(db, fields, user_id)
-    return {"status": "success", "result": result}
+    tasks, count = db_get_tasks(db, fields, user_id)
+    return {"status": "success", "result": tasks, "count": count}
 
 @router.post("/upsert_task")
 async def upsert_task(request:Request, task:TypeTask = Body(...), db:Session = Depends(get_db)):

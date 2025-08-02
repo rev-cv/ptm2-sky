@@ -4,10 +4,12 @@ from sqlalchemy.sql import case
 from database.sqlalchemy_tables import Task, Association, TaskCheck
 from datetime import datetime, timezone, timedelta
 from serializers.returned_task import serialize_task
-import re
+import os, re
 from schemas.types_queries import TypeQuery
-
+from dotenv import load_dotenv
 from sqlalchemy.orm import Session
+
+TASKS_PAGE_SIZE = int(os.getenv("TASKS_PAGE_SIZE"))
 
 pattern = re.compile(r'\d{1,3}')
 
@@ -141,13 +143,17 @@ def db_get_tasks(db: Session, fields: TypeQuery, user_id: int):
         if dt:
             query = query.filter(Task.finished_at < dt)
 
+    all_count = query.count()
+    # ↑ данное решение сомнительное с точки зрения производительности
+    # однако, как пользователю, очень хочется, чтобы было четкое представление
+    # о конечном кол-ве задач для запроса.
+    # А еще это упрощает логику пагинации.
 
     order_by = []
     for s in fields.order_by:
         st = sorting_paramentrs.get(s, None)
         if st is not None:
             order_by.insert(0, st)
-
 
     # -----------------
     # НАЧАЛО блока кода отвечающего за группировку задач по статусу выполнения
@@ -202,8 +208,13 @@ def db_get_tasks(db: Session, fields: TypeQuery, user_id: int):
     # КОНЕЦ блока кода оотвечающего за группировку задач по статусу выполнения
     # -----------------
 
-    query = query.order_by(*order_by)
-    return [serialize_task(task) for task in query.all()]
+    query = (query
+        .order_by(*order_by)
+        .offset((fields.page - 1) * TASKS_PAGE_SIZE)
+        .limit(TASKS_PAGE_SIZE)
+    )
+
+    return [serialize_task(task) for task in query.all()], all_count
 
 
 def getDate (text, offset=0, is_finish=False):

@@ -1,6 +1,6 @@
 const APIURL = import.meta.env.VITE_API_URL
 import { TypeViewTask, TypeReturnTask, TypeTasks_Filter } from '@mytype/typeTask'
-import { getDefaultStore, viewTasks, addToast } from "@utils/jotai.store"
+import { getDefaultStore, atomViewTasks, addToast } from "@utils/jotai.store"
 import { taskChangeFIltersDetector, taskChangeSubtasksDetector } from '@utils/task-change-detector'
 import { fetchAuth } from '@api/authFetch'
 
@@ -8,7 +8,7 @@ export const updateTask = async (editingTask:TypeViewTask) => {
     const changesInTask:TypeReturnTask = { id: editingTask.id }
 
     const store = getDefaultStore()
-    const tasks = store.get(viewTasks)
+    const tasks = store.get(atomViewTasks)
 
     const e = editingTask
     const o = tasks.find(obj => obj.id === e.id)
@@ -99,7 +99,7 @@ export const updateTask = async (editingTask:TypeViewTask) => {
         if (res.ok) {
             const data = await res.json()
             const updateable: TypeViewTask = data.updateable
-            store.set(viewTasks, tasks.map(elem => 
+            store.set(atomViewTasks, tasks.map(elem => 
                 elem.id === updateable.id ? updateable : elem
             ))
 

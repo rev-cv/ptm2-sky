@@ -17,8 +17,8 @@ const AppInitializer = ({ children }:TypeProps) => {
     const navigate = useNavigate()
     const location = useLocation()
 
+    // === Активация заданной темы
     useEffect(() => {
-        // активация заданной темы
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
         const handleChange = () => {
@@ -41,7 +41,6 @@ const AppInitializer = ({ children }:TypeProps) => {
 
     // === Правила редиректов ===
     useEffect(() => {
-        // правила редиректов
         if (!initialized || isAuthenticated === null) return
 
         if (!isAuthenticated && location.pathname !== "/auth") {
@@ -51,7 +50,6 @@ const AppInitializer = ({ children }:TypeProps) => {
         }
     }, [initialized, isAuthenticated, location.pathname, navigate])
 
-    // во время проверки авторизации пользователя показывается страница загрузки
     if (!initialized || isAuthenticated === null) {
         return <SuspensePage />
     }

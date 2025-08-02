@@ -20,12 +20,13 @@ import IcoFilters from '@asset/filter.svg'
 import riskImpact from '@api/BlockCriticalityValues.json'
 
 type TaskProps = {
-    objTask: TypeViewTask;
+    objTask: TypeViewTask
+    index: number
 }
 
 const dayms = 1000 * 60 * 60 * 24; // 1 день в миллисекундах
 
-function Task({objTask} : TaskProps) {
+function Task({objTask, index} : TaskProps) {
     const [isOpenEditorTask, setIsOpenEditorTask] = useState(false)
     const [isOpenSubTasks, setIsOpenSubTasks] = useState(false)
 
@@ -76,6 +77,8 @@ function Task({objTask} : TaskProps) {
         className={`task-item${objTask.status ? " task-done" : isFail ? " task-fail" : ""}`}
         onClick={() => setIsOpenEditorTask(true)}
         >
+        <div className="task-item__index">{`#${index + 1}`}</div>
+
         <div className="task-item__title">{objTask.title}</div>
 
         {(0 < objTask.description.trim().length) ?

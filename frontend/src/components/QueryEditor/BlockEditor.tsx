@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { TypeQuery, ruleDoneFailList } from '@mytype/typeQueries'
 import { TypeTasks_RI } from '@mytype/typeTask'
 import { TypeFilterNew } from '@mytype/typeFilters'
@@ -28,6 +29,14 @@ type TypeProps = {
 }
 
 function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypeProps) {
+
+    const [show, setShow] = useState(false)
+    useEffect(() => {
+        const timer = setTimeout(() => setShow(true), 290)
+        return () => clearTimeout(timer)
+    }, [])
+
+    if (!show) return 
 
     return <div className='query-block-editor__block'>
         <div className='query-block-editor__title'>{title}</div>
