@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from routers.api_router import router as ApiRouter
+from routers.websocket import router as WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from database.sqlalchemy_tables import init_db
 
@@ -30,6 +31,7 @@ app.add_middleware(
 )
 
 app.include_router(ApiRouter)
+app.include_router(WebSocket)
 
 @app.get("/hello", response_class=HTMLResponse)
 async def read_hello(request: Request):

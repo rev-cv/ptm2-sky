@@ -49,7 +49,7 @@ def unpack_token(token, type_token="a", is_return_id=False):
     if not email or not user_id:
         raise HTTPException(status_code=401, detail=f"Недействительный {tt} Token")
     
-    return payload if not is_return_id else user_id
+    return payload if not is_return_id else int(user_id)
 
 
 # === Регистрация ===
@@ -152,3 +152,17 @@ def logout(response: Response):
     response.delete_cookie("access_token", path="/")
     response.delete_cookie("refresh_token", path="/api/refresh")
     return {"success": True}
+
+
+# === Генерация специального токена для открытия WebSocket соединения ===
+@router.get("/get_ws_token")
+async def get_websocket_token(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("access_token")
+    payload = unpack_token(token,"a")
+    email = payload.get("sub")
+    user_id = payload.get("id")
+    if not db.query(exists().where(User.email == email)).scalar():
+        raise HTTPException(status_code=401, detail="Пользователь не найден")
+    new_ws_token = create_token({"sub": email, "id": user_id}, timedelta(seconds=30))
+    return {"ws_token": new_ws_token}
+

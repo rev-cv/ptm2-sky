@@ -36,18 +36,19 @@ const AppInitializer = ({ children }:TypeProps) => {
     // === Аутентификация ===
     useEffect(() => {
         checkToken()
-        setInitialized(true)
     }, [])
 
     // === Правила редиректов ===
     useEffect(() => {
-        if (!initialized || isAuthenticated === null) return
+        if (isAuthenticated === null) return
 
         if (!isAuthenticated && location.pathname !== "/auth") {
             navigate("/auth", { replace: true })
         } else if (isAuthenticated && location.pathname === "/auth") {
             navigate("/", { replace: true })
         }
+
+        setInitialized(true)
     }, [initialized, isAuthenticated, location.pathname, navigate])
 
     if (!initialized || isAuthenticated === null) {

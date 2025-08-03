@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { currentNewTask2, isOpenNewTaskEditor, openedTabsTaskEditor, atomThemeList, atomStressList, atomActionList, atomStateDict, useAtom, useAtomValue } from '@utils/jotai.store'
 import { createTask } from '@api/createTask'
+import { generateTask } from '@api/generateTask'
+
 import { TypeFilterNew__Tabs } from '@mytype/typeFilters'
 
 import Button from '@comps/Button/Button'
@@ -298,7 +300,7 @@ function EditorNewTask () {
             <div className='editor-task__bottom-btns'>
                 <Button
                     icon={IcoMagic}
-                    onClick={() => {}}
+                    onClick={() => generateTask(task, 'full')}
                     disabled={ task.title.length < 6 }
                 />
     
