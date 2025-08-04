@@ -156,7 +156,8 @@ function Task({objTask, index} : TaskProps) {
                         e.stopPropagation()
                         setIsOpenSubTasks(!isOpenSubTasks)
                     }}
-                    ><span>{`${doneSubTasksCount} / ${objTask.subtasks.length}`}</span> подзадач
+                    ><span>{`${doneSubTasksCount} / ${objTask.subtasks.length}`}</span>
+                    {objTask.subtasks.length < 2 ? " step" : " steps"}
                 </button>
             </div>
             <div className={`task-item__subtask-extender${isOpenSubTasks ? " view" : ""}`}>

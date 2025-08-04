@@ -77,9 +77,19 @@ async def websocket_connection(websocket: WebSocket, ws_token: Optional[str] = Q
 
 async def connection_processing(websocket: WebSocket, command:str, payload:str|None):
     """Обработка сообщений присылаемых клиентом"""
+
+    print("-"*30)
+    print(command)
+    print("-"*30)
+
     match command:
         case Commands.SET:
             clients[websocket]["task_obj"] = payload
+
+
+            print("*"*30)
+            print(payload)
+            print("*"*30)
             clients[websocket]["status"] = Commands.STATUS
             await send_response(websocket, "set", "The task object was loaded successfully.", T_Status.ADDED)
         case Commands.STATUS:
@@ -109,6 +119,9 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
             clients[websocket]["process"] = asyncio.create_task(
                 generate_full_task(websocket, clients)
             )
+
+            
+
             
         case _:
             await send_error(websocket, command, f"Unknown command: {command}", C_Status.UNKNOWN)

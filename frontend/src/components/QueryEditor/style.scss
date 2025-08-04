@@ -191,13 +191,25 @@
         }
     }
 
-    &__name {
+    &__name > textarea {
         font-size: 1.4em; 
         font-weight: 700;
         padding-top: .7em;
+
+        border-bottom: 1px solid var(--color-error);
+        margin-bottom: .3em;
+
+        &:not(:empty) {
+            background-color: transparent;
+            border-bottom-color: transparent !important;
+        }
+
+        &:focus {
+            background-color: rgba($color: #000000, $alpha: .3) !important;
+        }
     }
 
-    &__descr {
+    &__descr > textarea {
         font-size: .7em;
         line-height: 1.2em !important;
         border-left: 1px solid var(--color-button-default);
@@ -207,7 +219,7 @@
         // margin-bottom: 1em;
     }
 
-    &__search {
+    &__search > textarea {
         font-size: .9em;
         line-height: 1.2em !important;
         border-left: 1px solid var(--color-button-default);

@@ -78,6 +78,7 @@ function EditorNewTask () {
                     allList={themeList}
                     curList={task.filters.theme}
                     tt="темы"
+                    isTheme={true}
                     description="Категории или области, к которым относится задача, например, работа, учеба или личные проекты."
                     onAddElement={elem => {
                         updateTask({
@@ -300,7 +301,7 @@ function EditorNewTask () {
             <div className='editor-task__bottom-btns'>
                 <Button
                     icon={IcoMagic}
-                    onClick={() => generateTask(task, 'full')}
+                    onClick={() => generateTask(task, 'gen')}
                     disabled={ task.title.length < 6 }
                 />
     

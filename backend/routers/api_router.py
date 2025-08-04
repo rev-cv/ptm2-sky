@@ -27,11 +27,11 @@ router.include_router(task_router)
 router.include_router(query_router)
 
 
-with open("./ai_promts/APIKEY", "r") as f:
-    APIKEY = f.read()
+# with open("./ai_promts/APIKEY", "r") as f:
+#     APIKEY = f.read()
 
-with open("./ai_promts/APIURL", "r") as f:
-    APIURL = f.read()
+# with open("./ai_promts/APIURL", "r") as f:
+#     APIURL = f.read()
 
 with open("./ai_promts/magic_task_promt.md", "r") as f:
     magic_task_promt = f.read()

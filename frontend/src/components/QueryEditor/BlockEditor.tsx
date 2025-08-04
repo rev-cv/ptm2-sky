@@ -51,7 +51,7 @@ function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypePro
 
         <TextArea
             value={editable.descr}
-            placeholder="Description"
+            label='Description'
             className='query-block-editor__descr'
             onChange={e => updateEditable({...editable, descr: e.target.value})}
         />

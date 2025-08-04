@@ -23,13 +23,13 @@ function BlockTiming ({deadline, activation, taskchecks,
 
     const tch = sortDateStrings(taskchecks)
 
-    return <div className="editor-task__block editor-task__block-timing">
+    return <div className="editor-task__block editor-block-timing">
 
-        <div className='editor-task__block-timing__title'>
+        <div className='editor-block-timing__title'>
             <IcoStart /><span>Дата активации</span>
         </div>
 
-        <div className="editor-task__block-timing__descr">
+        <div className="editor-block-timing__descr">
             Дата, когда задача становится активной и доступной для выполнения.
         </div>
         
@@ -38,14 +38,14 @@ function BlockTiming ({deadline, activation, taskchecks,
             onClickDay={value => updateActivation(value)}
         />
 
-        <div className='editor-task__block-timing__d'></div>
+        <div className='editor-block-timing__d'></div>
 
 
-        <div className='editor-task__block-timing__title ico-deadline'>
+        <div className='editor-block-timing__title ico-deadline'>
             <IcoStart /><span>Дата дедлайна</span>
         </div>
 
-        <div className="editor-task__block-timing__descr">
+        <div className="editor-block-timing__descr">
             Крайний срок, к которому задача должна быть завершена.
         </div>
         
@@ -54,14 +54,14 @@ function BlockTiming ({deadline, activation, taskchecks,
             onClickDay={value => updateDeadline(value)}
         />
 
-        <div className='editor-task__block-timing__d'></div>
+        <div className='editor-block-timing__d'></div>
 
 
-        <div className='editor-task__block-timing__title'>
+        <div className='editor-block-timing__title'>
             <IcoCheck /><span>Даты проверок задачи</span>
         </div>
 
-        <div className="editor-task__block-timing__descr">
+        <div className="editor-block-timing__descr">
             Даты, когда запланированы напоминания или проверки прогресса по задаче.
         </div>
         

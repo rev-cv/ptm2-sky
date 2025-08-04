@@ -40,7 +40,7 @@ async def send_response(websocket: WebSocket, command: str, message=None, status
         response["message"] = message
     if data is not None:
         response["daya"] = data
-    await websocket.send_json(json.dumps(response))
+    await websocket.send_json(response)
 
 async def send_error(websocket:WebSocket, command:str, error_message:str, status:str = "error"):
     await send_response(websocket, command, error_message, status)

@@ -75,6 +75,7 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                 return <BlockFilters 
                     allList={themeList}
                     curList={task.filters.theme}
+                    isTheme={true}
                     tt="темы"
                     description="Категории или области, к которым относится задача, например, работа, учеба или личные проекты."
                     onAddElement={elem => {

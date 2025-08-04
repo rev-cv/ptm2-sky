@@ -1,18 +1,21 @@
-import { useRef, useLayoutEffect, useState, useEffect } from "react";
 import './style.scss'
+import { useRef, useLayoutEffect, useEffect } from "react"
+import Button from '@comps/Button/Button'
+import IcoMagic from '@asset/magic.svg'
 
 type TypeTextArea = {
     value?: string
+    label?: string
     placeholder?: string
     className?: string
     onChange?: (e:React.ChangeEvent<HTMLTextAreaElement>) => void
+    onGenerate?: () => void
     isBanOnEnter?: boolean
 }
 
-function AutoResizeTextarea({value="", className, placeholder, onChange, isBanOnEnter=false}:TypeTextArea) {
+function AutoResizeTextarea({value="", label, placeholder, className, onChange, onGenerate, isBanOnEnter=false}:TypeTextArea) {
 
     const textareaRef = useRef<HTMLTextAreaElement>(null)
-    const [empty, setEmpty] = useState(false)
 
     const resizeHight = () => {
         const textarea = textareaRef.current
@@ -38,7 +41,6 @@ function AutoResizeTextarea({value="", className, placeholder, onChange, isBanOn
 
     const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         resizeHight()
-        setEmpty(textareaRef.current?.value.trim() === '')
         if (onChange) onChange(e)
     }
 
@@ -74,18 +76,34 @@ function AutoResizeTextarea({value="", className, placeholder, onChange, isBanOn
         }
     }
 
-    return (
+    return <div className={`text-area2${className ? " " + className : ""}`}>
         <textarea
+            id={generateRandomId()}
             ref={textareaRef}
-            className={`text-area${className?" "+className:""}${empty?" empty":""}`}
+            className={`text-area2__input`}
             onInput={handleInput}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
             value={value}
-            placeholder={placeholder}
             rows={1}
+            placeholder={ !placeholder ? ' ' : placeholder}
         />
-    )
+
+        { !label ? null : <label className="text-area2__label">{label}</label> }
+        
+        { !onGenerate ? null :
+            <div className="text-area2__gen-btn">
+                <Button 
+                    icon={IcoMagic}
+                    onClick={() => onGenerate()}
+                />
+            </div>
+        }
+    </div>
 }
 
 export default AutoResizeTextarea
+
+const generateRandomId = () => {
+    return 'id_' + Math.random().toString(36).substr(2, 9);
+}

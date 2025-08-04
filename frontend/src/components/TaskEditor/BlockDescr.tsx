@@ -17,10 +17,10 @@ type TypeDescrTask = {
 
 function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/A", finished, onChangeTitle, onChangeDescr, onChangeMotiv, onChangeStatus}:TypeDescrTask) {
 
-    return <div className="editor-task__block editor-task__block-descr">
+    return <div className="editor-task__block editor-block-main">
 
         { 0 < id ?
-            <div className='editor-task__block-descr__status'>
+            <div className='editor-block-main__status'>
                 <Toggle
                     elements={[
                         { label: "wait", value: 0, isActive: true },
@@ -32,30 +32,31 @@ function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/
             </div> : null
         }
 
-        <div className='editor-task__block-descr__id'>
+        <div className='editor-block-main__id'>
             {id < 0 ? `Сreating a new task…` : `${id}: created ${created} ${finished ? "- finished " + finished : ""}`}
         </div>
 
         <TextArea 
             value={title}
             placeholder="Task title"
-            className='editor-task__block-descr__title'
+            className='editor-block-main__title'
             onChange={e => onChangeTitle(e.target.value)}
             isBanOnEnter={true}
         />
 
-        <div className='editor-task__block__label'>description</div>
         <TextArea 
             value={descr} 
-            className='editor-task__block-descr__descr'
+            label='description'
+            className='editor-block-main__descr'
             onChange={e => onChangeDescr(e.currentTarget.value)}
         />
 
-        <div className='editor-task__block__label'>motivation</div>
         <TextArea 
             value={motiv} 
-            className='editor-task__block-descr__descr'
+            label='motivation'
+            className='editor-block-main__descr'
             onChange={e => onChangeMotiv(e.currentTarget.value)}
+            onGenerate={() => {}}
         />
     </div>
 }

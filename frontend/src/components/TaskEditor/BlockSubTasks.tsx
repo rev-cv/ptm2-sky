@@ -8,6 +8,7 @@ import Button from '@comps/Button/Button'
 import IcoGrid from '@asset/grid.svg'
 import IcoAdd from '@asset/add.svg'
 import IcoRemove from '@asset/close.svg'
+import IcoMagic from '@asset/magic.svg'
 
 type TypeProps = {
     subtasks: TypeTasks_SubTask[]
@@ -62,21 +63,22 @@ function BlockSubTasks({ subtasks, onUpdate }: TypeProps) {
     }
 
     return (
-        <div className="editor-task__block editor-task__block-subtasks">
+        <div className="editor-task__block">
             {sortedSubtasks.map((item, idx) => (
                 <div
-                    className={`editor-subtask${dragOverIdx === idx ? ' drag-over' : ''}`}
+                    className={`editor-block-subtask${dragOverIdx === idx ? ' drag-over' : ''}`}
                     key={item.id}
                     onDragOver={e => handleDragOver(idx, e)}
                     onDrop={e => handleDrop(idx, e)}
-                >
+                    >
                     <div
-                        className='editor-subtask__drag-and-drop'
+                        className='editor-block-subtask__drag-and-drop'
                         draggable
                         onDragStart={e => handleDragStart(idx, e)}
                         onDragEnd={handleDragEnd}
                         ><IcoGrid />
                     </div>
+
                     <CheckBoxTask 
                         state={item.status} 
                         onChangeStatus={() => onUpdate(subtasks.map(subtask =>
@@ -84,65 +86,68 @@ function BlockSubTasks({ subtasks, onUpdate }: TypeProps) {
                         ))} />
                     <TextArea 
                         value={item.title}
-                        className='editor-subtask__title'
+                        className='editor-block-subtask__title'
                         onChange={e => onUpdate(subtasks.map(subtask =>
                             subtask.id === item.id ? { ...subtask, title: e.target.value } : subtask
                         ))}
                     />
-                    <div className='editor-subtask__label'>description</div>
                     <TextArea 
                         value={item.description}
-                        className='editor-subtask__text'
+                        label='description'
+                        className='editor-block-subtask__text'
                         onChange={e => onUpdate(subtasks.map(subtask =>
                             subtask.id === item.id ? { ...subtask, description: e.target.value } : subtask
                         ))}
                     />
-                    <div className='editor-subtask__label'>motivation</div>
                     <TextArea 
                         value={item.motivation}
-                        className='editor-subtask__text'
+                        label='motivation'
+                        className='editor-block-subtask__text'
                         onChange={e => onUpdate(subtasks.map(subtask =>
                             subtask.id === item.id ? { ...subtask, motivation: e.target.value } : subtask
                         ))}
                     />
-                    <div className='editor-subtask__label'>instruction</div>
                     <TextArea 
                         value={item.instruction}
-                        className='editor-subtask__text'
+                        label='instruction'
+                        className='editor-block-subtask__text'
                         onChange={e => onUpdate(subtasks.map(subtask =>
                             subtask.id === item.id ? { ...subtask, instruction: e.target.value } : subtask
                         ))}
                     />
-                    <div className='editor-subtask__label'>continuance</div>
-                    <div className='editor-subtask__text'>
+                    
+                    <div className='editor-block-subtask__text'>
                         <input 
+                            id={`id-`}
                             type="number"
-                            className='editor-subtask__continuance'
+                            className='editor-block-subtask__continuance'
                             value={item.continuance}
                             onChange={e => onUpdate(subtasks.map(subtask =>
                                 subtask.id === item.id ? { ...subtask, continuance: Number(e.target.value) } : subtask
                             ))}
                         />
-                        <span>hours</span>
+                        <span>hours allotted</span>
                     </div>
                     <Button
                         icon={IcoRemove}
                         variant='remove'
                         onClick={() => onUpdate(subtasks.filter(subtask => subtask.id != item.id))}
-                        className="editor-subtask__remove"
+                        className="editor-block-subtask__remove"
                         title='remove'
                     />
                 </div>
             ))}
             <div
-                className={`editor-subtask${dragOverIdx === sortedSubtasks.length ? ' drag-over' : ''}`}
+                className={`editor-block-subtask${dragOverIdx === sortedSubtasks.length ? ' drag-over' : ''}`}
                 onDragOver={e => handleDragOver(sortedSubtasks.length, e)}
                 onDrop={e => handleDrop(sortedSubtasks.length, e)}
-            >
+                >
+                <Button icon={IcoMagic}/>
                 <Button
                     icon={IcoAdd}
                     onClick={addNewSubTask}
                     title='add new subtask'
+                    text={'new step'}
                 />
             </div>
         </div>

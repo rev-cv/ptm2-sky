@@ -10,7 +10,7 @@ export async function generateTask (task:TypeViewTask, typeGen:string) {
     try {
         const res = await fetchAuth(`${APIURL}/api/get_ws_token`, {method: 'GET'})
         // из-за проблем с передачей куки по websocket
-        // было принято получать короткоживущий токен (60сек)
+        // было принято решение получать короткоживущий токен (60сек)
         // конкретно для открытия соединения websocket
         
         if (!res.ok) {
@@ -38,15 +38,22 @@ export async function generateTask (task:TypeViewTask, typeGen:string) {
     }
 
     ws.onmessage = (event) => {
-        const responce = JSON.parse(event.data)
-        console.log(responce)
+        // обработка сообщений присылаемых сервером
+        const response = JSON.parse(event.data)
+        console.log(response)
 
-        switch (responce.status) {
+        switch (response.status) {
             case "task_added":
-                // задача загружена => можно подать команду на старт генерации  
-                break;
+                // задача загружена => можно подать команду на старт генерации
+                const message = JSON.stringify({"command": typeGen})
+                ws.send(message)
+                console.log(response.status)
+                break
+            case "gen":
+
+                break
             default:
-                break;
+                break
         }
     }
 
