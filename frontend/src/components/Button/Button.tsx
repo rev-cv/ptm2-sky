@@ -3,7 +3,7 @@ import './style.scss'
 type TypeProps = {
     text?: string | null
     title?: string
-    icon?: string | null | React.FunctionComponent<React.SVGProps<SVGSVGElement>> | React.ComponentType<React.SVGProps<SVGSVGElement>>
+    icon?: string | null | React.FunctionComponent<any> | React.ComponentType<any>
     className?: string | null
     variant?: 'first' | 'second' | 'transparent' | 'remove'
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void

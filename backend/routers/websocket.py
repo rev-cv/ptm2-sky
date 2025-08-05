@@ -3,7 +3,7 @@ from typing import Optional
 from routers.auth_router import unpack_token
 import asyncio
 import json
-from ai_gen.full_task import generate_full_task
+from ai.generator import ai_task_generator
 from routers.ws_response_and_status import *
 
 # Хранилище активных клиентов
@@ -41,13 +41,7 @@ async def websocket_connection(websocket: WebSocket, ws_token: Optional[str] = Q
     
     """
     Открытое соединение всегда принимает json состоящий из двух полей
-
     - command - что делать
-        - set - задает объект задачи
-        - gen - сгенерировать всю задачу
-        - gen_steps - сгенерировать шаги
-        - gen_motivation
-        - status - отслеживание состояния при генерациях
     - message - над чем произволить действие (не обязательное поле)
     """
 
@@ -78,23 +72,14 @@ async def websocket_connection(websocket: WebSocket, ws_token: Optional[str] = Q
 async def connection_processing(websocket: WebSocket, command:str, payload:str|None):
     """Обработка сообщений присылаемых клиентом"""
 
-    print("-"*30)
-    print(command)
-    print("-"*30)
-
     match command:
         case Commands.SET:
             clients[websocket]["task_obj"] = payload
-
-
-            print("*"*30)
-            print(payload)
-            print("*"*30)
             clients[websocket]["status"] = Commands.STATUS
             await send_response(websocket, "set", "The task object was loaded successfully.", T_Status.ADDED)
         case Commands.STATUS:
             await websocket.send_text(clients[websocket]["status"])
-        case Commands.GEN:
+        case Commands.GEN | Commands.GEN_MOTIVE | Commands.GEN_STEPS:
             # проверка, есть ли уже запущенный процесс
             if clients[websocket]["process"] is not None:
                 await send_error(
@@ -115,14 +100,9 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
                 return
             
             # запуск генерации в фоне
-            clients[websocket]["status"] = "generating"
             clients[websocket]["process"] = asyncio.create_task(
-                generate_full_task(websocket, clients)
+                ai_task_generator(websocket, clients, command)
             )
-
-            
-
-            
         case _:
             await send_error(websocket, command, f"Unknown command: {command}", C_Status.UNKNOWN)
 

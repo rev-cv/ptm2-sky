@@ -1,14 +1,22 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from routers.api_router import router as ApiRouter
+# from routers.api_router import router as ApiRouter
 from routers.websocket import router as WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from database.sqlalchemy_tables import init_db
 
+from routers.filter_router import router as filter_router
+from routers.task_router import router as task_router
+from routers.query_router import router as query_router
+from routers.auth_router import router as auth_router
+
+
 init_db()
 
+
 app = FastAPI()
+
 
 # Настройка CORS
 origins = [
@@ -22,6 +30,7 @@ origins = [
     "https://127.0.0.1:3000",
 ]
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,  # Разрешённые источники
@@ -30,8 +39,17 @@ app.add_middleware(
     allow_headers=["*"],  # Разрешить все заголовки
 )
 
-app.include_router(ApiRouter)
+
+api_routers = APIRouter(prefix="/api", tags=["api"])
+api_routers.include_router(auth_router)
+api_routers.include_router(filter_router)
+api_routers.include_router(task_router)
+api_routers.include_router(query_router)
+
+
+app.include_router(api_routers)
 app.include_router(WebSocket)
+
 
 @app.get("/hello", response_class=HTMLResponse)
 async def read_hello(request: Request):

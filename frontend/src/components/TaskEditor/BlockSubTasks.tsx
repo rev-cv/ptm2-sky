@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TypeTasks_SubTask } from '@mytype/typeTask'
+import { atomGenSteps, useAtom } from '@utils/jotai.store'
 
 import CheckBoxTask from '@comps/CheckBox/CheckBoxTask'
 import TextArea from '@comps/TextArea/TextArea'
@@ -9,18 +10,44 @@ import IcoGrid from '@asset/grid.svg'
 import IcoAdd from '@asset/add.svg'
 import IcoRemove from '@asset/close.svg'
 import IcoMagic from '@asset/magic.svg'
+import IcoBack from '@asset/back.svg'
+import Loader from '@comps/Loader/Loader'
 
 type TypeProps = {
     subtasks: TypeTasks_SubTask[]
     onUpdate: (newOrder: TypeTasks_SubTask[]) => void
+    onGenerate: (typeGen:string) => void
+    onRollbackGenerate: (oldSteps:TypeTasks_SubTask[]) => void
 }
 
-function BlockSubTasks({ subtasks, onUpdate }: TypeProps) {
+function BlockSubTasks({ subtasks, onUpdate, onGenerate, onRollbackGenerate }: TypeProps) {
     const [dragOverIdx, setDragOverIdx] = useState<number | null>(null)
+    const [genSteps, updateGenSteps] = useAtom(atomGenSteps)
 
     const sortedSubtasks = [...subtasks].sort(
         (a: TypeTasks_SubTask, b: TypeTasks_SubTask) => a.order - b.order
     )
+
+    const hundleGenerate = () => {
+        if (genSteps.isGen) {
+            // Остановка генерации
+            updateGenSteps({ isGen: false, fixed: [] })
+            return
+        }
+
+        if (0 < genSteps.fixed.length) {
+            // Откат после генерации
+            onRollbackGenerate(genSteps.fixed)
+            updateGenSteps({ isGen: false, fixed: [] })
+            return
+        }
+
+        console.log('hundleGenerate')
+
+        // Старт генерации
+        updateGenSteps({ isGen: true, fixed: [...sortedSubtasks] })
+        setTimeout(() => onGenerate("gen_steps"), 3000)
+    }
 
     const handleDragStart = (idx: number, e: React.DragEvent) => {
         e.dataTransfer.effectAllowed = "move"
@@ -142,7 +169,13 @@ function BlockSubTasks({ subtasks, onUpdate }: TypeProps) {
                 onDragOver={e => handleDragOver(sortedSubtasks.length, e)}
                 onDrop={e => handleDrop(sortedSubtasks.length, e)}
                 >
-                <Button icon={IcoMagic}/>
+                <Button 
+                    onClick={hundleGenerate}
+                    icon={
+                        (genSteps.isGen) ? Loader : 
+                        (0 < genSteps.fixed.length) ? IcoBack : IcoMagic
+                    }
+                />
                 <Button
                     icon={IcoAdd}
                     onClick={addNewSubTask}

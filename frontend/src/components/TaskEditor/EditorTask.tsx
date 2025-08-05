@@ -6,11 +6,13 @@ import { TypeFilterNew__Tabs } from '@mytype/typeFilters'
 
 import Modal from '@comps/Modal/Modal'
 import BlockMenu, { asideButtons } from './BlockMenu'
-import BlockDescription from './BlockDescr'
+import BlockDescription from './BlockMain'
 import BlockSubTasks from './BlockSubTasks'
 import BlockTiming from './BlockTiming'
 import BlockRisk from './BlockRisk'
 import BlockFilters from './BlockFilters'
+
+import { generateTask } from '@api/generateTask'
 
 import './style.scss'
 
@@ -45,11 +47,29 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                     onChangeDescr={s => updateTask({...task, description: s})}
                     onChangeMotiv={s => updateTask({...task, motivation: s})}
                     onChangeStatus={b => updateTask({...task, status: b})}
+                    onGenerate={typeGen => {
+                        generateTask(task, typeGen).then(newTask => {
+                            if (!newTask) return
+                            updateTask({...task, motivation: newTask.motivation })
+                        })
+                    }}
+                    onRollbackGenerate={oldMotive => {
+                        updateTask({...task, motivation: oldMotive})
+                    }}
                 />
             case "steps":
                 return <BlockSubTasks 
                     subtasks={task.subtasks}
                     onUpdate={newOrder => updateTask({...task, subtasks: newOrder})}
+                    onGenerate={typeGen => {
+                        generateTask(task, typeGen).then(newTask => {
+                            if (!newTask) return
+                            updateTask({...task, subtasks: [...newTask.subtasks] })
+                        })
+                    }}
+                    onRollbackGenerate={oldMotive => {
+                        updateTask({...task, subtasks: [...oldMotive]})
+                    }}
                 />
             case "timing":
                 return <BlockTiming 

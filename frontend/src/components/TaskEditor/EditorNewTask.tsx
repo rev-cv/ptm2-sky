@@ -8,7 +8,7 @@ import { TypeFilterNew__Tabs } from '@mytype/typeFilters'
 import Button from '@comps/Button/Button'
 import Modal from '@comps/Modal/Modal'
 import BlockMenu from './BlockMenu'
-import BlockDescription from './BlockDescr'
+import BlockMain from './BlockMain'
 import BlockSubTasks from './BlockSubTasks'
 import BlockTiming from './BlockTiming'
 import BlockRisk from './BlockRisk'
@@ -36,7 +36,7 @@ function EditorNewTask () {
     const getPage = () => {
         switch (activeTab) {
             case "":
-                return <BlockDescription
+                return <BlockMain
                     id={task.id}
                     title={task.title}
                     descr={task.description}
@@ -47,11 +47,29 @@ function EditorNewTask () {
                     onChangeDescr={s => updateTask({...task, description: s})}
                     onChangeMotiv={s => updateTask({...task, motivation: s})}
                     onChangeStatus={b => updateTask({...task, status: b})}
+                    onGenerate={typeGen => {
+                        generateTask(task, typeGen).then(newTask => {
+                            if (!newTask) return
+                            updateTask({...task, motivation: newTask.motivation })
+                        })
+                    }}
+                    onRollbackGenerate={oldMotive => {
+                        updateTask({...task, motivation: oldMotive})
+                    }}
                 />
             case "steps":
                 return <BlockSubTasks 
                     subtasks={task.subtasks}
                     onUpdate={newOrder => updateTask({...task, subtasks: newOrder})}
+                    onGenerate={typeGen => {
+                        generateTask(task, typeGen).then(newTask => {
+                            if (!newTask) return
+                            updateTask({...task, subtasks: [...newTask.subtasks] })
+                        })
+                    }}
+                    onRollbackGenerate={oldMotive => {
+                        updateTask({...task, subtasks: [...oldMotive]})
+                    }}
                 />
             case "timing":
                 return <BlockTiming 

@@ -2,6 +2,7 @@ export * from './jotai.auth'
 export * from './jotai.user'
 
 export * from './jotai.newtask'
+export * from './jotai.magic-task'
 export * from './jotai.view-tasks'
 
 export * from './jotai.filters'

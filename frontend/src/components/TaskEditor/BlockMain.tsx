@@ -1,5 +1,9 @@
 import TextArea from '@comps/TextArea/TextArea'
 import Toggle from '@comps/Toggles/Toggle'
+import { atomGenMotive, useAtom } from '@utils/jotai.store'
+import IcoMagic from '@asset/magic.svg'
+import IcoBack from '@asset/back.svg'
+import Loader from '@comps/Loader/Loader'
 
 type TypeDescrTask = {
     title?: string
@@ -13,9 +17,33 @@ type TypeDescrTask = {
     onChangeDescr: (descr:string) => void
     onChangeMotiv: (descr:string) => void
     onChangeStatus: (status:boolean) => void
+    onGenerate: (typeGen:string) => void
+    onRollbackGenerate: (oldMotiv:string) => void
 }
 
-function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/A", finished, onChangeTitle, onChangeDescr, onChangeMotiv, onChangeStatus}:TypeDescrTask) {
+function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/A", finished, onChangeTitle, onChangeDescr, onChangeMotiv, onChangeStatus, onGenerate, onRollbackGenerate}:TypeDescrTask) {
+
+    const [genMotive, updateGenMotive] = useAtom(atomGenMotive)
+
+    const hundleGenerate = () => {
+        if (genMotive.isGen) {
+            // Остановка генерации
+            updateGenMotive({ isGen: false, fixed: "" })
+            return
+        }
+
+        if (genMotive.fixed) {
+            // Откат после генерации
+            onRollbackGenerate(genMotive.fixed)
+            updateGenMotive({ isGen: false, fixed: "" })
+            return
+        }
+
+        // Старт генерации
+        updateGenMotive({ isGen: true, fixed: motiv })
+        setTimeout(() => onGenerate("gen_motive"), 3000)
+    }
+
 
     return <div className="editor-task__block editor-block-main">
 
@@ -56,7 +84,11 @@ function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/
             label='motivation'
             className='editor-block-main__descr'
             onChange={e => onChangeMotiv(e.currentTarget.value)}
-            onGenerate={() => {}}
+            onGenerate={hundleGenerate}
+            icoGen={
+                (genMotive.isGen) ? Loader : 
+                (genMotive.fixed != "") ? IcoBack : IcoMagic
+            }
         />
     </div>
 }

@@ -27,7 +27,8 @@ class Commands(str, Enum):
     SET = 'set' # установить задачу в clients[websocket]["task_obj"], над которой будут производиться операции
     STATUS = "status" # запрос с клиента на статус вполнения задачи (если от сервера ничего не приходит)
     GEN = "gen" # генерация задачи
-    GEN_STEPS = "gen" # генерация шагов у задачи
+    GEN_STEPS = "gen_steps" # генерация шагов у задачи
+    GEN_MOTIVE = "gen_motive"
 
 async def send_response(websocket: WebSocket, command: str, message=None, status="success", data=None):
     """Унифицированная отправка ответов"""
@@ -39,7 +40,7 @@ async def send_response(websocket: WebSocket, command: str, message=None, status
     if message is not None:
         response["message"] = message
     if data is not None:
-        response["daya"] = data
+        response["data"] = data
     await websocket.send_json(response)
 
 async def send_error(websocket:WebSocket, command:str, error_message:str, status:str = "error"):

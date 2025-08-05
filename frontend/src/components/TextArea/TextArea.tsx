@@ -1,7 +1,6 @@
 import './style.scss'
 import { useRef, useLayoutEffect, useEffect } from "react"
 import Button from '@comps/Button/Button'
-import IcoMagic from '@asset/magic.svg'
 
 type TypeTextArea = {
     value?: string
@@ -10,11 +9,13 @@ type TypeTextArea = {
     className?: string
     onChange?: (e:React.ChangeEvent<HTMLTextAreaElement>) => void
     onGenerate?: () => void
+    icoGen?: React.FunctionComponent<any> | React.ComponentType<any> | string
     isBanOnEnter?: boolean
 }
 
-function AutoResizeTextarea({value="", label, placeholder, className, onChange, onGenerate, isBanOnEnter=false}:TypeTextArea) {
+function AutoResizeTextarea({value="", label, placeholder, className, onChange, onGenerate, icoGen, isBanOnEnter=false}:TypeTextArea) {
 
+    const IcoGen = icoGen
     const textareaRef = useRef<HTMLTextAreaElement>(null)
 
     const resizeHight = () => {
@@ -94,7 +95,7 @@ function AutoResizeTextarea({value="", label, placeholder, className, onChange, 
         { !onGenerate ? null :
             <div className="text-area2__gen-btn">
                 <Button 
-                    icon={IcoMagic}
+                    icon={IcoGen}
                     onClick={() => onGenerate()}
                 />
             </div>
