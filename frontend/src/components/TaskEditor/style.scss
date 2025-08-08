@@ -115,6 +115,11 @@
         font-size: 1.4em; 
         font-weight: 700;
         border-bottom: 1px solid var(--color-error);
+        // padding-left: 0 !important;
+        // padding-right: 0 !important;
+        margin-right: -.7em;
+        margin-left: -.7em;
+
 
         &:not(:empty) {
             background-color: transparent;

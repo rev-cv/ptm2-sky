@@ -46,7 +46,7 @@ function BlockSubTasks({ subtasks, onUpdate, onGenerate, onRollbackGenerate }: T
 
         // Старт генерации
         updateGenSteps({ isGen: true, fixed: [...sortedSubtasks] })
-        setTimeout(() => onGenerate("gen_steps"), 3000)
+        onGenerate("gen_steps")
     }
 
     const handleDragStart = (idx: number, e: React.DragEvent) => {

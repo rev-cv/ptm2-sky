@@ -21,7 +21,8 @@ type TypeDescrTask = {
     onRollbackGenerate: (oldMotiv:string) => void
 }
 
-function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/A", finished, onChangeTitle, onChangeDescr, onChangeMotiv, onChangeStatus, onGenerate, onRollbackGenerate}:TypeDescrTask) {
+function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/A", finished, 
+    onChangeTitle, onChangeDescr, onChangeMotiv, onChangeStatus, onGenerate, onRollbackGenerate}:TypeDescrTask) {
 
     const [genMotive, updateGenMotive] = useAtom(atomGenMotive)
 
@@ -41,7 +42,7 @@ function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/
 
         // Старт генерации
         updateGenMotive({ isGen: true, fixed: motiv })
-        setTimeout(() => onGenerate("gen_motive"), 3000)
+        onGenerate("gen_motive")
     }
 
 

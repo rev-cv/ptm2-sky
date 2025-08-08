@@ -90,6 +90,23 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                     onChangeImpact={i => updateTask({...task, impact: i})}
                     onChangeProp={text => updateTask({...task, risk_proposals: text})}
                     onChangeExpl={text => updateTask({...task, risk_explanation: text})}
+                    onGenerate={typeGen => {
+                        generateTask(task, typeGen).then(newTask => {
+                            if (!newTask) return
+                            updateTask({...task, 
+                                risk:newTask.risk, 
+                                risk_proposals:newTask.risk_proposals,
+                                risk_explanation: newTask.risk_explanation
+                            })
+                        })
+                    }}
+                    onRollbackGenerate={oldRisk => {
+                        updateTask({...task, 
+                            risk:oldRisk.risk, 
+                            risk_proposals:oldRisk.risk_proposals,
+                            risk_explanation: oldRisk.risk_explanation
+                        })
+                    }}
                 />
             case "themes":
                 return <BlockFilters 

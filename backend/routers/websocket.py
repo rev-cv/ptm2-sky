@@ -79,7 +79,7 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
             await send_response(websocket, "set", "The task object was loaded successfully.", T_Status.ADDED)
         case Commands.STATUS:
             await websocket.send_text(clients[websocket]["status"])
-        case Commands.GEN | Commands.GEN_MOTIVE | Commands.GEN_STEPS:
+        case Commands.GEN | Commands.GEN_MOTIVE | Commands.GEN_STEPS | Commands.GEN_RISK:
             # проверка, есть ли уже запущенный процесс
             if clients[websocket]["process"] is not None:
                 await send_error(

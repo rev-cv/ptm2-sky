@@ -29,6 +29,7 @@ class Commands(str, Enum):
     GEN = "gen" # генерация задачи
     GEN_STEPS = "gen_steps" # генерация шагов у задачи
     GEN_MOTIVE = "gen_motive"
+    GEN_RISK = "gen_risk"
 
 async def send_response(websocket: WebSocket, command: str, message=None, status="success", data=None):
     """Унифицированная отправка ответов"""

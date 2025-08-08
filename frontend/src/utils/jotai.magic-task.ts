@@ -1,6 +1,6 @@
 
 import { atom } from 'jotai'
-import { TypeGenMotive, TypeGenSteps } from '@mytype/typesGenerations'
+import { TypeGenMotive, TypeGenSteps, TypeGenRisk } from '@mytype/typesGenerations'
 
 /* старт → генерация → ок или отменить результат */
 
@@ -12,4 +12,9 @@ export const atomGenMotive = atom<TypeGenMotive>({
 export const atomGenSteps = atom<TypeGenSteps>({
     isGen: false,
     fixed: []
+})
+
+export const atomGenRisk = atom<TypeGenRisk>({
+    isGen: false,
+    fixed: null
 })

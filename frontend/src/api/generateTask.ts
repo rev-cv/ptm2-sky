@@ -2,7 +2,7 @@ const APIURL = import.meta.env.VITE_API_URL
 const WSURL = import.meta.env.VITE_WS_URL
 import { fetchAuth } from '@api/authFetch'
 import { TypeViewTask } from '@mytype/typeTask'
-import { getDefaultStore, atomGenMotive, atomGenSteps } from '@utils/jotai.store'
+import { getDefaultStore, atomGenMotive, atomGenSteps, addToast } from '@utils/jotai.store'
 
 export async function generateTask(task: TypeViewTask, typeGen: string): Promise<TypeViewTask | undefined> {
     let wsToken = ""
@@ -36,6 +36,9 @@ export async function generateTask(task: TypeViewTask, typeGen: string): Promise
             if (response.status === "task_added") {
                 const message = JSON.stringify({ command: typeGen })
                 ws.send(message)
+            } else if (response.status === "error") {
+                addToast(response.message, "delete")
+                console.error(`AI generation error: ${response.message}`)
             } else if (response.status === "generation_completed" && response.data) {
                 ws.close(1000, "The client closed the WebSocket connection.")
                 updateState(typeGen)
@@ -44,6 +47,8 @@ export async function generateTask(task: TypeViewTask, typeGen: string): Promise
         }
 
         ws.onerror = (error) => {
+            // onerror на клиенте вызывается браузером при ошибках низкого уровня
+            // например, при проблемах с сетью или протоколом
             console.error('WebSocket error:', error)
             reject(error)
         }
