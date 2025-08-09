@@ -1,6 +1,10 @@
 import { useState } from 'react'
+
 import { TypeFilterNew, TypeFilterNew__Tabs } from '@mytype/typeFilters'
 import { TypeTasks_Filter, TypeStates } from '@mytype/typeTask'
+import { Commands } from '@mytype/typesGen'
+
+import { atomGenTheme, atomGenState, atomGenStress, atomGenAction, useAtom } from '@utils/jotai.store'
 
 import Button from '@comps/Button/Button'
 import TextArea from '@comps/TextArea/TextArea'
@@ -8,20 +12,74 @@ import TextArea from '@comps/TextArea/TextArea'
 import IcoRemove from '@asset/close.svg'
 import IcoAdd from '@asset/add.svg'
 import IcoMagic from '@asset/magic.svg'
+import IcoBack from '@asset/back.svg'
+import Loader from '@comps/Loader/Loader'
+
+const filterElements = {
+    "theme": {
+        atomGen: atomGenTheme, 
+        title: "темы", 
+        command: Commands.GEN_THEME,
+        descr: "Категории или области, к которым относится задача, например, работа, учеба или личные проекты."
+    },
+    "state": {
+        atomGen: atomGenState, 
+        title: "состояния", 
+        command: Commands.GEN_STATE,
+        descr: "Условия (эмоциональное настроение, физическая энергия, окружающая обстановка), оптимальные для успешного выполнения задачи."
+    },
+    "stress": {
+        atomGen: atomGenStress, 
+        title: "эмоциональные состояния", 
+        command: Commands.GEN_STRESS,
+        descr: "Эмоции и уровень энергии, которые вызывает процесс выполнения задачи, влияющие на восприятие и мотивацию."
+    },
+    "action": {
+        atomGen: atomGenAction, 
+        title: "события", 
+        command: Commands.GEN_ACTION,
+        descr: "Характер действий, необходимых для выполнения задачи, таких как анализ, творчество или рутинные операции."
+    },
+}
 
 type TypeProps = {
-    allList?: TypeFilterNew[] | null | undefined // чистый список с фильтрами
-    tabList?: TypeFilterNew__Tabs[] // фильтры переданные в вкладках
-    curList: TypeTasks_Filter[]
+    type: "theme" | "state" | "stress" | "action"
+    curList: TypeTasks_Filter[] // список с добавленными фильтрами
+    allList?: TypeFilterNew[] | null | undefined // список со всеми фильтрами
+    tabList?: TypeFilterNew__Tabs[] // список со всеми фильтрами разбитыми по группам (для state)
+    // передается либо allList, либо tabList
+    isTheme?: boolean
     onAddElement: (elem:TypeTasks_Filter, sub:TypeStates|undefined) => void
     onDelElement: (id:number) => void
     onUpdateElement: (elem:TypeTasks_Filter) => void
-    isTheme?: boolean
-    tt: string
-    description: string
+    onGenerate: (command: typeof Commands[keyof typeof Commands]) => void
+    onRollbackGenerate: (oldSteps:TypeTasks_Filter[]) => void
 }
 
-function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement, onUpdateElement, tt, description, isTheme=false} : TypeProps) {
+function BlockFilters ({type, curList, allList, tabList=[], isTheme=false,
+    onAddElement, onDelElement, onUpdateElement, onGenerate, onRollbackGenerate} : TypeProps) {
+
+    const [genFilter, updateGenFilter] = useAtom(filterElements[type].atomGen)
+
+    const hundleGenerate = () => {
+        if (genFilter.isGen) {
+            // остановка генерации
+            updateGenFilter({ isGen: false, fixed: [] })
+            onGenerate(Commands.STOP)
+            return
+        }
+
+        if (0 < genFilter.fixed.length) {
+            // откат после генерации
+            onRollbackGenerate(genFilter.fixed)
+            updateGenFilter({ isGen: false, fixed: [] })
+            return
+        }
+
+        // старт генерации
+        updateGenFilter({ isGen: true, fixed: [...curList] })
+        onGenerate(filterElements[type].command)
+    }
 
     const curListID = curList.map(elem => elem.idf)
     let filterCount = 0 
@@ -47,7 +105,7 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
     }
 
     return <div className="editor-task__block editor-block-filters">
-        <div className='editor-block-filters__about'>{description}</div>
+        <div className='editor-block-filters__about'>{filterElements[type].descr}</div>
 
         <div className='editor-block-filters__d'></div>
 
@@ -83,7 +141,13 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
             ))}
 
             <div className='editor-block-filters__new-and-gen-btns'>
-                <Button icon={IcoMagic}/>
+                <Button 
+                    icon={
+                        (genFilter.isGen) ? Loader : 
+                        (0 < genFilter.fixed.length) ? IcoBack : IcoMagic
+                    }
+                    onClick={hundleGenerate}
+                />
                 { !isTheme ? null :
                     <Button icon={IcoAdd} text={'new'}/>
                 }
@@ -91,7 +155,7 @@ function BlockFilters ({allList, curList, tabList=[], onAddElement, onDelElement
         </div>
 
         <Button 
-            text={`все ${tt} - ${filterCount}`} 
+            text={`все ${filterElements[type].title} - ${filterCount}`} 
             variant='second'
             className='editor-block-filters__all-filters-btn'
             onClick={() => setOpenAllFilters(prev => !prev)}

@@ -1,6 +1,9 @@
+import { atomGenMotive, useAtom } from '@utils/jotai.store'
+import { Commands } from '@mytype/typesGen'
+
 import TextArea from '@comps/TextArea/TextArea'
 import Toggle from '@comps/Toggles/Toggle'
-import { atomGenMotive, useAtom } from '@utils/jotai.store'
+
 import IcoMagic from '@asset/magic.svg'
 import IcoBack from '@asset/back.svg'
 import Loader from '@comps/Loader/Loader'
@@ -17,7 +20,7 @@ type TypeDescrTask = {
     onChangeDescr: (descr:string) => void
     onChangeMotiv: (descr:string) => void
     onChangeStatus: (status:boolean) => void
-    onGenerate: (typeGen:string) => void
+    onGenerate: (command: typeof Commands[keyof typeof Commands]) => void
     onRollbackGenerate: (oldMotiv:string) => void
 }
 
@@ -28,21 +31,22 @@ function DescriptionTask ({title="", descr="", motiv="", status, id, created="N/
 
     const hundleGenerate = () => {
         if (genMotive.isGen) {
-            // Остановка генерации
+            // остановка генерации
             updateGenMotive({ isGen: false, fixed: "" })
+            onGenerate(Commands.STOP)
             return
         }
 
         if (genMotive.fixed) {
-            // Откат после генерации
+            // откат после генерации
             onRollbackGenerate(genMotive.fixed)
             updateGenMotive({ isGen: false, fixed: "" })
             return
         }
 
-        // Старт генерации
+        // старт генерации
         updateGenMotive({ isGen: true, fixed: motiv })
-        onGenerate("gen_motive")
+        onGenerate(Commands.GEN_MOTIVE)
     }
 
 

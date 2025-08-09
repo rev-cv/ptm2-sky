@@ -12,7 +12,7 @@ import BlockTiming from './BlockTiming'
 import BlockRisk from './BlockRisk'
 import BlockFilters from './BlockFilters'
 
-import { generateTask } from '@api/generateTask'
+import { wsCommander } from '@api/generateTask'
 
 import './style.scss'
 
@@ -47,11 +47,10 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                     onChangeDescr={s => updateTask({...task, description: s})}
                     onChangeMotiv={s => updateTask({...task, motivation: s})}
                     onChangeStatus={b => updateTask({...task, status: b})}
-                    onGenerate={typeGen => {
-                        generateTask(task, typeGen).then(newTask => {
-                            if (!newTask) return
-                            updateTask({...task, motivation: newTask.motivation })
-                        })
+                    onGenerate={async command => {
+                        const newTask = await wsCommander(command, task)
+                        if (!newTask) return
+                        updateTask({...task, motivation: newTask.motivation })
                     }}
                     onRollbackGenerate={oldMotive => {
                         updateTask({...task, motivation: oldMotive})
@@ -61,11 +60,10 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                 return <BlockSubTasks 
                     subtasks={task.subtasks}
                     onUpdate={newOrder => updateTask({...task, subtasks: newOrder})}
-                    onGenerate={typeGen => {
-                        generateTask(task, typeGen).then(newTask => {
-                            if (!newTask) return
-                            updateTask({...task, subtasks: [...newTask.subtasks] })
-                        })
+                    onGenerate={async command => {
+                        const newTask = await wsCommander(command, task)
+                        if (!newTask) return
+                        updateTask({...task, subtasks: [...newTask.subtasks] })
                     }}
                     onRollbackGenerate={oldMotive => {
                         updateTask({...task, subtasks: [...oldMotive]})
@@ -90,14 +88,13 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                     onChangeImpact={i => updateTask({...task, impact: i})}
                     onChangeProp={text => updateTask({...task, risk_proposals: text})}
                     onChangeExpl={text => updateTask({...task, risk_explanation: text})}
-                    onGenerate={typeGen => {
-                        generateTask(task, typeGen).then(newTask => {
-                            if (!newTask) return
-                            updateTask({...task, 
-                                risk:newTask.risk, 
-                                risk_proposals:newTask.risk_proposals,
-                                risk_explanation: newTask.risk_explanation
-                            })
+                    onGenerate={async command => {
+                        const newTask = await wsCommander(command, task)
+                        if (!newTask) return
+                        updateTask({...task, 
+                            risk: newTask.risk, 
+                            risk_proposals: newTask.risk_proposals,
+                            risk_explanation: newTask.risk_explanation 
                         })
                     }}
                     onRollbackGenerate={oldRisk => {
@@ -113,8 +110,7 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                     allList={themeList}
                     curList={task.filters.theme}
                     isTheme={true}
-                    tt="темы"
-                    description="Категории или области, к которым относится задача, например, работа, учеба или личные проекты."
+                    type='theme'
                     onAddElement={elem => {
                         updateTask({
                             ...task, 
@@ -142,13 +138,14 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                             }
                         })
                     }}
+                    onGenerate={()=>{}}
+                    onRollbackGenerate={()=>{}}
                 />
             case "stress":
                 return <BlockFilters 
                     allList={stressList}
                     curList={task.filters.stress}
-                    tt="эмоциональные состояния"
-                    description="Эмоции и уровень энергии, которые вызывает процесс выполнения задачи, влияющие на восприятие и мотивацию."
+                    type="stress"
                     onAddElement={elem => {
                         updateTask({
                             ...task, 
@@ -176,13 +173,14 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                             }
                         })
                     }}
+                    onGenerate={()=>{}}
+                    onRollbackGenerate={()=>{}}
                 />
             case "actions":
                 return <BlockFilters 
                     allList={actionList}
                     curList={task.filters.action_type}
-                    tt="события"
-                    description="Характер действий, необходимых для выполнения задачи, таких как анализ, творчество или рутинные операции."
+                    type='action'
                     onAddElement={elem => {
                         updateTask({
                             ...task, 
@@ -210,6 +208,8 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                             }
                         })
                     }}
+                    onGenerate={()=>{}}
+                    onRollbackGenerate={()=>{}}
                 />
             case "states":
                 const statelist:TypeFilterNew__Tabs[] = [
@@ -256,8 +256,7 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                 return <BlockFilters 
                     tabList={statelist}
                     curList={addedFilters}
-                    tt="состояния"
-                    description="Условия (эмоциональное настроение, физическая энергия, окружающая обстановка), оптимальные для успешного выполнения задачи."
+                    type="state"
                     onAddElement={(elem, tab) => {
                         const state = {...task.filters.state}
                         if (tab) {
@@ -310,6 +309,8 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                             }
                         })
                     }}
+                    onGenerate={()=>{}}
+                    onRollbackGenerate={()=>{}}
                 />
             default:
                 break;

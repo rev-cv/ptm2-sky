@@ -85,9 +85,9 @@ function Task({objTask, index} : TaskProps) {
             <div className="task-item__descr">{objTask.description}</div> : null
         }
 
-        {(0 < objTask.motivation.trim().length) ?
+        {/* {(0 < objTask.motivation.trim().length) ?
             <div className="task-item__descr">{objTask.motivation}</div> : null
-        }
+        } */}
         
         {(riskValue && 0 < riskValue.value ) &&
             <div className={`task-item__descr`}>

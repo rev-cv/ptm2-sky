@@ -1,6 +1,6 @@
-import { TypeTasks_RI } from '@mytype/typeTask'
-import { TypeGenRisk, TypeGenRisk__Fixed } from '@mytype/typesGenerations'
 import { atomGenRisk, useAtom } from '@utils/jotai.store'
+import { TypeTasks_RI } from '@mytype/typeTask'
+import { Commands, TypeGenRisk, TypeGenRisk__Fixed } from '@mytype/typesGen'
 import values_component from '@api/BlockCriticalityValues.json'
 
 import Toggle from '@comps/Toggles/Toggle'
@@ -13,7 +13,6 @@ import IcoMagic from '@asset/magic.svg'
 import IcoBack from '@asset/back.svg'
 import Loader from '@comps/Loader/Loader'
 
-
 type TypeProps = {
     risk: TypeTasks_RI
     impact: TypeTasks_RI
@@ -23,7 +22,7 @@ type TypeProps = {
     onChangeImpact: (i:TypeTasks_RI) => void
     onChangeProp: (text:string) => void
     onChangeExpl: (text:string) => void
-    onGenerate: (typeGen:string) => void
+    onGenerate: (command: typeof Commands[keyof typeof Commands]) => void
     onRollbackGenerate: (oldRisk:TypeGenRisk__Fixed) => void    
 }
 
@@ -32,29 +31,30 @@ function BlockRisk ({risk, impact, risk_proposals="", risk_explanation="",
 
     const [genRisk, updateGenRisk] = useAtom<TypeGenRisk>(atomGenRisk)
     
-        const hundleGenerate = () => {
-            if (genRisk.isGen) {
-                // остановка генерации
-                updateGenRisk({ isGen: false, fixed: null })
-                return
-            }
-    
-            if (genRisk.fixed) {
-                // откат после генерации
-                onRollbackGenerate(genRisk.fixed)
-                updateGenRisk({ isGen: false, fixed: null })
-                return
-            }
-    
-            // старт генерации
-            if (0 < risk || risk_proposals || risk_explanation) {
-                updateGenRisk({ isGen: true, fixed: {risk, risk_proposals, risk_explanation}})
-            } else {
-                updateGenRisk({ isGen: true, fixed: null })
-            }
-            
-            onGenerate("gen_risk")
+    const hundleGenerate = () => {
+        if (genRisk.isGen) {
+            // остановка генерации
+            updateGenRisk({ isGen: false, fixed: null })
+            onGenerate(Commands.STOP)
+            return
         }
+
+        if (genRisk.fixed) {
+            // откат после генерации
+            onRollbackGenerate(genRisk.fixed)
+            updateGenRisk({ isGen: false, fixed: null })
+            return
+        }
+
+        // старт генерации
+        if (0 < risk || risk_proposals || risk_explanation) {
+            updateGenRisk({ isGen: true, fixed: {risk, risk_proposals, risk_explanation}})
+        } else {
+            updateGenRisk({ isGen: true, fixed: null })
+        }
+        
+        onGenerate(Commands.GEN_RISK)
+    }
 
     return <div className='editor-task__block editor-block-riskimpact'>
 

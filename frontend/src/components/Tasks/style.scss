@@ -133,7 +133,7 @@
     }
 
     &:hover::before {
-        opacity: .04;
+        opacity: .02;
     }
 
     &.task-done::after {
@@ -141,7 +141,7 @@
         position: absolute;
         inset: 0;
         background-color: var(--color-done);
-        opacity: .2;
+        opacity: .12;
         pointer-events: none;
     }
 
@@ -255,6 +255,17 @@
         .checkbox-sub {
             justify-self: center;
             align-self: center;
+        }
+
+        &:has(.checkbox-sub.active) {
+            opacity: .3;
+
+            .task-item__subtask-description,
+            .task-item__subtask-motivation,
+            .task-item__subtask-instruction,
+            .task-item__subtask-continuance {
+                display: none;
+            }
         }
     }
 

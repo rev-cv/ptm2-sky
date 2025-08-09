@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { TypeTasks_SubTask } from '@mytype/typeTask'
 import { atomGenSteps, useAtom } from '@utils/jotai.store'
+import { TypeTasks_SubTask } from '@mytype/typeTask'
+import { Commands } from '@mytype/typesGen'
 
 import CheckBoxTask from '@comps/CheckBox/CheckBoxTask'
 import TextArea from '@comps/TextArea/TextArea'
@@ -16,7 +17,7 @@ import Loader from '@comps/Loader/Loader'
 type TypeProps = {
     subtasks: TypeTasks_SubTask[]
     onUpdate: (newOrder: TypeTasks_SubTask[]) => void
-    onGenerate: (typeGen:string) => void
+    onGenerate: (command: typeof Commands[keyof typeof Commands]) => void
     onRollbackGenerate: (oldSteps:TypeTasks_SubTask[]) => void
 }
 
@@ -30,23 +31,22 @@ function BlockSubTasks({ subtasks, onUpdate, onGenerate, onRollbackGenerate }: T
 
     const hundleGenerate = () => {
         if (genSteps.isGen) {
-            // Остановка генерации
+            // остановка генерации
             updateGenSteps({ isGen: false, fixed: [] })
+            onGenerate(Commands.STOP)
             return
         }
 
         if (0 < genSteps.fixed.length) {
-            // Откат после генерации
+            // откат после генерации
             onRollbackGenerate(genSteps.fixed)
             updateGenSteps({ isGen: false, fixed: [] })
             return
         }
 
-        console.log('hundleGenerate')
-
-        // Старт генерации
+        // старт генерации
         updateGenSteps({ isGen: true, fixed: [...sortedSubtasks] })
-        onGenerate("gen_steps")
+        onGenerate(Commands.GEN_STEPS)
     }
 
     const handleDragStart = (idx: number, e: React.DragEvent) => {
@@ -79,7 +79,7 @@ function BlockSubTasks({ subtasks, onUpdate, onGenerate, onRollbackGenerate }: T
         const newsubtask:TypeTasks_SubTask = {
             id: (negativeIdCount + 1) * (-1),
             status: false,
-            title: "new subtask",
+            title: "",
             description: "",
             continuance: 0,
             instruction: "",
@@ -112,6 +112,7 @@ function BlockSubTasks({ subtasks, onUpdate, onGenerate, onRollbackGenerate }: T
                             subtask.id === item.id ? { ...subtask, status: !subtask.status } : subtask
                         ))} />
                     <TextArea 
+                        placeholder='title'
                         value={item.title}
                         className='editor-block-subtask__title'
                         onChange={e => onUpdate(subtasks.map(subtask =>

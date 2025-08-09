@@ -1,18 +1,5 @@
 import { atom } from 'jotai'
-import { TypeNewTask } from '@mytype/typesNewTask'
 import { TypeViewTask } from '@mytype/typeTask'
-
-export const resetTask:TypeNewTask = {
-    title: "",
-    description: "",
-    impact: 0,
-    risk: 0,
-    deadline: null,
-    activation: null,
-    taskchecks: [],
-}
-
-export const currentNewTask = atom<TypeNewTask>({...resetTask})
 
 export const resetTask2:TypeViewTask = {
     id: -1,
@@ -47,7 +34,7 @@ export const resetTask2:TypeViewTask = {
     }
 }
 
-export const currentNewTask2 = atom<TypeViewTask>({...resetTask2})
+export const currentNewTask2 = atom<TypeViewTask>(structuredClone(resetTask2))
 
 export const isOpenNewTaskEditor = atom<boolean>(false)
 export const openedTabsTaskEditor = atom<string>("")

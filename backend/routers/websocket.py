@@ -75,16 +75,15 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
     match command:
         case Commands.SET:
             clients[websocket]["task_obj"] = payload
-            clients[websocket]["status"] = Commands.STATUS
-            await send_response(websocket, "set", "The task object was loaded successfully.", T_Status.ADDED)
+            await send_response(websocket, Commands.SET, "The task object was loaded successfully.", G_Status.ADDED)
         case Commands.STATUS:
             await websocket.send_text(clients[websocket]["status"])
-        case Commands.GEN | Commands.GEN_MOTIVE | Commands.GEN_STEPS | Commands.GEN_RISK:
+        case Commands.GEN | Commands.GEN_MOTIVE | G_Status.GEN_STEPS | Commands.GEN_RISK:
             # проверка, есть ли уже запущенный процесс
             if clients[websocket]["process"] is not None:
                 await send_error(
                     websocket, 
-                    command="gen", 
+                    command=command, 
                     error_message="Generation already in progress. Use 'cancel' to stop it.", 
                     status=G_Status.PROGRESS
                 )
@@ -93,9 +92,9 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
             if not clients[websocket]["task_obj"]:
                 await send_error(
                     websocket, 
-                    command="gen", 
+                    command=command, 
                     error_message="No task object set. Use 'set' command first.", 
-                    status=T_Status.NOTSET
+                    status=G_Status.NOTSET
                 )
                 return
             
@@ -104,7 +103,7 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
                 ai_task_generator(websocket, clients, command)
             )
         case _:
-            await send_error(websocket, command, f"Unknown command: {command}", C_Status.UNKNOWN)
+            await send_error(websocket, command, f"Unknown command: {command}", G_Status.UNKNOWN)
 
 
 

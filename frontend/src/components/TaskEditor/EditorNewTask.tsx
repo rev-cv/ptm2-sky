@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { currentNewTask2, isOpenNewTaskEditor, openedTabsTaskEditor, atomThemeList, atomStressList, atomActionList, atomStateDict, useAtom, useAtomValue } from '@utils/jotai.store'
+import { currentNewTask2, isOpenNewTaskEditor, openedTabsTaskEditor, atomThemeList, atomStressList, atomActionList, atomStateDict, resetTask2, useAtom, useAtomValue } from '@utils/jotai.store'
 import { createTask } from '@api/createTask'
-import { generateTask } from '@api/generateTask'
+import { wsCommander } from '@api/generateTask'
 
 import { TypeFilterNew__Tabs } from '@mytype/typeFilters'
 
@@ -15,7 +15,7 @@ import BlockRisk from './BlockRisk'
 import BlockFilters from './BlockFilters'
 
 import IcoAdd from '@asset/add.svg'
-import IcoMagic from '@asset/magic.svg'
+// import IcoMagic from '@asset/magic.svg'
 import IcoClean from '@asset/clean.svg'
 
 import { formatDateString } from '@utils/date-funcs'
@@ -47,11 +47,10 @@ function EditorNewTask () {
                     onChangeDescr={s => updateTask({...task, description: s})}
                     onChangeMotiv={s => updateTask({...task, motivation: s})}
                     onChangeStatus={b => updateTask({...task, status: b})}
-                    onGenerate={typeGen => {
-                        generateTask(task, typeGen).then(newTask => {
-                            if (!newTask) return
-                            updateTask({...task, motivation: newTask.motivation })
-                        })
+                    onGenerate={async command => {
+                        const newTask = await wsCommander(command, task)
+                        if (!newTask) return
+                        updateTask({...task, motivation: newTask.motivation })
                     }}
                     onRollbackGenerate={oldMotive => {
                         updateTask({...task, motivation: oldMotive})
@@ -61,11 +60,10 @@ function EditorNewTask () {
                 return <BlockSubTasks 
                     subtasks={task.subtasks}
                     onUpdate={newOrder => updateTask({...task, subtasks: newOrder})}
-                    onGenerate={typeGen => {
-                        generateTask(task, typeGen).then(newTask => {
-                            if (!newTask) return
-                            updateTask({...task, subtasks: [...newTask.subtasks] })
-                        })
+                    onGenerate={async command => {
+                        const newTask = await wsCommander(command, task)
+                        if (!newTask) return
+                        updateTask({...task, subtasks: [...newTask.subtasks] })
                     }}
                     onRollbackGenerate={oldMotive => {
                         updateTask({...task, subtasks: [...oldMotive]})
@@ -90,14 +88,13 @@ function EditorNewTask () {
                     onChangeImpact={i => updateTask({...task, impact: i})}
                     onChangeProp={text => updateTask({...task, risk_proposals: text})}
                     onChangeExpl={text => updateTask({...task, risk_explanation: text})}
-                    onGenerate={typeGen => {
-                        generateTask(task, typeGen).then(newTask => {
-                            if (!newTask) return
-                            updateTask({...task, 
-                                risk:newTask.risk, 
-                                risk_proposals:newTask.risk_proposals,
-                                risk_explanation: newTask.risk_explanation
-                            })
+                    onGenerate={async command => {
+                        const newTask = await wsCommander(command, task)
+                        if (!newTask) return
+                        updateTask({...task, 
+                            risk: newTask.risk, 
+                            risk_proposals: newTask.risk_proposals,
+                            risk_explanation: newTask.risk_explanation 
                         })
                     }}
                     onRollbackGenerate={oldRisk => {
@@ -112,9 +109,8 @@ function EditorNewTask () {
                 return <BlockFilters 
                     allList={themeList}
                     curList={task.filters.theme}
-                    tt="темы"
+                    type="theme"
                     isTheme={true}
-                    description="Категории или области, к которым относится задача, например, работа, учеба или личные проекты."
                     onAddElement={elem => {
                         updateTask({
                             ...task, 
@@ -142,13 +138,14 @@ function EditorNewTask () {
                             }
                         })
                     }}
+                    onGenerate={()=>{}}
+                    onRollbackGenerate={()=>{}}
                 />
             case "stress":
                 return <BlockFilters 
                     allList={stressList}
                     curList={task.filters.stress}
-                    tt="эмоциональные состояния"
-                    description="Эмоции и уровень энергии, которые вызывает процесс выполнения задачи, влияющие на восприятие и мотивацию."
+                    type="stress"
                     onAddElement={elem => {
                         updateTask({
                             ...task, 
@@ -176,13 +173,14 @@ function EditorNewTask () {
                             }
                         })
                     }}
+                    onGenerate={()=>{}}
+                    onRollbackGenerate={()=>{}}
                 />
             case "actions":
                 return <BlockFilters 
                     allList={actionList}
                     curList={task.filters.action_type}
-                    tt="события"
-                    description="Характер действий, необходимых для выполнения задачи, таких как анализ, творчество или рутинные операции."
+                    type="action"
                     onAddElement={elem => {
                         updateTask({
                             ...task, 
@@ -210,6 +208,8 @@ function EditorNewTask () {
                             }
                         })
                     }}
+                    onGenerate={()=>{}}
+                    onRollbackGenerate={()=>{}}
                 />
             case "states":
                 const statelist:TypeFilterNew__Tabs[] = [
@@ -256,8 +256,7 @@ function EditorNewTask () {
                 return <BlockFilters 
                     tabList={statelist}
                     curList={addedFilters}
-                    tt="состояния"
-                    description="Условия (эмоциональное настроение, физическая энергия, окружающая обстановка), оптимальные для успешного выполнения задачи."
+                    type="state"
                     onAddElement={(elem, tab) => {
                         const state = {...task.filters.state}
                         if (tab) {
@@ -310,6 +309,8 @@ function EditorNewTask () {
                             }
                         })
                     }}
+                    onGenerate={()=>{}}
+                    onRollbackGenerate={()=>{}}
                 />
             default:
                 break;
@@ -334,11 +335,11 @@ function EditorNewTask () {
             </div>
 
             <div className='editor-task__bottom-btns'>
-                <Button
+                {/* <Button
                     icon={IcoMagic}
                     onClick={() => generateTask(task, 'gen')}
                     disabled={ task.title.length < 6 }
-                />
+                /> */}
     
                 <Button
                     text="Create task"
@@ -355,7 +356,9 @@ function EditorNewTask () {
                     icon={IcoClean}
                     className='editor-task__bottom-btns-clean'
                     variant='second'
-                    onClick={() => {}}
+                    onClick={() => {
+                        updateTask(structuredClone(resetTask2))
+                    }}
                 />
             </div>
         </div>

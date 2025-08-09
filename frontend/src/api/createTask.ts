@@ -39,7 +39,7 @@ export const createTask = async () => {
         })
         if (res.ok) {
             loadTasks()
-            store.set(currentNewTask2, resetTask2)
+            store.set(currentNewTask2, structuredClone(resetTask2))
             addToast("Добавлена новая задача!")
         } else {
             throw new Error(`Создание новой задачи: Ошибка возвращенных данных`)
