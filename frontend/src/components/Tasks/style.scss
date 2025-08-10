@@ -54,10 +54,10 @@
         font-size: .7em;
         line-height: 1.2em;
         white-space: pre-wrap;
-        color: var(--color-text-secondary);
-
-        display: flex;
-        gap: .2em .4em;
+        
+        * {
+            color: var(--color-text-secondary);
+        }
 
         &:empty {
             display: none;
@@ -243,6 +243,10 @@
             font-size: .7em;
             line-height: 1.2em;
             color: var(--color-text-secondary);
+
+            * {
+                color: var(--color-text-secondary)
+            }
         }
 
         &-title {

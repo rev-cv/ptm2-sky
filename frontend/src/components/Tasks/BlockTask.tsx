@@ -11,6 +11,7 @@ import './style.scss'
 
 import BlockSubTask from './BlockSubTask'
 import ModalEditorTask from '@comps/TaskEditor/EditorTask'
+import MarkDown from '@comps/MarkDown/MarkDown'
 
 import IcoStart from '@asset/start.svg'
 import IcoRisk from '@asset/risk.svg'
@@ -82,7 +83,7 @@ function Task({objTask, index} : TaskProps) {
         <div className="task-item__title">{objTask.title}</div>
 
         {(0 < objTask.description.trim().length) ?
-            <div className="task-item__descr">{objTask.description}</div> : null
+            <MarkDown className="task-item__descr" markdown={objTask.description}/> : null
         }
 
         {/* {(0 < objTask.motivation.trim().length) ?

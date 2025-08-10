@@ -1,6 +1,7 @@
 import { TypeTasks_SubTask } from '@mytype/typeTask'
 
 import CheckBoxTask from '@comps/CheckBox/CheckBoxTask'
+import MarkDown from '@comps/MarkDown/MarkDown'
 
 type BlockSubTaskProps = {
     subtask: TypeTasks_SubTask
@@ -17,13 +18,13 @@ function BlockSubTask ({subtask, onChangeStatus}:BlockSubTaskProps) {
             />
             <div className="task-item__subtask-title">{subtask.title}</div>
             {subtask.description &&
-                <div className="task-item__subtask-description">{subtask.description}</div>
+                <MarkDown className="task-item__subtask-description" markdown={subtask.description}/>
             }
             {subtask.motivation &&
-                <div className="task-item__subtask-motivation">{subtask.motivation}</div>
+                <MarkDown className="task-item__subtask-motivation" markdown={subtask.motivation}/>
             }
             {subtask.instruction &&
-                <div className="task-item__subtask-instruction">{subtask.instruction}</div>
+                <MarkDown className="task-item__subtask-instruction" markdown={subtask.instruction}/>
             }
             {(subtask.continuance && 0 < subtask.continuance) ?
                 <div className="task-item__subtask-continuance">

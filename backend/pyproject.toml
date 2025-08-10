@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "alembic>=1.16.4",
+    "bs4>=0.0.2",
     "fastapi>=0.115.12",
+    "httpx[http2]>=0.28.1",
     "llama-cpp-python>=0.3.8",
     "openai>=1.77.0",
     "passlib>=1.7.4",

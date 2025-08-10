@@ -1,0 +1,173 @@
+
+.md {
+    display: flex;
+    flex-direction: column;
+    gap: .6em 0;
+
+    a {
+        padding: 0 4px 0 0;
+        border-radius: 2px;
+        transition: 
+            background-color 300ms ease-in-out,
+            padding-left 300ms ease-in-out,
+            margin-right 300ms ease-in-out
+        ;
+        color: var(--color-border-active);
+        cursor: pointer;
+        font-size: .9em;
+
+        &:hover {
+            padding-left: 4px;
+            background-color: var(--color-curtain);
+            margin-right: -4px;
+        }
+    }
+
+    p {
+
+    }
+
+    ol, ul {
+        padding-left: 2em;
+        display: flex;
+        flex-direction: column;
+        gap: .2em;
+    }
+
+    ul:not(.contains-task-list) {
+        list-style-type: circle;
+    }
+
+    ol {
+        list-style-type: decimal;
+    }
+
+    .contains-task-list {
+        padding-left: 1em;
+
+        input {
+            display: none;
+        }
+
+        li {
+            display: flex;
+        }
+
+        li:has(input:checked):before {
+            content: "";
+            margin-right: .5em;
+            width: 1em;
+            height: 1em;
+            display: inline-block;
+            --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M16.03 10.03a.75.75 0 1 0-1.06-1.06l-4.47 4.47l-1.47-1.47a.75.75 0 0 0-1.06 1.06l2 2a.75.75 0 0 0 1.06 0z'/%3E%3Cpath fill='%23000' fill-rule='evenodd' d='M12.057 1.25h-.114c-2.309 0-4.118 0-5.53.19c-1.444.194-2.584.6-3.479 1.494c-.895.895-1.3 2.035-1.494 3.48c-.19 1.411-.19 3.22-.19 5.529v.114c0 2.309 0 4.118.19 5.53c.194 1.444.6 2.584 1.494 3.479c.895.895 2.035 1.3 3.48 1.494c1.411.19 3.22.19 5.529.19h.114c2.309 0 4.118 0 5.53-.19c1.444-.194 2.584-.6 3.479-1.494c.895-.895 1.3-2.035 1.494-3.48c.19-1.411.19-3.22.19-5.529v-.114c0-2.309 0-4.118-.19-5.53c-.194-1.444-.6-2.584-1.494-3.479c-.895-.895-2.035-1.3-3.48-1.494c-1.411-.19-3.22-.19-5.529-.19M3.995 3.995c.57-.57 1.34-.897 2.619-1.069c1.3-.174 3.008-.176 5.386-.176s4.086.002 5.386.176c1.279.172 2.05.5 2.62 1.069c.569.57.896 1.34 1.068 2.619c.174 1.3.176 3.008.176 5.386s-.002 4.086-.176 5.386c-.172 1.279-.5 2.05-1.069 2.62c-.57.569-1.34.896-2.619 1.068c-1.3.174-3.008.176-5.386.176s-4.086-.002-5.386-.176c-1.279-.172-2.05-.5-2.62-1.069c-.569-.57-.896-1.34-1.068-2.619c-.174-1.3-.176-3.008-.176-5.386s.002-4.086.176-5.386c.172-1.279.5-2.05 1.069-2.62' clip-rule='evenodd'/%3E%3C/svg%3E");
+            background-color: currentColor;
+            -webkit-mask-image: var(--svg);
+            mask-image: var(--svg);
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%;
+            color: var(--color-text-secondary);
+        }
+
+        li:has(input:not(:checked)):before {
+            content: "";
+            margin-right: .5em;
+            width: 1em;
+            height: 1em;
+            display: inline-block;
+            --svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' fill-rule='evenodd' d='M11.943 1.25h.114c2.309 0 4.118 0 5.53.19c1.444.194 2.584.6 3.479 1.494c.895.895 1.3 2.035 1.494 3.48c.19 1.411.19 3.22.19 5.529v.114c0 2.309 0 4.118-.19 5.53c-.194 1.444-.6 2.584-1.494 3.479c-.895.895-2.035 1.3-3.48 1.494c-1.411.19-3.22.19-5.529.19h-.114c-2.309 0-4.118 0-5.53-.19c-1.444-.194-2.584-.6-3.479-1.494c-.895-.895-1.3-2.035-1.494-3.48c-.19-1.411-.19-3.22-.19-5.529v-.114c0-2.309 0-4.118.19-5.53c.194-1.444.6-2.584 1.494-3.479c.895-.895 2.035-1.3 3.48-1.494c1.411-.19 3.22-.19 5.529-.19m-5.33 1.676c-1.278.172-2.049.5-2.618 1.069c-.57.57-.897 1.34-1.069 2.619c-.174 1.3-.176 3.008-.176 5.386s.002 4.086.176 5.386c.172 1.279.5 2.05 1.069 2.62c.57.569 1.34.896 2.619 1.068c1.3.174 3.008.176 5.386.176s4.086-.002 5.386-.176c1.279-.172 2.05-.5 2.62-1.069c.569-.57.896-1.34 1.068-2.619c.174-1.3.176-3.008.176-5.386s-.002-4.086-.176-5.386c-.172-1.279-.5-2.05-1.069-2.62c-.57-.569-1.34-.896-2.619-1.068c-1.3-.174-3.008-.176-5.386-.176s-4.086.002-5.386.176' clip-rule='evenodd'/%3E%3C/svg%3E");
+            background-color: currentColor;
+            -webkit-mask-image: var(--svg);
+            mask-image: var(--svg);
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%;
+            color: var(--color-text-secondary);
+        }
+    }
+
+    picture {
+        max-height: 30vh;
+        display: flex;
+        background-color: rgba($color: #000000, $alpha: .1);
+        border-radius: .3em;
+        overflow: hidden;
+
+        img {
+            object-fit: contain;
+        }
+    }
+
+    table {
+        thead {
+            background-color: rgba($color: #000000, $alpha: .1);
+        }
+
+        tbody > tr {
+            background-color: rgba($color: #000000, $alpha: .1);
+        }
+
+        th, td {
+            padding: .4em;
+            line-height: 1em;
+            text-align: left;
+        }
+    }
+
+    pre {
+        display: flex;
+        background-color: rgba($color: #000000, $alpha: .1);
+        overflow: hidden;
+        padding: .4em;
+
+        code {
+            font-family: "Source Code Pro" !important;
+            font-size: .9em;
+        }
+    }
+
+    p > code {
+        font-family: "Source Code Pro" !important;
+        background-color: rgba($color: #000000, $alpha: .1);
+        padding: .2em .4em;
+        border-radius: .3em;
+        color: yellowgreen;
+        font-size: .9em;
+    }
+
+    .md-site-preview {
+        // display: grid;
+        // grid-template-columns: 6em 1fr;
+        // grid-template-rows: auto 1fr;
+        // grid-template-areas: "img title" "img descr";
+        // gap: .5em .7em;
+        background-color: rgba($color: #000000, $alpha: .1);
+        border-radius: .3em;
+        overflow: hidden;
+        padding: .4em;
+        position: relative;
+
+        &__image {
+            min-height: 6em;
+            grid-area: img;
+            border-radius: .1em;
+        }
+
+        &__title {
+            font-size: 1.2em;
+            grid-area: title;
+        }
+
+        &__descr {
+            grid-area: descr;
+        }
+
+        &__link {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+        }
+    }
+}
