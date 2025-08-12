@@ -12,11 +12,11 @@ import './style.scss'
 import BlockSubTask from './BlockSubTask'
 import ModalEditorTask from '@comps/TaskEditor/EditorTask'
 import MarkDown from '@comps/MarkDown/MarkDown'
+import ProgressCircle from '@comps/ProgressCircle/ProgressCircle'
 
 import IcoStart from '@asset/start.svg'
 import IcoRisk from '@asset/risk.svg'
 import IcoImpact from '@asset/impact.svg'
-import IcoFilters from '@asset/filter.svg'
 
 import riskImpact from '@api/BlockCriticalityValues.json'
 
@@ -89,67 +89,65 @@ function Task({objTask, index} : TaskProps) {
         {/* {(0 < objTask.motivation.trim().length) ?
             <div className="task-item__descr">{objTask.motivation}</div> : null
         } */}
-        
-        {(riskValue && 0 < riskValue.value ) &&
-            <div className={`task-item__descr`}>
-                <IcoRisk /> <span>{riskValue.description}</span>
-            </div>
-        }
-        {(impactValue && 0 < impactValue.value ) &&
-            <div className={`task-item__descr`}>
-                <IcoImpact /> <span>{impactValue.description}</span>
-            </div>
-        }
-        {0 < countFilters &&
-            <div className={`task-item__descr`}><span>
-                <IcoFilters /> 
-                {Object.entries(objTask.filters).map(([key, filter]) => {
-                    if (Array.isArray(filter) && filter.length) {
-                        return filter.map((f, i) => (
-                            <button
-                                key={`${key}-${i}`}
-                                onClick={e => {
-                                    e.stopPropagation()
-                                    loadTasksByTheme(`#${f.name}`, f.idf)
-                                }}
-                                >#{f.name}
-                            </button>
-                        ))
-                    }
-                    if (key === "state" && typeof filter === "object" && filter !== null) {
-                        return Object.entries(filter).map(([, subArr]) =>
-                            Array.isArray(subArr) && subArr.length ? (
-                                subArr.map((f, i) => (
-                                    <button
-                                        key={`${key}-${i}`}
-                                        onClick={e => {
-                                            e.stopPropagation()
-                                            loadTasksByTheme(`#${f.name}`, f.idf)
-                                        }}
-                                        >#{f.name}
-                                    </button>
-                                ))
-                            ) : null
-                        )
-                    }
-                    return null
-                })}
-            </span></div>
-        }
-        {objTask.activation &&
-            <div className={`task-item__descr`}>
-                <IcoStart />
-                { activation ? <span>{formatDateString(activation)}</span> : "" }
-            </div>
-        }
-        {objTask.deadline &&
-            <div className={`task-item__descr ${deadlineClass} dl`}>
-                <IcoStart />
-                { deadline ? <span>{formatDateString(new Date(deadline))}</span> : "" }
-                { deadlaneDiff != null ? <span className='days'> {`(${deadlaneDiff} days)`}</span> : "" }
-            </div>
-        }
 
+        <div className={`task-item__annexe`}>
+            {(riskValue && 0 < riskValue.value ) && 
+                <ProgressCircle value={riskValue.value} icon={IcoRisk} title={riskValue.description}/>
+            }
+            {(impactValue && 0 < impactValue.value ) && 
+                <ProgressCircle value={impactValue.value} icon={IcoImpact} title={impactValue.description}/>
+            }
+
+            <div className="task-item__annexe__dates">
+                {objTask.activation &&
+                    <div className={`task-item__annexe__activate`}>
+                        <IcoStart />
+                        { activation ? <span>{formatDateString(activation)}</span> : "" }
+                    </div>
+                }
+
+                {objTask.deadline &&
+                    <div className={`task-item__annexe__deadline ${deadlineClass}`}>
+                        <IcoStart />
+                        { deadline ? <span>{formatDateString(new Date(deadline))}</span> : "" }
+                        { deadlaneDiff != null ? <span className='days'> {`(${deadlaneDiff} days)`}</span> : "" }
+                    </div>
+                }
+            </div>
+
+            {0 < countFilters && Object.entries(objTask.filters).map(([key, filter]) => {
+                        if (Array.isArray(filter) && filter.length) {
+                            return filter.map((f, i) => (
+                                <button
+                                    key={`${key}-${i}`}
+                                    onClick={e => {
+                                        e.stopPropagation()
+                                        loadTasksByTheme(`#${f.name}`, f.idf)
+                                    }}
+                                    >#{f.name}
+                                </button>
+                            ))
+                        }
+                        if (key === "state" && typeof filter === "object" && filter !== null) {
+                            return Object.entries(filter).map(([, subArr]) =>
+                                Array.isArray(subArr) && subArr.length ? (
+                                    subArr.map((f, i) => (
+                                        <button
+                                            key={`${key}-${i}`}
+                                            onClick={e => {
+                                                e.stopPropagation()
+                                                loadTasksByTheme(`#${f.name}`, f.idf)
+                                            }}
+                                            >#{f.name}
+                                        </button>
+                                    ))
+                                ) : null
+                            )
+                        }
+                        return null
+                    })}
+        </div>
+        
         { (0 < objTask.subtasks.length) && <>
             <div className={`task-item__subtasks-btn`}>
                 <button

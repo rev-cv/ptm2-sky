@@ -2,7 +2,7 @@ import './style.scss'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
-import PagePreview from './PagePreview'
+// import PagePreview from './PagePreview'
 
 type TypeProps = {
     className?: string

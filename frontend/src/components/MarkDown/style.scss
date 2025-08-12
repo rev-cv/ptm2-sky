@@ -23,10 +23,6 @@
         }
     }
 
-    p {
-
-    }
-
     ol, ul {
         padding-left: 2em;
         display: flex;
@@ -133,7 +129,7 @@
         background-color: rgba($color: #000000, $alpha: .1);
         padding: .2em .4em;
         border-radius: .3em;
-        color: yellowgreen;
+        color: var(--color-warning);
         font-size: .9em;
     }
 

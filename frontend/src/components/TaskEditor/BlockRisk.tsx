@@ -100,7 +100,7 @@ function BlockRisk ({risk, impact, risk_proposals="", risk_explanation="",
 
         <div className='editor-block-riskimpact__title'>
             <IcoImpact />
-            <span>Риски невыполнения</span>
+            <span>Оценка последствий</span>
         </div>
 
         <Toggle

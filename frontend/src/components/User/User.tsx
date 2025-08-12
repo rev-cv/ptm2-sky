@@ -2,7 +2,8 @@ import './style.scss'
 import { atomUser, useAtom, addToast } from '@utils/jotai.store'
 
 function User () {
-    const [user, updateUser] = useAtom(atomUser)
+    const [user, ] = useAtom(atomUser)
+    // const [user, updateUser] = useAtom(atomUser)
 
     return <div className="user-profile">
         <picture className="user-profile__avatar">

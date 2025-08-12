@@ -1,18 +1,20 @@
 import './style.scss';
 
 type TypeProgressCircleProps = {
+    title?: string;
     from?: number;
     value: number;
-    Icon?: string | null | React.FunctionComponent<React.SVGProps<SVGSVGElement>> | React.ComponentType<React.SVGProps<SVGSVGElement>>
-    title?: string;
+    icon?: string | null | React.FunctionComponent<React.SVGProps<SVGSVGElement>> | React.ComponentType<React.SVGProps<SVGSVGElement>>
     onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-function ProgressCircle ({ value=3, from=3, title="", Icon, onClick } : TypeProgressCircleProps) {
+function ProgressCircle ({ value=3, from=3, title="", icon, onClick } : TypeProgressCircleProps) {
+
+    const Icon = icon
 
     if (value === 0) return null
 
-    const progress = (value / from) * 100; // Процент заполнения: 33.33%, 66.67%, 100%
+    const progress = (value / from) * 100 // Процент заполнения: 33.33%, 66.67%, 100%
 
     return (
         <div className="progress-circle" title={title} onClick={e => {
@@ -25,7 +27,7 @@ function ProgressCircle ({ value=3, from=3, title="", Icon, onClick } : TypeProg
                 style={{
                     background: `conic-gradient(#3b82f6 ${progress}%, transparent ${progress}% 100%)`,
                 }}
-            >
+                >
                 <div className="progress-circle__bg">
                     {
                         Icon && <div className="progress-circle__icon" >
@@ -35,7 +37,7 @@ function ProgressCircle ({ value=3, from=3, title="", Icon, onClick } : TypeProg
                 </div>
             </div>
         </div>
-    );
-};
+    )
+}
 
 export default ProgressCircle
