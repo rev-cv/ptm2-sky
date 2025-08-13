@@ -52,8 +52,14 @@
 
             span {
                 font-size: .5em;
-                opacity: .7;
-                padding-left: 1em;
+                line-height: 1em;
+                // opacity: .7;
+                padding: .4em .5em;
+                margin-left: 1em;
+                align-self: center;
+                background-color: var(--color-button-default);
+                color: var(--color-button-text) !important;
+                border-radius: 3px;
             }
         }
 

@@ -19,7 +19,6 @@ def serialize_task(task):
             "id": assoc.id, 
             "idf": assoc.filter.id, # фильтр с которым связана ассоциация
             "reason": assoc.reason,
-            "proposals": assoc.proposals,
             "name": assoc.filter.name if assoc.filter else None,
             "description": assoc.filter.description if assoc.filter else None
         }

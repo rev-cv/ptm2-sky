@@ -3,8 +3,11 @@ import asyncio
 from routers.ws_response_and_status import *
 from ai.get_promt import get_prompt
 from ai.run_open_ai import run_open_ai
+from database.sqlalchemy_tables import get_db
+from database.sqlalchemy_tables import Filter
+from sqlalchemy import exists
 
-async def ai_task_generator (websocket: WebSocket, clients: dict, command):
+async def ai_task_generator (websocket: WebSocket, clients: dict, command, user_id):
     try:
         await send_response(
             websocket, 
@@ -15,7 +18,7 @@ async def ai_task_generator (websocket: WebSocket, clients: dict, command):
 
         task_obj = clients[websocket]["task_obj"]
 
-        promt = get_prompt(task_obj, command)
+        promt = get_prompt(task_obj, command, user_id)
 
         print(promt)
 
@@ -36,10 +39,12 @@ async def ai_task_generator (websocket: WebSocket, clients: dict, command):
                 response = checked_result
         elif command == Commands.GEN_RISK:
             response = check_risk(response)
+        elif command == Commands.GEN_THEME:
+            response = check_theme(response)
 
         if response is None:
             send_error(
-                command=Commands.GEN_STEPS,
+                command=command,
                 error_message="От AI не получен валидный ответ.",
                 status=G_Status.ERROR
             )
@@ -87,6 +92,7 @@ def check_steps(response):
     
     return {"subtasks": checked_result}
 
+
 def check_risk(response):
 
     risk = response.get("risk", 0)
@@ -99,3 +105,56 @@ def check_risk(response):
         "risk_proposals": risk_proposals,
     }
     
+
+def check_theme(response):
+    result = []
+    filters = response.get("filters", None)
+
+    if type(filters) is not list:
+        return None
+    
+    try:
+        db = next(get_db())
+        
+        for x in filters:
+            idf = x.get("id", None)
+            name = x.get("name", None)
+            reason = x.get("reason", None)
+            description = x.get("description", None)
+
+            if idf < 0:
+                # объект является новой темой
+                result.append({
+                    'id': -1,   # еще не созданная ассоциация с фильтром
+                    'idf': idf, # еще не созданный фильтр
+                    'name': name,
+                    'reason': reason,
+                    'description': description,
+                })
+                continue
+            
+            filt = db.get(Filter, idf)
+            
+            if not filt:
+                continue # фильтр бракованный
+
+            result.append({
+                'id': -1,   # еще не созданная ассоциация с фильтром
+                'idf': filt.id,
+                'name': filt.name,
+                'reason': reason,
+                'description': filt.description,
+            })
+
+    finally:
+        db.close()
+
+    if len(result) == 0:
+        return None
+
+    return {
+        "filters": {
+            "theme": result
+        }
+    }
+

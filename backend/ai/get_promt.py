@@ -1,5 +1,6 @@
 import json
 from routers.ws_response_and_status import Commands
+from database.db_get_filters import get_themes_by_ai_generate
 
 with open("./ai/promts/step-initial.md", "r") as f:
     temp_initial = f.read()
@@ -7,17 +8,17 @@ with open("./ai/promts/step-initial.md", "r") as f:
 with open("./ai/promts/step-motivation.md", "r") as f:
     temp_motivation = f.read()
 
-# with open("./ai/promts/step-data-output.md", "r") as f:
-#     temp_output = f.read()
-
 with open("./ai/promts/step-subtasks.md", "r") as f:
     temp_subtasks = f.read()
 
 with open("./ai/promts/step-risk.md", "r") as f:
     temp_risk = f.read()
 
+with open("./ai/promts/step-theme.md", "r") as f:
+    temp_theme = f.read()
 
-def get_prompt(task, command):
+
+def get_prompt(task, command, user_id):
     try:
         string = json.dumps(task, ensure_ascii=False)
         temp = temp_initial.replace('%%%DATA-INPUT%%%', string)
@@ -29,8 +30,11 @@ def get_prompt(task, command):
                 temp += temp_subtasks.replace('%%%STEP%%%', str(2))
             case Commands.GEN_RISK:
                 temp += temp_risk.replace('%%%STEP%%%', str(2))
+            case Commands.GEN_THEME:
+                themes = get_themes_by_ai_generate(user_id)
+                themes_json = json.dumps(themes, ensure_ascii=False)
+                temp += temp_theme.replace('%%%STEP%%%', str(2)).replace('%%%USER-THEMES%%%', themes_json)
 
-        # temp += temp_output.replace('%%%STEP%%%', str(3))
         return temp
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Ошибка: {str(e)}")

@@ -17,7 +17,6 @@ export type TypeTasks_Filter = {
     name?: string // название фильтра
     description?: string // описание фильтра
     reason: string // причина релевантности
-    proposals?: string | null // предложения по фильтру
 }
 
 export type TypeTasks_RI = 0 | 1 | 2 | 3

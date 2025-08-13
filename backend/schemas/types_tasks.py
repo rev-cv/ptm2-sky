@@ -16,6 +16,8 @@ class TypeFilter(BaseModel):
     id: int
     idf: int # ассоциация с фильтром (нужно если id === -1, т.е. ассоциация еще не создана)
     reason: str
+    description: Optional[str] = None
+    name: Optional[str] = None
 
 class TypeTask(BaseModel):
     id: int

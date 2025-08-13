@@ -138,8 +138,37 @@ function EditorNewTask () {
                             }
                         })
                     }}
-                    onGenerate={()=>{}}
-                    onRollbackGenerate={()=>{}}
+                    onGenerate={async command => {
+                        const newTask = await wsCommander(command, task)
+                        if (!newTask?.filters?.theme) return
+                        // нужна проверка на то, что id не добавленных ассоциаций эксклюзивны
+                        let contNotAdded = 0
+                        const ntc = [...task.filters.theme, ...newTask.filters.theme].map(elem => {
+                            if (elem.id < 0) {
+                                contNotAdded -= 1
+                                elem.id = contNotAdded
+
+                                if (elem.idf < 0) {
+                                    elem.idf = contNotAdded
+                                }
+                            }
+                            return elem
+                        })
+                        updateTask({...task, 
+                            filters: {
+                                ...task.filters,
+                                theme: ntc
+                            }
+                        })
+                    }}
+                    onRollbackGenerate={oldTheme => {
+                        updateTask({...task, 
+                            filters: {
+                                ...task.filters,
+                                theme: oldTheme
+                            }
+                        })
+                    }}
                 />
             case "stress":
                 return <BlockFilters 

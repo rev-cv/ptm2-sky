@@ -38,21 +38,17 @@ assoc__queries_exfilt_and_filters = Table(
 class Filter(Base):
     __tablename__ = 'filters'
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
+    name = Column(String, default="")
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="custom_filters")
     filter_type = Column(String, nullable=False)  # theme, state__physical, state__intellectual, stress, energy_level и т.д.
-    description = Column(Text)
-    is_user_defined = Column(Boolean, default=False)  # флаг для пользовательских фильтров
+    description = Column(Text, default="")
 
 class Association(Base):
     __tablename__ = 'associations'
     id = Column(Integer, primary_key=True, index=True)
     filter_id = Column(Integer, ForeignKey('filters.id'), nullable=False)
-    reason = Column(Text) # обоснование причины добавления связи с фильтром
-    relevance  = Column(Integer) # процент соответствия с фильтром
-    proposals = Column(Text) # предложения / рекомендации
-
+    reason = Column(Text, default="") # обоснование причины добавления связи с фильтром
     filter = relationship("Filter")
 
 class SubTask(Base):
@@ -61,11 +57,17 @@ class SubTask(Base):
     task_id = Column(Integer, ForeignKey('tasks.id'))
     status = Column(Boolean, default=False)
     title = Column(String, nullable=False)
-    description = Column(Text)
-    instruction = Column(Text)
-    continuance = Column(Float)
-    motivation = Column(Text)
+    description = Column(Text, default="")
+    instruction = Column(Text, default="")
+    continuance = Column(Float, default="")
+    motivation = Column(Text, default="")
     order = Column(Integer)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        default=lambda:datetime.datetime.now(datetime.timezone.utc)
+    )
+    finished_at = Column(DateTime(timezone=True))
 
 class TaskCheck(Base):
     __tablename__ = 'taskchecks'
@@ -77,7 +79,7 @@ class Task(Base):
     __tablename__ = 'tasks'
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
-    description = Column(Text)
+    description = Column(Text, default="")
 
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="tasks")
@@ -85,7 +87,7 @@ class Task(Base):
     created_at = Column(
         DateTime(timezone=True), 
         nullable=False, 
-        default=lambda: datetime.datetime.now(datetime.timezone.utc)
+        default=lambda:datetime.datetime.now(datetime.timezone.utc)
     )
     activation = Column(DateTime(timezone=True))
     deadline = Column(DateTime(timezone=True))
@@ -93,18 +95,21 @@ class Task(Base):
     status = Column(Boolean, default=False)
     finished_at = Column(DateTime(timezone=True))
 
-    impact = Column(Integer)
-    risk = Column(Integer)
+    impact = Column(Integer, default=0)
+    risk = Column(Integer, default=0)
 
-    risk_explanation = Column(Text)
-    risk_proposals = Column(Text)
-    motivation = Column(Text)
+    risk_explanation = Column(Text, default="")
+    risk_proposals = Column(Text, default="")
+    motivation = Column(Text, default="")
 
     # --- relationships ---
     
     subtasks = relationship("SubTask", backref="task", lazy="joined")
     filters = relationship("Association", backref="task", secondary=assoс__tasks_and_associations, lazy="joined")
     taskchecks = relationship("TaskCheck", backref="task", lazy="joined")
+
+    def __repr__(self):
+        return f"Task(id={self.id}, title='{self.title}', status='{self.status}')"
 
 class Queries(Base):
     __tablename__ = 'queries'

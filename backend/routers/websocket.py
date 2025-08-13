@@ -15,10 +15,6 @@ router = APIRouter()
 async def websocket_connection(websocket: WebSocket, ws_token: Optional[str] = Query(None)):
     """Установка websocket соединения с клиентом"""
 
-    print("*"*30)
-    print(ws_token)
-    print("*"*30)
-
     # проверки доступа на основе специально сгенерированного токена
     if not ws_token:
         await websocket.close(code=4001, reason="No access token")
@@ -62,14 +58,14 @@ async def websocket_connection(websocket: WebSocket, ws_token: Optional[str] = Q
             except json.JSONDecodeError:
                 await send_error(websocket, "parse", "Invalid JSON format")
 
-            await connection_processing(websocket, command, payload)
+            await connection_processing(websocket, command, payload, user_id)
 
     except WebSocketDisconnect:
         clients.pop(websocket, None)
         print("Клиент отключился")
 
 
-async def connection_processing(websocket: WebSocket, command:str, payload:str|None):
+async def connection_processing(websocket: WebSocket, command:str, payload:str|None, user_id):
     """Обработка сообщений присылаемых клиентом"""
 
     match command:
@@ -78,7 +74,7 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
             await send_response(websocket, Commands.SET, "The task object was loaded successfully.", G_Status.ADDED)
         case Commands.STATUS:
             await websocket.send_text(clients[websocket]["status"])
-        case Commands.GEN | Commands.GEN_MOTIVE | G_Status.GEN_STEPS | Commands.GEN_RISK:
+        case Commands.GEN | Commands.GEN_MOTIVE | Commands.GEN_STEPS | Commands.GEN_RISK | Commands.GEN_THEME:
             # проверка, есть ли уже запущенный процесс
             if clients[websocket]["process"] is not None:
                 await send_error(
@@ -100,7 +96,7 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
             
             # запуск генерации в фоне
             clients[websocket]["process"] = asyncio.create_task(
-                ai_task_generator(websocket, clients, command)
+                ai_task_generator(websocket, clients, command, user_id)
             )
         case _:
             await send_error(websocket, command, f"Unknown command: {command}", G_Status.UNKNOWN)

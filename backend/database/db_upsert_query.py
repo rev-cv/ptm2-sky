@@ -29,16 +29,16 @@ def db_upsert_query(db:Session, q:TypeQuery, user_id:int):
     query.drange = f"{q.drange[0]}__{q.drange[1]}"
     query.frange = f"{q.frange[0]}__{q.frange[1]}"
 
-    query.inrisk = ','.join(str(x) for x in q.inrisk)
-    query.exrisk = ','.join(str(x) for x in q.exrisk)
-    query.inimpact = ','.join(str(x) for x in q.inimpact)
-    query.eximpact = ','.join(str(x) for x in q.eximpact)
+    query.inrisk = ','.join(str(x) for x in q.inrisk if x)
+    query.exrisk = ','.join(str(x) for x in q.exrisk if x)
+    query.inimpact = ','.join(str(x) for x in q.inimpact if x)
+    query.eximpact = ','.join(str(x) for x in q.eximpact if x)
 
     query.donerule = q.donerule
     query.failrule = q.failrule
-    query.statusrule = ','.join(str(x) for x in q.statusrule)
+    query.statusrule = ','.join(str(x) for x in q.statusrule if x)
 
-    query.order_by = ','.join(q.order_by)
+    query.order_by = ','.join(str(x) for x in q.order_by if x)
 
     query.infilt = db.query(Filter).filter(Filter.id.in_(q.infilt)).all()
     query.exfilt = db.query(Filter).filter(Filter.id.in_(q.exfilt)).all()

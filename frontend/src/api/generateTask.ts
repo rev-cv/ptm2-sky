@@ -10,9 +10,10 @@ import { Commands, G_Status, CommandValues } from '@mytype/typesGen'
 let ws:WebSocket|null = null
 const store = getDefaultStore()
 
-export async function wsCommander(command: CommandValues, task: TypeViewTask
-    ) : Promise<TypeViewTask | undefined> {
+export async function wsCommander(command: CommandValues, task: TypeViewTask) : Promise<TypeViewTask | undefined> {
 
+    console.log(command)
+    
     // комманда на закрытие веб соединения
     if (ws && ws.readyState === WebSocket.OPEN && command === Commands.STOP) {
         ws?.send(JSON.stringify({command}))

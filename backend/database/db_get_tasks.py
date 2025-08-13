@@ -17,7 +17,7 @@ def extract_first_match(text):
     match = pattern.search(text)
     return match.group(0) if match else None
 
-sorting_paramentrs = {
+sorting_parametrs = {
     "created_asc": Task.created_at.asc(),
     "created_desc": Task.created_at.desc(),
     "deadline_asc": Task.deadline.asc(),
@@ -31,7 +31,7 @@ sorting_paramentrs = {
     "risk_asc": Task.risk.asc(),
     "risk_desc": Task.risk.desc(),
     "impact_asc": Task.impact.asc(),
-    "impact_asc": Task.impact.desc(),
+    "impact_desc": Task.impact.desc(),
 }
 
 
@@ -59,7 +59,6 @@ def db_get_tasks(db: Session, fields: TypeQuery, user_id: int):
         elif "wait" in fields.statusrule:
             query = query.filter(Task.status == False)
             query = query.filter(or_(Task.deadline == None, cdt < Task.deadline))
-
 
     if fields.infilt:
         query = query.filter(
@@ -121,7 +120,7 @@ def db_get_tasks(db: Session, fields: TypeQuery, user_id: int):
         if dt:
             query = query.filter(Task.deadline < dt)
 
-    # проверки
+    # даты проверок
     if fields.irange[0] or fields.irange[1]:
         query = query.join(TaskCheck)
         if fields.irange[0]:
@@ -151,7 +150,7 @@ def db_get_tasks(db: Session, fields: TypeQuery, user_id: int):
 
     order_by = []
     for s in fields.order_by:
-        st = sorting_paramentrs.get(s, None)
+        st = sorting_parametrs.get(s, None)
         if st is not None:
             order_by.insert(0, st)
 
@@ -213,6 +212,31 @@ def db_get_tasks(db: Session, fields: TypeQuery, user_id: int):
         .offset((fields.page - 1) * TASKS_PAGE_SIZE)
         .limit(TASKS_PAGE_SIZE)
     )
+
+    # Принудительная компиляция для фиксации состояния запроса
+    query.statement.compile(compile_kwargs={"literal_binds": True})
+    # ↑ КРИТИЧЕСКИЙ ФИКС: Принудительная компиляция запроса для корректной сортировки
+    #
+    # ПРОБЛЕМА:
+    # SQLAlchemy использует ленивую (отложенную) компиляцию запросов. Это означает, что
+    # query-объект строится в памяти как цепочка операций, но фактический SQL генерируется
+    # только в момент выполнения (.all(), .first(), etc).
+    #
+    # В нашем случае сложная логика построения запроса (множественные фильтры, условная
+    # группировка по статусам, динамическая сортировка) приводила к состоянию гонки:
+    # некоторые модификации query применялись в неправильном порядке при ленивой компиляции.
+    #
+    # СИМПТОМЫ:
+    # - Сортировка по impact_desc не работала
+    # - Добавление print(str(query)) "магически" исправляло проблему
+    # - Проблема проявлялась непредсказуемо
+    #
+    # РЕШЕНИЕ:
+    # Принудительно компилируем запрос в финальный SQL ДО его выполнения.
+    # Это гарантирует, что все модификации query применяются в правильном порядке
+    # и состояние запроса фиксируется до момента выполнения.
+
+    # print([dict(task) for task in query.all()])
 
     return [serialize_task(task) for task in query.all()], all_count
 

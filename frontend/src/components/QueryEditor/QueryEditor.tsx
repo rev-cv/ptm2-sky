@@ -174,7 +174,7 @@ function QueryEditor({onExit}:TypeProps) {
             <div className="query-editor__editor query-block-editor" ref={refEditor}>
                 { (editableQuery && queryOrTheme === 0) ?
                     <BlockEditor 
-                        title={editableQuery.id < 0 ? 'new query' : `edit query : ${editableQuery.id}`}
+                        title={editableQuery.id < 0 ? 'new query' : `#${editableQuery.id}`}
                         editable={editableQuery as TypeQuery}
                         updateEditable={(query: TypeQuery) => setEditableQuery(query)}
                         setEditableQuery={value => setEditableQuery(value)}
@@ -182,7 +182,7 @@ function QueryEditor({onExit}:TypeProps) {
                 }
                 { (editableQuery && queryOrTheme === 1) ?
                     <BlockThemeEditor 
-                        title={editableQuery.id < 0 ? 'new theme' : `edit theme : ${editableQuery.id}`}
+                        title={editableQuery.id < 0 ? 'new theme' : `#${editableQuery.id}`}
                         editable={editableQuery as TypeFilterNew}
                         updateEditable={(query: TypeFilterNew) => setEditableQuery(query)}
                         setEditableQuery={value => setEditableQuery(value)}

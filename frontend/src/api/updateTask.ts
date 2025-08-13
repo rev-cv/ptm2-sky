@@ -3,9 +3,12 @@ import { TypeViewTask, TypeReturnTask, TypeTasks_Filter } from '@mytype/typeTask
 import { getDefaultStore, atomViewTasks, addToast } from "@utils/jotai.store"
 import { taskChangeFIltersDetector, taskChangeSubtasksDetector } from '@utils/task-change-detector'
 import { fetchAuth } from '@api/authFetch'
+import { loadFilters } from '@api/loadFilters'
 
 export const updateTask = async (editingTask:TypeViewTask) => {
     const changesInTask:TypeReturnTask = { id: editingTask.id }
+
+    let isAddingNewTheme = false
 
     const store = getDefaultStore()
     const tasks = store.get(atomViewTasks)
@@ -67,7 +70,17 @@ export const updateTask = async (editingTask:TypeViewTask) => {
         const result: TypeTasks_Filter[] = []
 
         e.filters.theme.forEach(filter => {
-            result.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
+            result.push({ 
+                id: filter.id, 
+                idf: filter.idf, 
+                reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n'),
+                description: filter.description?.trim().replace(/\n{3,}/g, '\n\n'),
+                name: filter.name?.trim()
+            })
+
+            if (filter.idf < 0) {
+                isAddingNewTheme = true
+            }
         })
 
         Object.values(e.filters.state).forEach(filters => {
@@ -104,6 +117,13 @@ export const updateTask = async (editingTask:TypeViewTask) => {
             ))
 
             addToast("Задача обновлена!")
+
+            // Если во время добавления / обновления была добавлена задача, 
+            // следует обновить состояние фильтров
+            if (isAddingNewTheme) {
+                loadFilters()
+                addToast("Добавлены новые фильтры!")
+            }
         } else {
             throw new Error(`Редактирование задачи ${e.id}: Ошибка возвращенных данных`)
         }

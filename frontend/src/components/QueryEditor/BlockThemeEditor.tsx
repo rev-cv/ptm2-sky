@@ -31,7 +31,7 @@ function BlockThemeEditor ({title, editable, updateEditable, setEditableQuery}:T
         />
         <TextArea 
             value={editable.desc}
-            placeholder="Description"
+            label="Description"
             className='query-block-editor__descr'
             onChange={e => updateEditable({...editable, desc: e.target.value})}
             isBanOnEnter={false}

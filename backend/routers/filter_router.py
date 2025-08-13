@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from schemas.types_filters import TypeFilter
 
 from database.sqlalchemy_tables import get_db
-from database.db_get_all_filters import get_all_filters_list
+from database.db_get_filters import get_all_filters_list
 from database.db_upsert_filter import db_upsert_filter
 from database.db_remove_filter import db_remove_filter
 

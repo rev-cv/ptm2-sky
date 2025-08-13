@@ -60,6 +60,8 @@ function BlockFilters ({type, curList, allList, tabList=[], isTheme=false,
     onAddElement, onDelElement, onUpdateElement, onGenerate, onRollbackGenerate} : TypeProps) {
 
     const [genFilter, updateGenFilter] = useAtom(filterElements[type].atomGen)
+    let newThemes:TypeTasks_Filter[] = []
+    if (isTheme) newThemes = curList.filter(elem => elem.idf <= 0 && elem.idf <= 0)
 
     const hundleGenerate = () => {
         if (genFilter.isGen) {
@@ -88,18 +90,32 @@ function BlockFilters ({type, curList, allList, tabList=[], isTheme=false,
     if (allList) filterCount = allList.length
 
     const [isOpenAllFilters, setOpenAllFilters] = useState(false)
+
+    const addNewTheme = () => {
+        const newAssocID = curList.reduce((prev, cur) => cur.id < 0 ? prev - 1 : prev, -1);
+        // ↑ вычисляется оригинальное отрицательное ID для ассоциации 
+        // на основе кол-ва уже добавленных новых ассоциаций
+        onAddElement({
+            id: newAssocID,
+            idf: newAssocID,
+            name: "",
+            description: "",
+            reason: ""
+        } as TypeTasks_Filter, undefined)
+    }
     
     const toogleFilter = (elem:TypeFilterNew, sub:TypeStates|undefined=undefined) => {
         if (curListID.includes(elem.id)) {
             onDelElement(elem.id)
         } else {
+            const newAssocID = curList.reduce((prev, cur) => cur.id < 0 ? prev - 1 : prev, -1);
+            console.log(newAssocID)
             onAddElement({
-                id: -1, // id еще не добавленной ассоциации с фильтром < 0
+                id: newAssocID, // id еще не добавленной ассоциации с фильтром < 0
                 idf: elem.id, // id фильтра с котором будет ассоциирована ассоциация
                 name: elem.name,
                 description: elem.desc, 
                 reason: "",
-                proposals: null
             } as TypeTasks_Filter, sub)
         }
     }
@@ -112,7 +128,7 @@ function BlockFilters ({type, curList, allList, tabList=[], isTheme=false,
 
         <div className="editor-block-filters__added">
             { curList.map((filter, index) => (
-                <div 
+                (0 <= filter.idf) ? <div 
                     className='editor-block-filters__added-item'
                     key={`editor-task-id:${filter.id}:${index}`}
                     >
@@ -137,6 +153,53 @@ function BlockFilters ({type, curList, allList, tabList=[], isTheme=false,
                             ...filter, reason: e.target.value
                         })}
                     />
+                </div> : null
+            ))}
+
+            {newThemes.length === 0 ? null : newThemes.map((filter, index) => (
+                <div 
+                    className='editor-block-filters__added-item'
+                    key={`editor-task-id:${filter.id}:${index}`}
+                    >
+
+                    <div className='editor-block-filters__added-item__title-new-theme'>
+                        Будет добавлена новая тема:
+                    </div>
+
+                    <TextArea 
+                        value={filter.name}
+                        label='name'
+                        className='editor-block-filters__added-item__textarea'
+                        onChange={e => onUpdateElement({
+                            ...filter, name: e.target.value
+                        })}
+                    />
+
+                    <TextArea 
+                        value={filter.description}
+                        label='description'
+                        className='editor-block-filters__added-item__textarea'
+                        onChange={e => onUpdateElement({
+                            ...filter, description: e.target.value
+                        })}
+                    />
+
+                    <TextArea 
+                        value={filter.reason}
+                        label='reason'
+                        className='editor-block-filters__added-item__textarea'
+                        onChange={e => onUpdateElement({
+                            ...filter, reason: e.target.value
+                        })}
+                    />
+
+                    <Button
+                        icon={IcoRemove}
+                        variant='remove'
+                        onClick={() => onDelElement(filter.idf)}
+                        className="editor-block-filters__added-item__remove"
+                        title='remove'
+                    />
                 </div>
             ))}
 
@@ -148,9 +211,7 @@ function BlockFilters ({type, curList, allList, tabList=[], isTheme=false,
                     }
                     onClick={hundleGenerate}
                 />
-                { !isTheme ? null :
-                    <Button icon={IcoAdd} text={'new'}/>
-                }
+                { !isTheme ? null : <Button icon={IcoAdd} text={'new'} onClick={addNewTheme}/> }
             </div>
         </div>
 

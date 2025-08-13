@@ -2,7 +2,7 @@ from database.sqlalchemy_tables import Task, Association, TaskCheck, Filter, Sub
 from schemas.types_tasks import TypeTask
 from sqlalchemy.orm import Session
 from serializers.returned_task import serialize_task
-from datetime import datetime
+from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from fastapi import HTTPException
 
@@ -110,8 +110,20 @@ def db_upsert_task(db: Session, t: TypeTask, user_id: int):
             db.query(Association).filter(Association.id.in_(assoc_to_delete)).delete(synchronize_session=False)
 
         for assoc in t.filter_list:
-            if assoc.id < 0:
-                # если ассоциация с фильтром еще не создана, нужно создать
+            if assoc.idf < 0:
+                # еще не создан сам фильтер → создать новый фильтер
+                new_filter = Filter(
+                    name=assoc.name,
+                    description=assoc.description,
+                    filter_type="theme",
+                    user_id=user_id
+                )
+                # если фильтер не создан, то и ассоциация не могла бы быть создана
+                task.filters.append(
+                    Association(filter=new_filter, reason=assoc.reason)
+                )
+            elif assoc.id < 0:
+                # если ассоциация для фильтра еще не создана, нужно создать
                 filter = db.query(Filter).get(assoc.idf)
                 task.filters.append(
                     Association(filter=filter, reason=assoc.reason)
@@ -144,7 +156,14 @@ def db_upsert_task(db: Session, t: TypeTask, user_id: int):
                 )
             else:
                 original = next((s for s in task.subtasks if s.id == st.id), None)
+
                 if original:
+
+                    if not original.status and st.status == True:
+                        original.finished_at = datetime.now(timezone.utc)
+                    elif not st.status:
+                        original.finished_at = None
+
                     original.status = st.status
                     original.title = st.title
                     original.instruction = st.instruction
