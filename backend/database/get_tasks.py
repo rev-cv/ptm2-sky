@@ -1,7 +1,7 @@
 from sqlalchemy import or_, and_
 from database.sqlalchemy_tables import Task, Association, TaskCheck
 from datetime import datetime
-from serializers.returned_task import serialize_task
+from serializers.returned_task import serialize_task_new
 
 def get_tasks_by_filters(db, filters):
     query = db.query(Task)
@@ -63,4 +63,4 @@ def get_tasks_by_filters(db, filters):
     page_size = 20
     query = query.offset((page - 1) * page_size).limit(page_size)
 
-    return [serialize_task(task) for task in query.all()]
+    return [serialize_task_new(task) for task in query.all()]

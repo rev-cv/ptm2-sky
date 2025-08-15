@@ -40,7 +40,6 @@ function Tasks() {
 
             {
                 count - tasks.length != 0 ?
-
                     <div className='task-list__pagination'>
                         <Button 
                             text={"show more"} 

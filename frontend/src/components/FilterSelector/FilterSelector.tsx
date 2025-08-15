@@ -1,7 +1,7 @@
 import './style.scss'
-import React, { useState } from 'react'
-import { atomThemeList, atomActionList, atomStressList, atomStateDict, atomStateList, useAtomValue } from '@utils/jotai.store'
-import { TypeFilterNew, TypeFilterNew__Tabs } from '@mytype/typeFilters'
+import { useState } from 'react'
+import { atomThemeList, atomActionList, useAtomValue } from '@utils/jotai.store'
+import { TypeFilterNew } from '@mytype/typeFilters'
 
 import Button from '@comps/Button/Button'
 
@@ -24,29 +24,14 @@ type TypeProps = {
     updateFilters: (infilt:number[], exfilt:number[]) => void
 }
 
-function FilterSelector ({
-    type_filter,
-    intitle,
-    infilt, 
-
-    extitle,
-    exfilt,
-
-    updateFilters,
-
-    titleClass
-    }:TypeProps) {
+function FilterSelector ({type_filter, intitle, infilt, extitle, exfilt, updateFilters, titleClass }:TypeProps) {
 
     const atomList = 
         type_filter === "theme"  ? atomThemeList :
         type_filter === "action" ? atomActionList :
-        type_filter === "stress" ? atomStressList :
-        atomStateList
-
-    const isTypeFilterStates = type_filter === "state"
+        undefined
 
     const filterList = atomList ? useAtomValue(atomList) : []
-    let stateDict = isTypeFilterStates ? useAtomValue(atomStateDict) : null
 
     const selectInList = filterList
         .filter(f => infilt.includes(f.id))
@@ -81,57 +66,6 @@ function FilterSelector ({
 
         updateFilters(newInfilte, newExfilte)
     }
-
-    const getElementByAllFiters = (action:"in"|"ex") => {
-        if (stateDict === null) return null
-        const statelist:TypeFilterNew__Tabs[] = [
-            {
-                tabname: "Эмоциональное",
-                sysname: "emotional",
-                descr: "Состояние, связанное с чувствами и настроением, влияющее на восприятие и выполнение задачи.",
-                allList: stateDict.emotional
-            },
-            {
-                tabname: "Интеллектуальное",
-                sysname: "intellectual",
-                descr: "Состояние, требующее умственной активности, анализа и логического мышления для решения задачи.",
-                allList: stateDict.intellectual
-            },
-            {
-                tabname: "Мотивационное",
-                sysname: "motivational",
-                descr: "Состояние, характеризующееся уровнем вдохновения и желания активно работать над задачей.",
-                allList: stateDict.motivational
-            },
-            {
-                tabname: "Физическое",
-                sysname: "physical",
-                descr: "Состояние, связанное с физической энергией и самочувствием, необходимым для выполнения задачи.",
-                allList: stateDict.physical
-            },
-            {
-                tabname: "Социальное",
-                sysname: "social",
-                descr: "Состояние, связанное с взаимодействием с другими людьми, влияющее на выполнение задачи в группе или обществе.",
-                allList: stateDict.social
-            }
-        ]
-
-        return statelist.map((tab, tabindex) => (
-            <React.Fragment 
-                key={`all filter for ${action} > block with item (${tabindex})`}>
-                <div className='filter-all-list__tab'>{tab.tabname}</div>
-                {tab.allList?.map((elem, index) => (
-                    <div 
-                        className={`filter-all-list__item${exfilt.includes(elem.id) ? " active" : ""}`}
-                        onClick={() => toogleActionByFilter(action, elem)}
-                        key={`all filter for ${action} > item ID ${elem.id} (${index})`}>
-                        <div className='filter-all-list__item__name'>{elem.name}</div>
-                        <div className='filter-all-list__item__descr'>{elem.desc}</div>
-                    </div>
-                ))}
-            </React.Fragment>)
-    )}
     
     return <>
         {intitle ? <div className={titleClass ? titleClass : ""}>{intitle}</div> : null}
@@ -163,7 +97,7 @@ function FilterSelector ({
 
         <div className={`filter-all-list${isOpenInFilter ? " view" : ""}`}>
             <div>
-                {!isTypeFilterStates ? filterList.map((elem, index) => 
+                {filterList.map((elem, index) => 
                     <div 
                         className={`filter-all-list__item${infilt.includes(elem.id) ? " active" : ""}`}
                         onClick={() => toogleActionByFilter("in", elem)}
@@ -171,7 +105,7 @@ function FilterSelector ({
                         <div className='filter-all-list__item__name'>{elem.name}</div>
                         <div className='filter-all-list__item__descr'>{elem.desc}</div>
                     </div>
-                ) : getElementByAllFiters("in")}
+                )}
             </div>
         </div>
         
@@ -204,7 +138,7 @@ function FilterSelector ({
 
         <div className={`filter-all-list${isOpenExFilter ? " view" : ""}`}>
             <div>
-                {!isTypeFilterStates ? filterList.map((elem, index) => 
+                {filterList.map((elem, index) => 
                     <div 
                         className={`filter-all-list__item${exfilt.includes(elem.id) ? " active" : ""}`}
                         onClick={() => toogleActionByFilter("ex", elem)}
@@ -212,10 +146,9 @@ function FilterSelector ({
                         <div className='filter-all-list__item__name'>{elem.name}</div>
                         <div className='filter-all-list__item__descr'>{elem.desc}</div>
                     </div>
-                ) : getElementByAllFiters('ex')}
+                )}
             </div>
         </div>
-        
     </>
 }
 

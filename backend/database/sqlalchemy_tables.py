@@ -102,6 +102,21 @@ class Task(Base):
     risk_proposals = Column(Text, default="")
     motivation = Column(Text, default="")
 
+    stress = Column(Integer, default=0)
+    apathy = Column(Integer, default=0)
+    meditative = Column(Integer, default=0)
+    comfort = Column(Integer, default=0)
+    automaticity = Column(Integer, default=0)
+    significance = Column(Integer, default=0)
+    
+    physical = Column(Integer, default=0)
+    intellectual = Column(Integer, default=0)
+    motivational = Column(Integer, default=0)
+    emotional = Column(Integer, default=0)
+    financial = Column(Integer, default=0)
+    temporal = Column(Integer, default=0)
+    social = Column(Integer, default=0)
+
     # --- relationships ---
     
     subtasks = relationship("SubTask", backref="task", lazy="joined")

@@ -10,7 +10,7 @@ export type TypeToggleElement = {
 type TypeProps = {
     elements: TypeToggleElement[]
     onChange: (value: number) => void
-    activeValue: number
+    activeValue?: number
 }
 
 function Toggle({elements, onChange, activeValue=0}:TypeProps) {

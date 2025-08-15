@@ -10,15 +10,11 @@ export const createTask = async () => {
     const originalTask = store.get(currentNewTask2)
     let isAddingNewTheme = false
 
-    const { filters, ...rest } = originalTask;
+    const { themes, actions, ...rest } = originalTask;
 
     let filts:TypeTasks_Filter[] = []
 
-    // filters.theme.forEach(filter => {
-    //     filts.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
-    // })
-
-    filters.theme.forEach(filter => {
+    themes.forEach(filter => {
         filts.push({ 
             id: filter.id, 
             idf: filter.idf, 
@@ -32,18 +28,12 @@ export const createTask = async () => {
         }
     })
 
-    Object.values(filters.state).forEach(filters => {
-        filters.forEach(filter => {
-            filts.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
+    actions.forEach(filter => {
+        filts.push({ 
+            id: filter.id, 
+            idf: filter.idf, 
+            reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n')
         })
-    })
-
-    filters.stress.forEach(filter => {
-        filts.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
-    })
-
-    filters.action_type.forEach(filter => {
-        filts.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
     })
 
     const inTask:TypeReturnTask = {...rest, filter_list: filts}

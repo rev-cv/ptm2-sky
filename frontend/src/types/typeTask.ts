@@ -1,4 +1,17 @@
 
+export const PagesForTaskEditor = {
+    MAIN: 0,
+    STEP: 1,
+    TIME: 2,
+    RISK: 3,
+    THEME: 4,
+    ADAPT: 5,
+    INTENSITY: 6,
+    ACTION: 7,
+    STRESS: 8,
+    STATE: 9
+}
+
 export type TypeTasks_SubTask = {
     id: number
     status: boolean
@@ -42,43 +55,27 @@ export type TypeViewTask = {
     impact: TypeTasks_RI
     risk_proposals: string
     risk_explanation: string
+
+    stress: TypeTasks_RI
+    apathy:  TypeTasks_RI
+    meditative:  TypeTasks_RI
+    comfort:  TypeTasks_RI
+    automaticity:  TypeTasks_RI
+    significance:  TypeTasks_RI
     
-    filters: { // формат в котором фильтры приходят с сервера
-        theme: TypeTasks_Filter[]
-        // темы с id==-1 являются еще не существующими в базе данных
-        state: {
-            physical: TypeTasks_Filter[]
-            intellectual: TypeTasks_Filter[]
-            emotional: TypeTasks_Filter[]
-            motivational: TypeTasks_Filter[]
-            social: TypeTasks_Filter[]
-        }
-        stress: TypeTasks_Filter[]
-        action_type: TypeTasks_Filter[]
-    }
+    physical:  TypeTasks_RI
+    intellectual:  TypeTasks_RI
+    motivational:  TypeTasks_RI
+    emotional:  TypeTasks_RI
+    financial:  TypeTasks_RI
+    temporal:  TypeTasks_RI
+    social: TypeTasks_RI
+
+    themes: TypeTasks_Filter[]
+    actions: TypeTasks_Filter[]
 }
 
-export type TypeStates = "physical" | "intellectual" | "emotional" | "motivational" | "social"
-
-export type TypeReturnTask = {
-    // тип данных задачи отправляемых на сервер
-    id: number
-    status?: boolean
-    title?: string
-    description?: string
-    motivation?: string
-    subtasks?: TypeTasks_SubTask[]
-
-    created_at?: string // дата создания задачи
-    deadline?: string | null // время дедлайна
-    activation?: string | null // время активации задачи
-    taskchecks?: string[] // даты проверки задачи
-    finished_at?: string | null // дата успешного выполнения задачи (когда status установлен в значение True)
-
-    risk?: TypeTasks_RI
-    impact?: TypeTasks_RI
-    risk_proposals?: string
-    risk_explanation?: string
-
-    filter_list?: TypeTasks_Filter[] // формат в котором фильтры уходят на сервер
+export type TypeReturnTask = Partial<Omit<TypeViewTask, 'themes' | 'actions'>> & {
+    id: number; // id остаётся обязательным
+    filter_list?: TypeTasks_Filter[]
 }

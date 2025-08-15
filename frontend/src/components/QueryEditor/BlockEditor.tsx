@@ -4,7 +4,7 @@ import { TypeTasks_RI } from '@mytype/typeTask'
 import { TypeFilterNew } from '@mytype/typeFilters'
 import { TypeRuleStatus } from '@mytype/typeQueries'
 
-import ci_values from '@api/BlockCriticalityValues.json'
+import ci_values from '@api/valuesForComponents.json'
 
 import { createQuery } from '@api/createQuery'
 import { removeQuery } from '@api/removeQuery'
@@ -111,42 +111,10 @@ function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypePro
         />
 
         <FilterSelector 
-            type_filter='state'
-
-            intitle='Поиск по текущему состоянию'
-            extitle='Исключать задачи не соответствующие текущему состоянию'
-
-            infilt={editable.infilt}
-            exfilt={editable.exfilt}
-
-            titleClass='query-block-editor__title'
-
-            updateFilters={(infilt, exfilt) => updateEditable(
-                {...editable, infilt, exfilt}
-            )}
-        />
-
-        <FilterSelector 
             type_filter='action'
 
             intitle='Поиск по типу деятельности'
             extitle='Исключать задачи с типами действий'
-
-            infilt={editable.infilt}
-            exfilt={editable.exfilt}
-
-            titleClass='query-block-editor__title'
-
-            updateFilters={(infilt, exfilt) => updateEditable(
-                {...editable, infilt, exfilt}
-            )}
-        />
-
-        <FilterSelector 
-            type_filter='stress'
-
-            intitle='Поиск по эмоциональной нагрузке'
-            extitle='Исключать задачи с эмоциональной нагрузкой'
 
             infilt={editable.infilt}
             exfilt={editable.exfilt}

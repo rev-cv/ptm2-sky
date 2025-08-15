@@ -24,16 +24,6 @@ export const atomGenTheme = atom<t.TypeGenFilters>({
     fixed: []
 })
 
-export const atomGenState = atom<t.TypeGenFilters>({
-    isGen: false,
-    fixed: []
-})
-
-export const atomGenStress = atom<t.TypeGenFilters>({
-    isGen: false,
-    fixed: []
-})
-
 export const atomGenAction = atom<t.TypeGenFilters>({
     isGen: false,
     fixed: []

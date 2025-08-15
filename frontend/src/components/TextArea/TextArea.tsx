@@ -88,6 +88,7 @@ function AutoResizeTextarea({value="", label, placeholder, className, onChange, 
             value={value}
             rows={1}
             placeholder={ !placeholder ? ' ' : placeholder}
+            onClick={e => e.stopPropagation()}
         />
 
         { !label ? null : <label className="text-area2__label">{label}</label> }

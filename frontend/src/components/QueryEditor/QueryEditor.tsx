@@ -52,8 +52,9 @@ function QueryEditor({onExit}:TypeProps) {
                 <div className="query-editor__list-continer-menu">
                     <Toggle 
                         elements={[
+                            {label: "запросы", value: 0},
                             {label: "темы", value: 1},
-                            {label: "запросы", value: 0}
+                            {label: "вид", value: 2}
                         ]}
                         activeValue={queryOrTheme}
                         onChange={v => {

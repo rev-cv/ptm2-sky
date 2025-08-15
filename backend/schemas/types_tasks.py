@@ -41,3 +41,18 @@ class TypeTask(BaseModel):
     # никак не учавствующие, но могут передаваться при создании задачи
     created_at: Optional[str] = None
     finished_at: Optional[str] = None
+
+    stress: Optional[Literal[0, 1, 2, 3]] = None
+    apathy:  Optional[Literal[0, 1, 2, 3]] = None
+    meditative:  Optional[Literal[0, 1, 2, 3]] = None
+    comfort:  Optional[Literal[0, 1, 2, 3]] = None
+    automaticity:  Optional[Literal[0, 1, 2, 3]] = None
+    significance:  Optional[Literal[0, 1, 2, 3]] = None
+    
+    physical:  Optional[Literal[0, 1, 2, 3]] = None
+    intellectual:  Optional[Literal[0, 1, 2, 3]] = None
+    motivational:  Optional[Literal[0, 1, 2, 3]] = None
+    emotional:  Optional[Literal[0, 1, 2, 3]] = None
+    financial:  Optional[Literal[0, 1, 2, 3]] = None
+    temporal:  Optional[Literal[0, 1, 2, 3]] = None
+    social: Optional[Literal[0, 1, 2, 3]] = None

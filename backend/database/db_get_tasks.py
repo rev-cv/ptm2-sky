@@ -3,7 +3,7 @@ from sqlalchemy import or_, and_, not_
 from sqlalchemy.sql import case
 from database.sqlalchemy_tables import Task, Association, TaskCheck
 from datetime import datetime, timezone, timedelta
-from serializers.returned_task import serialize_task
+from serializers.returned_task import serialize_task_new
 import os, re
 from schemas.types_queries import TypeQuery
 from dotenv import load_dotenv
@@ -238,7 +238,7 @@ def db_get_tasks(db: Session, fields: TypeQuery, user_id: int):
 
     # print([dict(task) for task in query.all()])
 
-    return [serialize_task(task) for task in query.all()], all_count
+    return [serialize_task_new(task) for task in query.all()], all_count
 
 
 def getDate (text, offset=0, is_finish=False):

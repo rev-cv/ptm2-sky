@@ -18,7 +18,7 @@ import IcoStart from '@asset/start.svg'
 import IcoRisk from '@asset/risk.svg'
 import IcoImpact from '@asset/impact.svg'
 
-import riskImpact from '@api/BlockCriticalityValues.json'
+import riskImpact from '@api/valuesForComponents.json'
 
 type TaskProps = {
     objTask: TypeViewTask
@@ -47,20 +47,9 @@ function Task({objTask, index} : TaskProps) {
     const riskValue = getRiskImpactValue("risk", objTask.risk);
     const impactValue = getRiskImpactValue("impact", objTask.impact);
 
-    const countFilters = getCountFilters()
-
     const [doneSubTasksCount, /*waitSubTasksCount*/] = objTask.subtasks.reduce((prev, cur) => 
 	    cur.status ? [prev[0] + 1, prev[0]] : [prev[0], prev[1] + 1], [0, 0]
     )
-
-    function getCountFilters () {
-        return (objTask?.filters.theme?.length || 0) +
-            (objTask?.filters.stress?.length || 0) +
-            (objTask?.filters.action_type?.length || 0) +
-            (objTask?.filters.state
-                ? Object.values(objTask.filters.state).reduce((sum, arr) => sum + (arr?.length || 0), 0)
-                : 0)
-    }
 
     function getRiskImpactValue (arg1: string, arg2: number) {
         if (arg1 === "risk") {
@@ -115,37 +104,27 @@ function Task({objTask, index} : TaskProps) {
                 }
             </div>
 
-            {0 < countFilters && Object.entries(objTask.filters).map(([key, filter]) => {
-                        if (Array.isArray(filter) && filter.length) {
-                            return filter.map((f, i) => (
-                                <button
-                                    key={`${key}-${i}`}
-                                    onClick={e => {
-                                        e.stopPropagation()
-                                        loadTasksByTheme(`#${f.name}`, f.idf)
-                                    }}
-                                    >#{f.name}
-                                </button>
-                            ))
-                        }
-                        if (key === "state" && typeof filter === "object" && filter !== null) {
-                            return Object.entries(filter).map(([, subArr]) =>
-                                Array.isArray(subArr) && subArr.length ? (
-                                    subArr.map((f, i) => (
-                                        <button
-                                            key={`${key}-${i}`}
-                                            onClick={e => {
-                                                e.stopPropagation()
-                                                loadTasksByTheme(`#${f.name}`, f.idf)
-                                            }}
-                                            >#{f.name}
-                                        </button>
-                                    ))
-                                ) : null
-                            )
-                        }
-                        return null
-                    })}
+            { objTask.themes.map((f, i) => (
+                <button
+                    key={`theme-${f.idf}-#${i}`}
+                    onClick={e => {
+                        e.stopPropagation()
+                        loadTasksByTheme(`#${f.name}`, f.idf)
+                    }}
+                    >#{f.name}
+                </button>
+            ))}
+
+            { objTask.actions.map((f, i) => (
+                <button
+                    key={`actions-${f.idf}-#${i}`}
+                    onClick={e => {
+                        e.stopPropagation()
+                        loadTasksByTheme(`#${f.name}`, f.idf)
+                    }}
+                    >#{f.name}
+                </button>
+            ))}
         </div>
         
         { (0 < objTask.subtasks.length) && <>

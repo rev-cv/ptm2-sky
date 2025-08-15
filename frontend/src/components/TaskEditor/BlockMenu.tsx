@@ -1,7 +1,7 @@
+import { PagesForTaskEditor as Page } from '@mytype/typeTask'
+
 import Button from '@comps/Button/Button'
 
-import IcoState from '@asset/state-element.svg'
-import IcoStrass from '@asset/stress-element.svg'
 import IcoAction from '@asset/event-element.svg'
 import IcoTheme from '@asset/theme-element.svg'
 import IcoRisk from '@asset/risk.svg'
@@ -9,22 +9,30 @@ import IcoCalendar from '@asset/calendar.svg'
 import IcoStep from '@asset/subtask.svg'
 import IcoDescr from '@asset/title.svg'
 import IcoDelete from '@asset/delete.svg'
+import IcoAdapt from '@asset/adaptability.svg'
+import IcoResource from '@asset/resource.svg'
 
-export const asideButtons = [
-    ["Описание задачи", "", IcoDescr],
-    ["Разбивка по шагам", "steps", IcoStep],
-    ["Тайминг сроков", "timing", IcoCalendar],
-    ["Оценка критичности", "risk", IcoRisk],
-    ["Темы", "themes", IcoTheme],
-    ["Состояния", "states", IcoState],
-    ["Эмоциональная нагрузка", "stress", IcoStrass],
-    ["Типы действий", "actions", IcoAction],
+type TypeAsideButton = [
+    string, 
+    number, 
+    string | React.FunctionComponent<any> | React.ComponentType<any>
+]
+
+export const asideButtons:TypeAsideButton[] = [
+    ["Описание задачи", Page.MAIN, IcoDescr],
+    ["Разбивка по шагам", Page.STEP, IcoStep],
+    ["Тайминг сроков", Page.TIME, IcoCalendar],
+    ["Оценка критичности", Page.RISK, IcoRisk],
+    ["Темы", Page.THEME, IcoTheme],
+    ["Вид деятельности", Page.ACTION, IcoAction],
+    ["Ресурсоемкость", Page.INTENSITY, IcoResource],
+    ["Адаптивность", Page.ADAPT, IcoAdapt],
 ]
 
 type TypeProps = {
-    activeTab: string
+    activeTab: number
     isEdit?: boolean
-    onChangeTab: (activeTab:string) => void
+    onChangeTab: (activeTab:number) => void
     onDeleteTask?: () => void
 }
 

@@ -1,7 +1,7 @@
 import { atomGenRisk, useAtom } from '@utils/jotai.store'
 import { TypeTasks_RI } from '@mytype/typeTask'
 import { Commands, TypeGenRisk, TypeGenRisk__Fixed } from '@mytype/typesGen'
-import values_component from '@api/BlockCriticalityValues.json'
+import values_component from '@api/valuesForComponents.json'
 
 import Toggle from '@comps/Toggles/Toggle'
 import TextArea from '@comps/TextArea/TextArea'

@@ -11,13 +11,27 @@ export function taskChangeDetector (editingTask:TypeViewTask) : boolean {
 
     // проверки
 
-    if (o.status != e.status) return true
-    if (o.title.trim() != e.title.trim()) return true
-    if (o.description != e.description) return true
-    if (o.motivation != e.motivation) return true
+    const fieldsToCompare: (keyof TypeViewTask)[] = ['status', 'activation', 'deadline', 'risk', 'impact', 'stress', 'apathy', 'meditative', 'comfort', 'automaticity', 'significance', 'physical', 'intellectual', 'motivational', 'emotional', 'financial', 'temporal', 'social']
+    for (let index = 0; index < fieldsToCompare.length; index++) {
+        const name = fieldsToCompare[index]
+        if (o[name] != e[name]) {
+            return true
+        }
+    }
 
-    if (o.activation != e.activation) return true
-    if (o.deadline != e.deadline) return true
+    const fieldsToCompareText: (keyof TypeViewTask)[] = ['title', 'description', 'motivation', 'risk_proposals', 'risk_explanation']
+    for (let index = 0; index < fieldsToCompareText.length; index++) {
+        const name = fieldsToCompareText[index]
+        if ((o[name] as string).trim() !== (e[name] as string).trim()) {
+            return true
+        }
+    }
+
+    // проверка фильтров
+    if (taskChangeFIltersDetector(o, e)) return true
+    
+    // проверка подзадач
+    if (taskChangeSubtasksDetector(o, e)) return true
 
     if (o.taskchecks.length != e.taskchecks.length) return true
     for (let index = 0; index < e.taskchecks.length; index++) {
@@ -25,18 +39,6 @@ export function taskChangeDetector (editingTask:TypeViewTask) : boolean {
             return true
         }
     }
-
-    if (o.risk != e.risk) return true
-    if (o.impact != e.impact) return true
-
-    if (o.risk_proposals != e.risk_proposals) return true
-    if (o.risk_explanation != e.risk_explanation) return true
-
-    // проверка фильтров
-    if (taskChangeFIltersDetector(o, e)) return true
-    
-    // проверка подзадач
-    if (taskChangeSubtasksDetector(o, e)) return true
 
     return false
 }
@@ -46,22 +48,12 @@ export function taskChangeFIltersDetector (originalTask:TypeViewTask, editingTas
     const e = editingTas
 
     const getFilterIds = (obj:TypeViewTask) => {
-        const arrays = [
-            obj.filters.theme,
-            obj.filters.stress,
-            obj.filters.action_type,
-            ...Object.values(obj.filters.state)
-        ]
+        const arrays = [obj.themes, obj.actions]
         return arrays.flatMap(arr => arr.map(elem => elem.id))
     }
 
     const getFilterReasons = (obj:TypeViewTask) => {
-        const arrays = [
-            obj.filters.theme,
-            obj.filters.stress,
-            obj.filters.action_type,
-            ...Object.values(obj.filters.state)
-        ]
+        const arrays = [obj.themes, obj.actions]
         return arrays.flatMap(arr => arr.map(elem => elem.reason))
     }
 

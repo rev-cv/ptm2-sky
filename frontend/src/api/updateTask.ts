@@ -6,7 +6,8 @@ import { fetchAuth } from '@api/authFetch'
 import { loadFilters } from '@api/loadFilters'
 
 export const updateTask = async (editingTask:TypeViewTask) => {
-    const changesInTask:TypeReturnTask = { id: editingTask.id }
+    // const changesInTask:TypeReturnTask = { id: editingTask.id }
+    const changesInTask: Partial<TypeReturnTask> = { id: editingTask.id }
 
     let isAddingNewTheme = false
 
@@ -54,12 +55,6 @@ export const updateTask = async (editingTask:TypeViewTask) => {
     if (isTaskCheckDetect())
         changesInTask.taskchecks = e.taskchecks
 
-    if (o.risk != e.risk)
-        changesInTask.risk = e.risk
-
-    if (o.impact != e.impact)
-        changesInTask.impact = e.impact
-
     if (o.risk_proposals != e.risk_proposals)
         changesInTask.risk_proposals = e.risk_proposals.trim().replace(/\n{3,}/g, '\n\n')
 
@@ -69,7 +64,7 @@ export const updateTask = async (editingTask:TypeViewTask) => {
     if (taskChangeFIltersDetector(o, e)) {
         const result: TypeTasks_Filter[] = []
 
-        e.filters.theme.forEach(filter => {
+        e.themes.forEach(filter => {
             result.push({ 
                 id: filter.id, 
                 idf: filter.idf, 
@@ -83,17 +78,7 @@ export const updateTask = async (editingTask:TypeViewTask) => {
             }
         })
 
-        Object.values(e.filters.state).forEach(filters => {
-            filters.forEach(filter => {
-                result.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
-            })
-        })
-
-        e.filters.stress.forEach(filter => {
-            result.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
-        })
-
-        e.filters.action_type.forEach(filter => {
+        e.actions.forEach(filter => {
             result.push({ id: filter.id, idf: filter.idf, reason: filter.reason.trim().replace(/\n{3,}/g, '\n\n') })
         })
 
@@ -102,6 +87,21 @@ export const updateTask = async (editingTask:TypeViewTask) => {
 
     if (taskChangeSubtasksDetector(o, e)) {
         changesInTask.subtasks = e.subtasks
+    }
+
+    const fieldsToCompare: (keyof TypeReturnTask)[] = [
+        'risk', 'impact', 'stress', 'apathy',
+        'meditative', 'comfort', 'automaticity', 'significance', 'physical',
+        'intellectual', 'motivational', 'emotional', 'financial', 'temporal', 'social'
+    ]
+
+    for (const name of fieldsToCompare) {
+        if (name != "filter_list" && o[name] !== e[name]) {
+            if (e[name] != null && e[name] != undefined){
+                // @ts-ignore
+                changesInTask[name] = e[name]
+            }
+        }
     }
 
     try {

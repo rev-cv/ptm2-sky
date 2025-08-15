@@ -1,7 +1,7 @@
 from database.sqlalchemy_tables import Task, Association, TaskCheck, Filter, SubTask, User
 from schemas.types_tasks import TypeTask
 from sqlalchemy.orm import Session
-from serializers.returned_task import serialize_task
+from serializers.returned_task import serialize_task_new
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from fastapi import HTTPException
@@ -172,6 +172,16 @@ def db_upsert_task(db: Session, t: TypeTask, user_id: int):
                     original.motivation = st.motivation
                     original.order = st.order
 
+    fields = [
+        'stress', 'apathy', 'meditative', 'comfort', 'automaticity',
+        'significance', 'physical', 'intellectual', 'motivational',
+        'emotional', 'financial', 'temporal', 'social'
+    ]
+    for field in fields:
+        value = getattr(t, field)
+        if value is not None:
+            setattr(task, field, value)
+
     db.commit()
     db.refresh(task)
-    return serialize_task(task)
+    return serialize_task_new(task)

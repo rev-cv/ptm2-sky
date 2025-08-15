@@ -14,8 +14,7 @@ def initialize_filters_from_json(db, json_path="database/initial_data.json"):
             db_filter = Filter(
                 name=item["name"],
                 filter_type=filter_type,
-                description=item.get("description", ""),
-                is_user_defined=item.get("is_user_defined", False)
+                description=item.get("description", "")
             )
             db.add(db_filter)
     db.commit()
