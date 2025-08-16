@@ -1,7 +1,7 @@
 import './style.scss'
 
-import { useState } from 'react'
-import { useAtomValue, atomActionList, atomThemeList } from "@utils/jotai.store"
+import { useState, useEffect } from 'react'
+import { useAtomValue, atomActionList, atomThemeList, atomGenTaskBuffer, getDefaultStore } from "@utils/jotai.store"
 import { TypeViewTask } from '@mytype/typeTask'
 import { PagesForTaskEditor as Page } from '@mytype/typeTask'
 
@@ -24,10 +24,46 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
     const themeList = useAtomValue(atomThemeList)
     const actionList = useAtomValue(atomActionList)
 
+    useEffect(() => {
+        // проверка буфера генераций на предмет готовых генераций
+        const store = getDefaultStore()
+        const buffer = store.get(atomGenTaskBuffer)
+        const bufferElement = buffer[task.id] ?? {}
+        const fields = Object.keys(bufferElement)
+
+        if (fields.length === 0) return
+
+        const updatedTask = { ...task }
+        const taskFields = Object.keys(updatedTask)
+
+        fields.forEach(key => {
+            if (taskFields.includes(key)) {
+                // @ts-ignore
+                updatedTask[key] = bufferElement[key]
+            }
+        })
+
+        updateTask(updatedTask)
+        store.set(atomGenTaskBuffer, prev => {
+            const newPrev = Object.fromEntries(
+                Object.entries(prev).filter(([key]) => key !== String(task.id))
+            )
+            return newPrev
+        })
+    }, [])
+
     return <Modal 
         visible={visible}
         onRequestClose={() => setVisible(false)}
         onExited={() => {
+            // при закрытии инициировать очистку буфера
+            const store = getDefaultStore()
+            store.set(atomGenTaskBuffer, prev => {
+                const newPrev = Object.fromEntries(
+                    Object.entries(prev).filter(([key]) => key !== String(task.id))
+                )
+                return newPrev
+            })
             if (onExit) onExit(task)
         }}>
     

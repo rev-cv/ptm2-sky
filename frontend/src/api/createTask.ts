@@ -38,8 +38,6 @@ export const createTask = async () => {
 
     const inTask:TypeReturnTask = {...rest, filter_list: filts}
 
-    console.log(inTask)
-
     try {
         const res = await fetchAuth(`${APIURL}/api/upsert_task`, {
             method: 'POST',

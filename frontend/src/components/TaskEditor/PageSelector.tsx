@@ -34,17 +34,17 @@ const PageSelector = ({task, updateTask, activeTab, allFilters}:TypeProps) : Rea
                 motiv={task.motivation}
                 status={task.status}
                 created={formatDateString(task.created_at)}
-                onChangeTitle={s => updateTask({...task, title: s})}
-                onChangeDescr={s => updateTask({...task, description: s})}
-                onChangeMotiv={s => updateTask({...task, motivation: s})}
-                onChangeStatus={b => updateTask({...task, status: b})}
+                onChangeTitle={t => updateTask(prev => ({...prev, title: t}))}
+                onChangeDescr={d => updateTask(prev => ({...prev, description: d}))}
+                onChangeMotiv={m => updateTask(prev => ({...prev, motivation: m}))}
+                onChangeStatus={s => updateTask(prev => ({...prev, status: s}))}
                 onGenerate={async command => {
                     const newTask = await wsCommander(command, task)
                     if (!newTask) return
-                    updateTask({...task, motivation: newTask.motivation })
+                    updateTask(prev => ({...prev, motivation: newTask.motivation }))
                 }}
                 onRollbackGenerate={oldMotive => {
-                    updateTask({...task, motivation: oldMotive})
+                    updateTask(prev => ({...prev, motivation: oldMotive}))
                 }}
             />
         case Page.STEP:

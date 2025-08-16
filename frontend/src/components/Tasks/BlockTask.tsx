@@ -79,6 +79,35 @@ function Task({objTask, index} : TaskProps) {
             <div className="task-item__descr">{objTask.motivation}</div> : null
         } */}
 
+        { (0 < objTask.subtasks.length) && <>
+            <div className={`task-item__subtasks-btn`}>
+                <button
+                    onClick={e => {
+                        e.stopPropagation()
+                        setIsOpenSubTasks(!isOpenSubTasks)
+                    }}
+                    ><span>{`${doneSubTasksCount} / ${objTask.subtasks.length}`}</span>
+                    {objTask.subtasks.length < 2 ? " step" : " steps"}
+                </button>
+            </div>
+            <div className={`task-item__subtask-extender${isOpenSubTasks ? " view" : ""}`}>
+                <div>
+                    { objTask.subtasks?.sort((a, b) => a.order - b.order).map((subtask, index) => (
+                        <BlockSubTask 
+                            key={`task-subtask-id${index}`} 
+                            subtask={subtask}
+                            onChangeStatus={() => {
+                                const st = objTask.subtasks.map(elem => 
+                                    elem.id === subtask.id ? {...elem, status: !elem.status} : elem
+                                )
+                                updateTask({...objTask, subtasks: st})
+                            }}
+                        />
+                    ))}
+                </div>
+            </div>
+        </>}
+
         <div className={`task-item__annexe`}>
             {(riskValue && 0 < riskValue.value ) && 
                 <ProgressCircle value={riskValue.value} icon={IcoRisk} title={riskValue.description}/>
@@ -126,35 +155,6 @@ function Task({objTask, index} : TaskProps) {
                 </button>
             ))}
         </div>
-        
-        { (0 < objTask.subtasks.length) && <>
-            <div className={`task-item__subtasks-btn`}>
-                <button
-                    onClick={e => {
-                        e.stopPropagation()
-                        setIsOpenSubTasks(!isOpenSubTasks)
-                    }}
-                    ><span>{`${doneSubTasksCount} / ${objTask.subtasks.length}`}</span>
-                    {objTask.subtasks.length < 2 ? " step" : " steps"}
-                </button>
-            </div>
-            <div className={`task-item__subtask-extender${isOpenSubTasks ? " view" : ""}`}>
-                <div>
-                    { objTask.subtasks?.sort((a, b) => a.order - b.order).map((subtask, index) => (
-                        <BlockSubTask 
-                            key={`task-subtask-id${index}`} 
-                            subtask={subtask}
-                            onChangeStatus={() => {
-                                const st = objTask.subtasks.map(elem => 
-                                    elem.id === subtask.id ? {...elem, status: !elem.status} : elem
-                                )
-                                updateTask({...objTask, subtasks: st})
-                            }}
-                        />
-                    ))}
-                </div>
-            </div>
-        </>}
     </div>
 
     { isOpenEditorTask ? 

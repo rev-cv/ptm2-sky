@@ -1,8 +1,8 @@
 const APIURL = import.meta.env.VITE_API_URL
 const WSURL = import.meta.env.VITE_WS_URL
 
-import { getDefaultStore, atomGenMotive, atomGenSteps, 
-    atomGenRisk, atomGenTheme, addToast } from '@utils/jotai.store'
+import { getDefaultStore, atomGenMotive, atomGenSteps, atomGenTaskBuffer,
+    atomGenRisk, atomGenTheme, addToast, startToastGen, stopToastGen } from '@utils/jotai.store'
 import { fetchAuth } from '@api/authFetch'
 import { TypeViewTask } from '@mytype/typeTask'
 import { Commands, G_Status, CommandValues } from '@mytype/typesGen'
@@ -16,7 +16,7 @@ export async function wsCommander(command: CommandValues, task: TypeViewTask) : 
     
     // комманда на закрытие веб соединения
     if (ws && ws.readyState === WebSocket.OPEN && command === Commands.STOP) {
-        ws?.send(JSON.stringify({command}))
+        // ws?.send(JSON.stringify({command}))
         ws?.close(1000, "Stopped by client")
         ws = null
         addToast("Генерация отменена!", "delete")
@@ -27,7 +27,7 @@ export async function wsCommander(command: CommandValues, task: TypeViewTask) : 
     // проверка на активную генерацию
     if (ws && ws.readyState === WebSocket.OPEN) {
         resetGen(command)
-        addToast("Другая генерация уже запущена!", "delete")
+        addToast("Генерация уже запущена!", "delete")
         console.log("Генерация уже запущена. Дождитесь окончания.")
         return
     }
@@ -64,13 +64,23 @@ export async function wsCommander(command: CommandValues, task: TypeViewTask) : 
             if (response.status === G_Status.ADDED) {
                 const message = JSON.stringify({command})
                 ws?.send(message)
+            } else if (response.status === G_Status.STREAM) {
+                // console.log(response.message)
+                startToastGen(response.message)
             } else if (response.status === G_Status.ERROR) {
                 addToast(response.message, "delete")
                 console.error(`AI generation error: ${response.message}`)
             } else if (response.status === G_Status.COMPLETED && response.data) {
                 ws?.close(1000, "The client closed the WebSocket connection.")
                 addToast("Генерация завершена")
+
+                // ↓ вставка данных в буфер обмена
+                const buffer = store.get(atomGenTaskBuffer)
+                const bufferElement = buffer[task.id] ?? {}
+                buffer[task.id] = {...bufferElement, ...response.data}
+                
                 updateGen(command)
+                stopToastGen()
                 resolve(response.data as TypeViewTask)
             }
         }
@@ -95,16 +105,16 @@ export async function wsCommander(command: CommandValues, task: TypeViewTask) : 
 function updateGen (command:CommandValues) {
     switch (command) {
         case Commands.GEN_MOTIVE:
-            store.set(atomGenMotive, prev => {return {...prev, isGen:false}})
+            store.set(atomGenMotive, prev => ({...prev, isGen:false}))
             break
         case Commands.GEN_STEPS:
-            store.set(atomGenSteps, prev => {return {...prev, isGen:false}})
+            store.set(atomGenSteps, prev => ({...prev, isGen:false}))
             break
         case Commands.GEN_RISK:
-            store.set(atomGenRisk, prev => {return {...prev, isGen:false}})
+            store.set(atomGenRisk, prev => ({...prev, isGen:false}))
             break
         case Commands.GEN_THEME:
-            store.set(atomGenTheme, prev => {return {...prev, isGen:false}})
+            store.set(atomGenTheme, prev => ({...prev, isGen:false}))
             break
         default:
             break
@@ -129,3 +139,4 @@ function resetGen (command:CommandValues) {
             break
     }
 }
+

@@ -2,6 +2,7 @@ from enum import Enum
 from fastapi import WebSocket
 import time
 import json
+import asyncio
 
 # === СТАТУСЫ ===
 
@@ -12,6 +13,8 @@ class G_Status(str, Enum):
     COMPLETED = "generation_completed"
     CANCELLED = "generation_cancelled"
     ERROR = "generation_error"
+    TERMINATE = "forced_to_terminate"
+    STREAM = "stream"
 
     # статусы соединения и обработки запросов
     NOTSET = "task_not_set" # попытка произвести операцию до того, как был предоставлен объект задачи
@@ -47,3 +50,23 @@ async def send_response(websocket: WebSocket, command: str, message=None, status
 
 async def send_error(websocket:WebSocket, command:str, error_message:str, status:str = G_Status.ERROR):
     await send_response(websocket, command, error_message, status)
+
+
+async def forced_stop_of_generation(clients, websocket):
+    if websocket not in clients:
+        return
+    if "process" not in clients[websocket] or clients[websocket]["process"] is None:
+        del clients[websocket]
+        return
+    
+    task = clients[websocket]["process"]
+    task.cancel()
+
+    try:
+        await task
+    except asyncio.CancelledError:
+        print(f"Задача для {websocket} завершена по требованию пользователя.")
+        # закрыть соединение
+        if websocket.client_is_connected:
+            await websocket.close(code=1000)
+        clients.pop(websocket, None)

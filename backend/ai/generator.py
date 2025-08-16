@@ -31,12 +31,14 @@ async def ai_task_generator (websocket: WebSocket, clients: dict, command, user_
             )
             return
 
-        response = run_open_ai(promt)
+        response = await run_open_ai(promt, websocket, command)
 
         if command == Commands.GEN_STEPS:
             checked_result = check_steps(response)
             if checked_result:
                 response = checked_result
+        elif command == Commands.GEN_MOTIVE:
+            response = response.get("motivation", None)
         elif command == Commands.GEN_RISK:
             response = check_risk(response)
         elif command == Commands.GEN_THEME:
@@ -60,7 +62,7 @@ async def ai_task_generator (websocket: WebSocket, clients: dict, command, user_
         )
         
     except asyncio.CancelledError:
-        clients[websocket]["process"] = None
+        del clients[websocket]
         raise
 
 

@@ -13,7 +13,7 @@ body {
     .frame-central {
         background-color: var(--color-bg-primary);
         flex-grow: 1;
-        overflow: auto;
+        overflow-y: scroll;
     }
 
     .frame-left {

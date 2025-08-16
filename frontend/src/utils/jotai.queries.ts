@@ -32,3 +32,5 @@ export const atomQuerySelect = atom<TypeQuery|null>({...queryAllTasks})
 type TypeSamplingStatus = 'idle' | 'loading' | 'success' | 'error'
 
 export const atomSamplingStatus = atom<TypeSamplingStatus>("loading")
+
+export const atomQueryCurrentTab = atom<number>(0)

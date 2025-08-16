@@ -61,7 +61,8 @@ async def websocket_connection(websocket: WebSocket, ws_token: Optional[str] = Q
             await connection_processing(websocket, command, payload, user_id)
 
     except WebSocketDisconnect:
-        clients.pop(websocket, None)
+        # разрыв соединения: прекратить все генерации и очистить информацию о сессии
+        await forced_stop_of_generation(clients, websocket)
         print("Клиент отключился")
 
 
@@ -72,8 +73,8 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
         case Commands.SET:
             clients[websocket]["task_obj"] = payload
             await send_response(websocket, Commands.SET, "The task object was loaded successfully.", G_Status.ADDED)
-        case Commands.STATUS:
-            await websocket.send_text(clients[websocket]["status"])
+        # case Commands.STATUS:
+        #     await websocket.send_text(clients[websocket]["status"])
         case Commands.GEN | Commands.GEN_MOTIVE | Commands.GEN_STEPS | Commands.GEN_RISK | Commands.GEN_THEME:
             # проверка, есть ли уже запущенный процесс
             if clients[websocket]["process"] is not None:
@@ -98,8 +99,10 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
             clients[websocket]["process"] = asyncio.create_task(
                 ai_task_generator(websocket, clients, command, user_id)
             )
+        # case Commands.STOP:
+        #     # впринципе это не нужно, т.к. пользователю достаточно разорвать соединение
+        #     await forced_stop_of_generation(clients, websocket)
         case _:
             await send_error(websocket, command, f"Unknown command: {command}", G_Status.UNKNOWN)
-
 
 

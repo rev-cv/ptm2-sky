@@ -206,6 +206,13 @@
         }
     }
 
+    &__dates {
+        grid-column: 3 / 4;
+        font-size: .4em;
+        opacity: .6;
+        padding-top: 0.5em;
+    }
+
     &__drag-and-drop {
         width: 1.2em;
         height: 1.2em;
@@ -519,6 +526,10 @@
 
                 > div {
                     overflow: hidden;
+                }
+
+                * {
+                    border-color: transparent !important;
                 }
             }
         }

@@ -1,6 +1,7 @@
 
 import { atom } from 'jotai'
 import * as t from '@mytype/typesGen'
+import { TypeViewTask } from '@mytype/typeTask'
 
 /* старт → генерация → ок или отменить результат */
 
@@ -28,3 +29,5 @@ export const atomGenAction = atom<t.TypeGenFilters>({
     isGen: false,
     fixed: []
 })
+
+export const atomGenTaskBuffer = atom<Record<number, Partial<TypeViewTask>>>({})

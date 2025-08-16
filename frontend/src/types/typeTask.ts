@@ -22,6 +22,8 @@ export type TypeTasks_SubTask = {
     motivation?: string
     task_id?: number // ID задачи, к которой относится подзадача
     order: number
+    created_at?: string
+    finished_at?: string
 }
 
 export type TypeTasks_Filter = {

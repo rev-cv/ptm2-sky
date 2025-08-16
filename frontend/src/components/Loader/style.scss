@@ -30,3 +30,33 @@
         transform: rotate(1turn)
     }
 }
+
+.loader-gen {
+    font-size: 1rem;
+    width: 3em;
+    display: flex;
+    align-items: flex-start;
+    aspect-ratio: 1;
+}
+
+.loader-gen:before,
+.loader-gen:after {
+    content: "";
+    flex: 1;
+    aspect-ratio: 1;
+    --g: conic-gradient(from -90deg at .5em .5em,#fff 90deg,#0000 0);
+    background: var(--g), var(--g), var(--g);
+    filter: drop-shadow(1.5em 1.5em 0 #fff);
+    animation: l20 1s infinite;
+}
+
+.loader-gen:after {
+    transform: scaleX(-1);
+}
+
+@keyframes l20 {
+    0%   {background-position:0     0, .5em .5em, 1em 1em}
+    33%  {background-position:.5em  .5em}
+    66%  {background-position:0    1em,.5em .5em,1em 0   }
+    100% {background-position:0     0, .5em .5em, 1em 1em}
+}

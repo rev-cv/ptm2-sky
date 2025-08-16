@@ -1,6 +1,6 @@
 import './style.scss'
 import { useState, useRef } from 'react'
-import { useAtomValue, useAtom, queryAllTasks, atomQuerySelect, atomQueryList, atomThemeList } from '@utils/jotai.store'
+import { useAtomValue, useAtom, queryAllTasks, atomQuerySelect, atomQueryList, atomThemeList, atomQueryCurrentTab } from '@utils/jotai.store'
 import { TypeQuery } from '@mytype/typeQueries'
 import { TypeFilterNew } from '@mytype/typeFilters'
 
@@ -24,10 +24,11 @@ type TypeProps = {
 
 function QueryEditor({onExit}:TypeProps) {
     const [visible, setVisible] = useState(true)
-    const [queryOrTheme, setQOrT] = useState<0|1>(0)
+    // const [queryOrTheme, setQOrT] = useState<0|1>(0)
     const [editableQuery, setEditableQuery] = useState<TypeQuery|TypeFilterNew|null>(null)
     const queryList = useAtomValue(atomQueryList)
     const [querySelect, setQuerySelect] = useAtom(atomQuerySelect)
+    const [queryTab, setQueryTab] = useAtom(atomQueryCurrentTab)
     const themeList = useAtomValue(atomThemeList)
 
     const refEditor = useRef<HTMLDivElement>(null)
@@ -52,13 +53,13 @@ function QueryEditor({onExit}:TypeProps) {
                 <div className="query-editor__list-continer-menu">
                     <Toggle 
                         elements={[
-                            {label: "запросы", value: 0},
-                            {label: "темы", value: 1},
-                            {label: "вид", value: 2}
+                            {label: "queries", value: 0},
+                            {label: "themes", value: 1},
+                            {label: "actions", value: 2}
                         ]}
-                        activeValue={queryOrTheme}
+                        activeValue={queryTab}
                         onChange={v => {
-                            setQOrT(v as 0|1)
+                            setQueryTab(v)
                             setEditableQuery(null)
                         }}
                     />
@@ -66,9 +67,9 @@ function QueryEditor({onExit}:TypeProps) {
                         icon={IcoAdd}
                         variant='first'
                         onClick={() => {
-                            const newform = (queryOrTheme === 0) ? 
-                                {...queryAllTasks, name:"", descr:""} : 
-                                {id:-1, name:"", desc:"", type:"theme"}
+                            const newform = (queryTab === 0) ? {...queryAllTasks, name:"", descr:""} : 
+                                (queryTab === 1) ? {id:-1, name:"", desc:"", type:"theme"} : undefined
+                            if (newform === undefined) return 
                             setEditableQuery(
                                 (!editableQuery || 0 < editableQuery.id) ? newform : null
                             )
@@ -78,7 +79,7 @@ function QueryEditor({onExit}:TypeProps) {
                 </div>
 
                 <div className="query-editor__list-continer">
-                    { queryOrTheme === 0 ? <>
+                    { queryTab === 0 ? <>
                         { editableQuery ? null :
                             <div 
                                 key={`query-all-tasks`} 
@@ -133,7 +134,7 @@ function QueryEditor({onExit}:TypeProps) {
                         ))}
                     </> : null }
 
-                    {queryOrTheme === 1 ? <>
+                    {queryTab === 1 ? <>
                         {themeList.map((theme, index) => (
                             <div 
                                 key={`query-${index}-with-id-${theme.id}`}
@@ -173,7 +174,7 @@ function QueryEditor({onExit}:TypeProps) {
                 </div>
             </div>
             <div className="query-editor__editor query-block-editor" ref={refEditor}>
-                { (editableQuery && queryOrTheme === 0) ?
+                { (editableQuery && queryTab === 0) ?
                     <BlockEditor 
                         title={editableQuery.id < 0 ? 'new query' : `#${editableQuery.id}`}
                         editable={editableQuery as TypeQuery}
@@ -181,7 +182,7 @@ function QueryEditor({onExit}:TypeProps) {
                         setEditableQuery={value => setEditableQuery(value)}
                     />:null
                 }
-                { (editableQuery && queryOrTheme === 1) ?
+                { (editableQuery && queryTab === 1) ?
                     <BlockThemeEditor 
                         title={editableQuery.id < 0 ? 'new theme' : `#${editableQuery.id}`}
                         editable={editableQuery as TypeFilterNew}

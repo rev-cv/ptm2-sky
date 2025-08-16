@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { atomGenSteps, useAtom } from '@utils/jotai.store'
 import { TypeTasks_SubTask } from '@mytype/typeTask'
 import { Commands } from '@mytype/typesGen'
+import { formatDateString } from '@utils/date-funcs'
 
 import CheckBoxTask from '@comps/CheckBox/CheckBoxTask'
 import TextArea from '@comps/TextArea/TextArea'
@@ -75,9 +76,12 @@ function BlockSubTasks({ subtasks, onUpdate, onGenerate, onRollbackGenerate }: T
     const handleDragEnd = () => setDragOverIdx(null)
 
     const addNewSubTask = () => {
-        const negativeIdCount = subtasks.reduce((acc, subtask) => subtask.id < 0 ? acc + 1 : acc, 0);
+        const minNegativeId = subtasks.reduce((minId, subtask) => {
+            return subtask.id < 0 && subtask.id < minId ? subtask.id : minId;
+        }, 0);
+        const newId = minNegativeId === 0 ? -1 : minNegativeId - 1;
         const newsubtask:TypeTasks_SubTask = {
-            id: (negativeIdCount + 1) * (-1),
+            id: newId,
             status: false,
             title: "",
             description: "",
@@ -118,7 +122,7 @@ function BlockSubTasks({ subtasks, onUpdate, onGenerate, onRollbackGenerate }: T
                         onChange={e => onUpdate(subtasks.map(subtask =>
                             subtask.id === item.id ? { ...subtask, title: e.target.value } : subtask
                         ))}
-                    />
+                    />                    
                     <TextArea 
                         value={item.description}
                         label='description'
@@ -163,6 +167,10 @@ function BlockSubTasks({ subtasks, onUpdate, onGenerate, onRollbackGenerate }: T
                         className="editor-block-subtask__remove"
                         title='remove'
                     />
+                    <div className='editor-block-subtask__dates'>
+                        <span>{item.created_at ? `created: ${formatDateString(item.created_at)}` : null}</span>
+                        <span>{item.finished_at ? ` → finished: ${formatDateString(item.finished_at)}` : null}</span>
+                    </div>
                 </div>
             ))}
             <div

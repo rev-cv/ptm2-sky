@@ -25,6 +25,8 @@ export const G_Status = {
     COMPLETED: "generation_completed",
     CANCELLED: "generation_cancelled",
     ERROR: "generation_error",
+    TERMINATE: "forced_to_terminate",
+    STREAM: "stream",
 
     NOTSET: "task_not_set", // попытка произвести операцию до того, как был предоставлен объект задачи
     ADDED: "task_added", // задача была успешно добавлена
