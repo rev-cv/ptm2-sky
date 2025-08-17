@@ -37,6 +37,8 @@ sorting_parametrs = {
 
 def db_get_tasks(db: Session, fields: TypeQuery, user_id: int):
 
+    print(fields)
+
     cdt = datetime.now().astimezone(timezone.utc)
 
     query = db.query(Task).filter(Task.user_id == user_id)
@@ -115,10 +117,12 @@ def db_get_tasks(db: Session, fields: TypeQuery, user_id: int):
         dt = getDate(fields.drange[0], offset=fields.tz)
         if dt:
             query = query.filter(dt <= Task.deadline)
+        print(dt)
     if fields.drange[1]:
         dt = getDate(fields.drange[1], offset=fields.tz, is_finish=True)
         if dt:
             query = query.filter(Task.deadline < dt)
+        print(dt)
 
     # даты проверок
     if fields.irange[0] or fields.irange[1]:

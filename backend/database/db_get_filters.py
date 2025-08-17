@@ -42,5 +42,26 @@ def get_themes_by_ai_generate(user_id: int):
 
     return result
 
+def get_actions_by_ai_generate():
+    db = next(get_db())
+
+    try:
+        themes = (db.query(Filter)
+            .filter(Filter.filter_type == "action_type")
+            .all()
+        )
+    finally:
+        db.close()
+
+    result = [
+        {
+            "id": f.id,
+            "name": f.name,
+            "description": f.description
+        }
+        for f in themes
+    ] if themes else []
+
+    return result
 
 

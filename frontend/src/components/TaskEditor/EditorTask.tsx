@@ -54,8 +54,8 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
 
     return <Modal 
         visible={visible}
-        onRequestClose={() => setVisible(false)}
-        onExited={() => {
+        onRequestClose={() => {
+            setVisible(false)
             // при закрытии инициировать очистку буфера
             const store = getDefaultStore()
             store.set(atomGenTaskBuffer, prev => {
@@ -64,8 +64,8 @@ function TaskEditor ({originakTask, onExit, onDelete}:TypeProps) {
                 )
                 return newPrev
             })
-            if (onExit) onExit(task)
-        }}>
+        }}
+        onExited={() => {if (onExit) onExit(task)}}>
     
         <div className="editor-task">
             <BlockMenu

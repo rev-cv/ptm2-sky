@@ -116,22 +116,24 @@ function Task({objTask, index} : TaskProps) {
                 <ProgressCircle value={impactValue.value} icon={IcoImpact} title={impactValue.description}/>
             }
 
-            <div className="task-item__annexe__dates">
-                {objTask.activation &&
-                    <div className={`task-item__annexe__activate`}>
-                        <IcoStart />
-                        { activation ? <span>{formatDateString(activation)}</span> : "" }
-                    </div>
-                }
+            {(objTask.activation || objTask.deadline) &&
+                <div className="task-item__annexe__dates">
+                    {objTask.activation &&
+                        <div className={`task-item__annexe__activate`}>
+                            <IcoStart />
+                            { activation ? <span>{formatDateString(activation)}</span> : "" }
+                        </div>
+                    }
 
-                {objTask.deadline &&
-                    <div className={`task-item__annexe__deadline ${deadlineClass}`}>
-                        <IcoStart />
-                        { deadline ? <span>{formatDateString(new Date(deadline))}</span> : "" }
-                        { deadlaneDiff != null ? <span className='days'> {`(${deadlaneDiff} days)`}</span> : "" }
-                    </div>
-                }
-            </div>
+                    {objTask.deadline &&
+                        <div className={`task-item__annexe__deadline ${deadlineClass}`}>
+                            <IcoStart />
+                            { deadline ? <span>{formatDateString(new Date(deadline))}</span> : "" }
+                            { deadlaneDiff != null ? <span className='days'> {`(${deadlaneDiff} days)`}</span> : "" }
+                        </div>
+                    }
+                </div>
+            }
 
             { objTask.themes.map((f, i) => (
                 <button

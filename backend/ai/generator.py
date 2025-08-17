@@ -1,11 +1,10 @@
 from fastapi import  WebSocket
 import asyncio
-from routers.ws_response_and_status import *
+from routers.websocket_utils import *
 from ai.get_promt import get_prompt
 from ai.run_open_ai import run_open_ai
 from database.sqlalchemy_tables import get_db
 from database.sqlalchemy_tables import Filter
-from sqlalchemy import exists
 
 async def ai_task_generator (websocket: WebSocket, clients: dict, command, user_id):
     try:
@@ -31,18 +30,20 @@ async def ai_task_generator (websocket: WebSocket, clients: dict, command, user_
             )
             return
 
-        response = await run_open_ai(promt, websocket, command)
+        response = await run_open_ai(promt, websocket, clients, command)
 
-        if command == Commands.GEN_STEPS:
-            checked_result = check_steps(response)
-            if checked_result:
-                response = checked_result
-        elif command == Commands.GEN_MOTIVE:
-            response = response.get("motivation", None)
-        elif command == Commands.GEN_RISK:
-            response = check_risk(response)
-        elif command == Commands.GEN_THEME:
-            response = check_theme(response)
+        match command:
+            case Commands.GEN_STEPS:
+                checked_result = check_steps(response)
+                if checked_result:
+                    response = checked_result
+            case Commands.GEN_MOTIVE:
+                if response.get("motivation", False) is False:
+                    response = None
+            case Commands.GEN_RISK:
+                response = check_risk(response)
+            case Commands.GEN_THEME | Commands.GEN_ACTION:
+                response = check_theme(response)
 
         if response is None:
             send_error(
@@ -155,8 +156,6 @@ def check_theme(response):
         return None
 
     return {
-        "filters": {
-            "theme": result
-        }
+        "themes": result
     }
 

@@ -4,7 +4,7 @@ from routers.auth_router import unpack_token
 import asyncio
 import json
 from ai.generator import ai_task_generator
-from routers.ws_response_and_status import *
+from routers.websocket_utils import *
 
 # Хранилище активных клиентов
 clients = {}
@@ -58,6 +58,8 @@ async def websocket_connection(websocket: WebSocket, ws_token: Optional[str] = Q
             except json.JSONDecodeError:
                 await send_error(websocket, "parse", "Invalid JSON format")
 
+            await send_response(websocket, command=command, message="initialization", status=G_Status.STREAM)
+
             await connection_processing(websocket, command, payload, user_id)
 
     except WebSocketDisconnect:
@@ -71,16 +73,14 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
 
     match command:
         case Commands.SET:
-            clients[websocket]["task_obj"] = payload
+            clients[websocket]["task_obj"] = task_object_data_encapsulation(payload)
             await send_response(websocket, Commands.SET, "The task object was loaded successfully.", G_Status.ADDED)
-        # case Commands.STATUS:
-        #     await websocket.send_text(clients[websocket]["status"])
-        case Commands.GEN | Commands.GEN_MOTIVE | Commands.GEN_STEPS | Commands.GEN_RISK | Commands.GEN_THEME:
+        case Commands.GEN | Commands.GEN_MOTIVE | Commands.GEN_STEPS | Commands.GEN_RISK | Commands.GEN_THEME | Commands.GEN_ACTION:
             # проверка, есть ли уже запущенный процесс
             if clients[websocket]["process"] is not None:
                 await send_error(
-                    websocket, 
-                    command=command, 
+                    websocket,
+                    command=command,
                     error_message="Generation already in progress. Use 'cancel' to stop it.", 
                     status=G_Status.PROGRESS
                 )
@@ -88,9 +88,9 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
             # проверка, сначала должен быть передан объек задачи
             if not clients[websocket]["task_obj"]:
                 await send_error(
-                    websocket, 
-                    command=command, 
-                    error_message="No task object set. Use 'set' command first.", 
+                    websocket,
+                    command=command,
+                    error_message="No task object set. Use 'set' command first.",
                     status=G_Status.NOTSET
                 )
                 return
@@ -104,5 +104,4 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
         #     await forced_stop_of_generation(clients, websocket)
         case _:
             await send_error(websocket, command, f"Unknown command: {command}", G_Status.UNKNOWN)
-
 

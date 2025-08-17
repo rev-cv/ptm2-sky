@@ -58,8 +58,6 @@
         * {
             color: var(--color-text-secondary);
         }
-
-        
     }
 
     &::before {
@@ -223,6 +221,7 @@
 
     &__annexe {
         display: flex;
+        align-items: center;
         flex-wrap: wrap;
         gap: .3em;
         padding-top: 0em;
@@ -275,8 +274,6 @@
             ;
             color: var(--color-border-active);
             cursor: pointer;
-            // font-size: .9em;
-            // font-style: italic;
             align-self: center;
 
             &:hover {
@@ -284,13 +281,11 @@
                 background-color: var(--color-curtain);
                 margin-right: -4px;
             }
-        }
+        }        
+    }
 
-        &:has(.task-item__annexe__activate),
-        &:has(.task-item__annexe__deadline),
-        &:has(.progress-circle) {
-            padding-top: .5em;
-        }
+    &:has(.task-item__subtask-extender) .task-item__annexe  {
+        padding-top: .4em;
     }
 }
 

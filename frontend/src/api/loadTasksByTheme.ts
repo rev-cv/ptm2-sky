@@ -5,7 +5,7 @@ export function loadTasksByTheme (text:string, themeID:number) {
     const store = getDefaultStore()
 
     store.set(atomQuerySelect, {
-        ...queryAllTasks,
+        ...structuredClone(queryAllTasks),
         name: text,
         infilt: [themeID],
     })

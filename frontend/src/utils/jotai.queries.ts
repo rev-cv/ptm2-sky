@@ -27,7 +27,7 @@ export const queryAllTasks:TypeQuery = {
     page: 0
 }
 
-export const atomQuerySelect = atom<TypeQuery|null>({...queryAllTasks})
+export const atomQuerySelect = atom<TypeQuery|null>(structuredClone(queryAllTasks))
 
 type TypeSamplingStatus = 'idle' | 'loading' | 'success' | 'error'
 

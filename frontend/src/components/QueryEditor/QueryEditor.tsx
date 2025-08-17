@@ -1,6 +1,6 @@
 import './style.scss'
 import { useState, useRef } from 'react'
-import { useAtomValue, useAtom, queryAllTasks, atomQuerySelect, atomQueryList, atomThemeList, atomQueryCurrentTab } from '@utils/jotai.store'
+import { useAtomValue, useAtom, queryAllTasks, atomQuerySelect, atomQueryList, atomThemeList, atomQueryCurrentTab, atomActionList } from '@utils/jotai.store'
 import { TypeQuery } from '@mytype/typeQueries'
 import { TypeFilterNew } from '@mytype/typeFilters'
 
@@ -24,12 +24,12 @@ type TypeProps = {
 
 function QueryEditor({onExit}:TypeProps) {
     const [visible, setVisible] = useState(true)
-    // const [queryOrTheme, setQOrT] = useState<0|1>(0)
     const [editableQuery, setEditableQuery] = useState<TypeQuery|TypeFilterNew|null>(null)
     const queryList = useAtomValue(atomQueryList)
     const [querySelect, setQuerySelect] = useAtom(atomQuerySelect)
     const [queryTab, setQueryTab] = useAtom(atomQueryCurrentTab)
     const themeList = useAtomValue(atomThemeList)
+    const actionList = useAtomValue(atomActionList)
 
     const refEditor = useRef<HTMLDivElement>(null)
 
@@ -67,7 +67,7 @@ function QueryEditor({onExit}:TypeProps) {
                         icon={IcoAdd}
                         variant='first'
                         onClick={() => {
-                            const newform = (queryTab === 0) ? {...queryAllTasks, name:"", descr:""} : 
+                            const newform = (queryTab === 0) ? {...structuredClone(queryAllTasks), name:"", descr:""} : 
                                 (queryTab === 1) ? {id:-1, name:"", desc:"", type:"theme"} : undefined
                             if (newform === undefined) return 
                             setEditableQuery(
@@ -92,7 +92,7 @@ function QueryEditor({onExit}:TypeProps) {
                                     className="query-editor__item-title"
                                     onClick={() => {
                                         setVisible(false)
-                                        setQuerySelect({...queryAllTasks})
+                                        setQuerySelect(structuredClone(queryAllTasks))
                                     }}
                                 />
                             </div>
@@ -168,6 +168,26 @@ function QueryEditor({onExit}:TypeProps) {
                                         }}
                                     />
                                 }
+                            </div>
+                        ))}
+                    </> : null}
+
+                    {queryTab === 2 ? <>
+                        {actionList.map((theme, index) => (
+                            <div 
+                                key={`query-${index}-with-id-${theme.id}`}
+                                className={`query-editor__item`}
+                                >
+                                <Button 
+                                    icon={IcoTag}
+                                    text={theme.name}
+                                    variant={(querySelect?.id === theme.id) ? 'first' : 'second'}
+                                    className="query-editor__item-title"
+                                    onClick={() => {
+                                        setVisible(false)
+                                        loadTasksByTheme(`#${theme.name}`, theme.id)
+                                    }}
+                                />
                             </div>
                         ))}
                     </> : null}

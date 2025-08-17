@@ -50,14 +50,14 @@ const PageSelector = ({task, updateTask, activeTab, allFilters}:TypeProps) : Rea
         case Page.STEP:
             return <BlockSubTasks 
                 subtasks={task.subtasks}
-                onUpdate={newOrder => updateTask({...task, subtasks: newOrder})}
+                onUpdate={newOrder => updateTask(prev => ({...prev, subtasks: newOrder}))}
                 onGenerate={async command => {
                     const newTask = await wsCommander(command, task)
                     if (!newTask) return
-                    updateTask({...task, subtasks: [...newTask.subtasks] })
+                    updateTask(prev => ({...prev, subtasks: [...newTask.subtasks] }))
                 }}
                 onRollbackGenerate={oldMotive => {
-                    updateTask({...task, subtasks: [...oldMotive]})
+                    updateTask(prev => ({...prev, subtasks: [...oldMotive]}))
                 }}
             />
         case Page.TIME:
@@ -65,9 +65,9 @@ const PageSelector = ({task, updateTask, activeTab, allFilters}:TypeProps) : Rea
                 deadline={task.deadline}
                 activation={task.activation}
                 taskchecks={task.taskchecks}
-                updateDeadline={date => updateTask({...task, deadline: date})}
-                updateActivation={date => updateTask({...task, activation: date})}
-                updateTaskchecks={dates => updateTask({...task, taskchecks: dates})}
+                updateDeadline={date => updateTask(prev => ({...prev, deadline: date}))}
+                updateActivation={date => updateTask(prev => ({...prev, activation: date}))}
+                updateTaskchecks={dates => updateTask(prev => ({...prev, taskchecks: dates}))}
             />
         case Page.RISK:
             return <BlockRisk 
@@ -75,25 +75,25 @@ const PageSelector = ({task, updateTask, activeTab, allFilters}:TypeProps) : Rea
                 risk_proposals={task.risk_proposals}
                 risk_explanation={task.risk_explanation}
                 impact={task.impact}
-                onChangeRisk={r => updateTask({...task, risk: r})}
-                onChangeImpact={i => updateTask({...task, impact: i})}
-                onChangeProp={text => updateTask({...task, risk_proposals: text})}
-                onChangeExpl={text => updateTask({...task, risk_explanation: text})}
+                onChangeRisk={r => updateTask(prev => ({...prev, risk: r}))}
+                onChangeImpact={i => updateTask(prev => ({...prev, impact: i}))}
+                onChangeProp={text => updateTask(prev => ({...prev, risk_proposals: text}))}
+                onChangeExpl={text => updateTask(prev => ({...prev, risk_explanation: text}))}
                 onGenerate={async command => {
                     const newTask = await wsCommander(command, task)
                     if (!newTask) return
-                    updateTask({...task, 
+                    updateTask(prev => ({...prev, 
                         risk: newTask.risk, 
                         risk_proposals: newTask.risk_proposals,
                         risk_explanation: newTask.risk_explanation 
-                    })
+                    }))
                 }}
                 onRollbackGenerate={oldRisk => {
-                    updateTask({...task, 
+                    updateTask(prev => ({...prev, 
                         risk:oldRisk.risk, 
                         risk_proposals:oldRisk.risk_proposals,
                         risk_explanation: oldRisk.risk_explanation
-                    })
+                    }))
                 }}
             />
         case Page.THEME:
@@ -103,19 +103,17 @@ const PageSelector = ({task, updateTask, activeTab, allFilters}:TypeProps) : Rea
                 type="theme"
                 isTheme={true}
                 onAddElement={elem => {
-                    updateTask({
-                        ...task, themes: [...task.themes, elem]
-                    })
+                    updateTask(prev => ({...prev, themes: [...prev.themes, elem]}))
                 }}
                 onDelElement={id => {
-                    updateTask({
-                        ...task, themes: task.themes.filter(elem => elem.idf != id)
-                    })
+                    updateTask(prev => ({
+                        ...prev, themes: prev.themes.filter(elem => elem.idf != id)
+                    }))
                 }}
                 onUpdateElement={el => {
-                    updateTask({
-                        ...task, themes: task.themes.map(elem => elem.idf != el.idf ? elem : el)
-                    })
+                    updateTask(prev => ({
+                        ...prev, themes: prev.themes.map(elem => elem.idf != el.idf ? elem : el)
+                    }))
                 }}
                 onGenerate={async command => {
                     const newTask = await wsCommander(command, task)
@@ -133,10 +131,10 @@ const PageSelector = ({task, updateTask, activeTab, allFilters}:TypeProps) : Rea
                         }
                         return elem
                     })
-                    updateTask({...task, themes: ntc })
+                    updateTask(prev => ({...prev, themes: ntc }))
                 }}
                 onRollbackGenerate={oldTheme => {
-                    updateTask({...task, themes: oldTheme})
+                    updateTask(prev => ({...prev, themes: oldTheme}))
                 }}
             />
         case Page.ACTION:
@@ -145,22 +143,30 @@ const PageSelector = ({task, updateTask, activeTab, allFilters}:TypeProps) : Rea
                 allList={allFilters ? allFilters : []}
                 type="action"
                 onAddElement={elem => {
-                    updateTask({
-                        ...task, actions: [...task.actions, elem]
-                    })
+                    updateTask(prev => ({
+                        ...prev, actions: [...prev.actions, elem]
+                    }))
                 }}
                 onDelElement={id => {
-                    updateTask({
-                        ...task, actions: task.actions.filter(elem => elem.idf != id)
-                    })
+                    updateTask(prev => ({
+                        ...prev, actions: prev.actions.filter(elem => elem.idf != id)
+                    }))
                 }}
                 onUpdateElement={el => {
-                    updateTask({
-                        ...task, actions: task.actions.map(elem => elem.idf != el.idf ? elem : el)
-                    })
+                    updateTask(prev => ({
+                        ...prev, actions: prev.actions.map(elem => elem.idf != el.idf ? elem : el)
+                    }))
                 }}
-                onGenerate={()=>{}}
-                onRollbackGenerate={()=>{}}
+                onGenerate={async command => {
+                    const newTask = await wsCommander(command, task)
+                    if (!newTask?.themes) return
+                    // ↑ поскольку проверки идентичны newTask.themes
+                    // решено было возвращать результат генераций через это же поле ↓
+                    updateTask(prev => ({...prev, actions: newTask.themes }))
+                }}
+                onRollbackGenerate={oldActions => {
+                    updateTask(prev => ({...prev, actions: oldActions}))
+                }}
             />
         case Page.ADAPT:
             const pointAdapt:TypeAdaptValues[] = [
@@ -173,6 +179,11 @@ const PageSelector = ({task, updateTask, activeTab, allFilters}:TypeProps) : Rea
                     valuesForComponents.adapt.apathy, 
                     (v:TypeTasks_RI) => updateTask(prev => ({...prev, apathy: v})),
                     task.apathy
+                ],
+                [
+                    valuesForComponents.adapt.motivational, 
+                    (v:TypeTasks_RI) => updateTask(prev => ({...prev, motivational: v})),
+                    task.motivational
                 ],
                 [
                     valuesForComponents.adapt.meditative, 
@@ -227,11 +238,6 @@ const PageSelector = ({task, updateTask, activeTab, allFilters}:TypeProps) : Rea
                     valuesForComponents.intensity.emotional, 
                     (v:TypeTasks_RI) => updateTask(prev => ({...prev, emotional: v})),
                     task.emotional
-                ],
-                [
-                    valuesForComponents.intensity.motivational, 
-                    (v:TypeTasks_RI) => updateTask(prev => ({...prev, motivational: v})),
-                    task.motivational
                 ],
                 [
                     valuesForComponents.intensity.social, 

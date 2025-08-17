@@ -2,7 +2,7 @@ const APIURL = import.meta.env.VITE_API_URL
 const WSURL = import.meta.env.VITE_WS_URL
 
 import { getDefaultStore, atomGenMotive, atomGenSteps, atomGenTaskBuffer,
-    atomGenRisk, atomGenTheme, addToast, startToastGen, stopToastGen } from '@utils/jotai.store'
+    atomGenRisk, atomGenTheme, addToast, startToastGen, stopToastGen, atomGenAction } from '@utils/jotai.store'
 import { fetchAuth } from '@api/authFetch'
 import { TypeViewTask } from '@mytype/typeTask'
 import { Commands, G_Status, CommandValues } from '@mytype/typesGen'
@@ -69,17 +69,18 @@ export async function wsCommander(command: CommandValues, task: TypeViewTask) : 
                 startToastGen(response.message)
             } else if (response.status === G_Status.ERROR) {
                 addToast(response.message, "delete")
-                console.error(`AI generation error: ${response.message}`)
+                resetGen(command)
+                ws?.close(1000)
             } else if (response.status === G_Status.COMPLETED && response.data) {
                 ws?.close(1000, "The client closed the WebSocket connection.")
-                addToast("Генерация завершена")
 
                 // ↓ вставка данных в буфер обмена
                 const buffer = store.get(atomGenTaskBuffer)
                 const bufferElement = buffer[task.id] ?? {}
-                buffer[task.id] = {...bufferElement, ...response.data}
+                store.set(atomGenTaskBuffer, prev => ({...prev, [task.id]: {...bufferElement, ...response.data} }) )
                 
                 updateGen(command)
+                addToast("Генерация завершена")
                 stopToastGen()
                 resolve(response.data as TypeViewTask)
             }
@@ -116,6 +117,9 @@ function updateGen (command:CommandValues) {
         case Commands.GEN_THEME:
             store.set(atomGenTheme, prev => ({...prev, isGen:false}))
             break
+        case Commands.GEN_ACTION:
+            store.set(atomGenAction, prev => ({...prev, isGen:false}))
+            break
         default:
             break
     }
@@ -134,6 +138,9 @@ function resetGen (command:CommandValues) {
             break
         case Commands.GEN_THEME:
             store.set(atomGenTheme, {fixed:[], isGen:false})
+            break
+        case Commands.GEN_ACTION:
+            store.set(atomGenAction, {fixed:[], isGen:false})
             break
         default:
             break

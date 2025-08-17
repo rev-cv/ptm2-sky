@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
-import os
 from openai import OpenAI
+import os
 import re
 import json
-from routers.ws_response_and_status import *
+from routers.websocket_utils import *
 
 load_dotenv()
 
@@ -13,7 +13,9 @@ APIURL = os.getenv("OPENROUTER_AI_URL")
 json_pattern = re.compile(r'```json\s*(.*?)\s*```', re.DOTALL)
 json_obj_pattern = re.compile(r'\{.*\}', re.DOTALL)
 
-async def run_open_ai(message, websocket, command):
+async def run_open_ai(message, websocket, clients, command):
+    await send_response(websocket, command=command, message="starting", status=G_Status.STREAM)
+
     try:
         client = OpenAI(api_key=APIKEY, base_url=APIURL)
         stream = client.chat.completions.create(
@@ -34,20 +36,14 @@ async def run_open_ai(message, websocket, command):
         for chunk in stream:
             current_time = time.time()
             
-            # Проверяем, есть ли контент в чанке
+            # проверка, есть ли контент в чанке
             if chunk.choices[0].delta.content is not None:
                 content = chunk.choices[0].delta.content
                 full_response += content
                 token_count += 1
                 
-                # Выводим новые токены
-                # print(content, end='', flush=True)
-                
-                # Каждые 2 секунды показываем статистику
+                # каждые 2 секунды отправка прогресса
                 if current_time - last_update_time > 2:
-                    elapsed = current_time - start_time
-                    tokens_per_sec = token_count / elapsed if elapsed > 0 else 0
-                    # print(f"\n[📊 Статус: {token_count} токенов, {tokens_per_sec:.1f} токен/сек, {elapsed:.1f}сек]")
                     await send_response(
                         websocket, 
                         command=command,
@@ -56,25 +52,27 @@ async def run_open_ai(message, websocket, command):
                     )
                     last_update_time = current_time
             
-            # Проверяем завершение
+            # проверка завершения
             if chunk.choices[0].finish_reason is not None:
                 break
 
     except Exception as e:
         print(f"Error in run_open_ai: {e}")
-        print(f"Raw response: {full_response}")
+        await send_error(websocket, command=command, error_message=f"Error in run_open_ai: {e}")
+        await forced_stop_of_generation(clients, websocket)
         return None
     
-    # Валидация JSON
+    # валидация JSON
     try:
-        # Очистка от markdown
+        # очистка от markdown
         cleaned = clean_json_response(full_response)
         response = json.loads(cleaned)
         print(response)
         return response
     except json.JSONDecodeError as e:
         print(f"JSON parsing error: {e}")
-        print(f"Raw response: {full_response}")
+        await send_error(websocket, command=command, message=f"JSON parsing error: {e}")
+        await forced_stop_of_generation(clients, websocket)
         return None
     
 
