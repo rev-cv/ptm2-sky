@@ -1,21 +1,20 @@
-
 %custom-button {
-    font-size: .8em;
+    font-size: 0.8em;
 
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    border-radius: calc(.3em * 2 + 1em);
+    border-radius: calc(0.3em * 2 + 1em);
     transition: background-color 300ms ease-in-out;
-
     cursor: pointer;
-    
+
     span {
         color: var(--color-button-text);
-        padding-top: .15em;
+        padding-top: 0.15em;
     }
 
-    svg, .loader {
+    svg,
+    .loader {
         width: 1.2em;
         height: 1.2em;
     }
@@ -54,7 +53,8 @@
     }
 }
 
-.custom-button-second, .custom-button-transparent {
+.custom-button-second,
+.custom-button-transparent {
     background-color: var(--color-bg-primary);
 
     &:hover {
@@ -71,7 +71,7 @@
     border: 1px solid var(--color-button-transparent-hover);
 
     span {
-        transform: translateY(.07em);
+        transform: translateY(0.07em);
     }
 }
 
@@ -83,7 +83,7 @@
         color: var(--color-button-delete-text) !important;
         font-weight: normal;
     }
-    
+
     &:hover {
         background-color: var(--color-button-delete-hover);
     }
@@ -95,15 +95,15 @@
 
 .custom-button-ico-text {
     @extend %custom-button;
-    gap: .6em;
-    padding: .3em 1.4em .3em .6em;
+    gap: 0.6em;
+    padding: 0.3em 1.4em 0.3em 0.6em;
 }
 
 .custom-button-ico {
     @extend %custom-button;
-    padding: .55em;
-    height: calc(1em + .15em + .55em * 2);
-    width: calc(1em + .15em + .55em * 2);
+    padding: 0.55em;
+    height: calc(1em + 0.15em + 0.55em * 2);
+    width: calc(1em + 0.15em + 0.55em * 2);
 }
 
 .custom-button-text {

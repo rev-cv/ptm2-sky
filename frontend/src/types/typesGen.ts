@@ -1,11 +1,15 @@
-import { TypeTasks_Filter, TypeTasks_SubTask, TypeTasks_RI } from '@mytype/typeTask'
+import {
+    TypeTasks_Filter,
+    TypeTasks_SubTask,
+    TypeTasks_RI,
+} from "@mytype/typeTask";
 
-export type CommandKeys = keyof typeof Commands
-export type CommandValues = typeof Commands[CommandKeys]
+export type CommandKeys = keyof typeof Commands;
+export type CommandValues = (typeof Commands)[CommandKeys];
 
 export const Commands = {
     // комманды отправляемые на сервер
-    SET: 'set', // установить задачу в clients[websocket]["task_obj"], над которой будут производиться операции
+    SET: "set", // установить задачу в clients[websocket]["task_obj"], над которой будут производиться операции
     STOP: "stop", // остановить все генерации
     STATUS: "status", // запрос с клиента на статус вполнения задачи (если от сервера ничего не приходит)
     GEN: "gen", // генерация задачи
@@ -15,8 +19,8 @@ export const Commands = {
     GEN_THEME: "gen_theme",
     GEN_STATE: "gen_state",
     GEN_ACTION: "gen_action",
-    GEN_STRESS: "gen_stress",
-} as const
+    GEN_INTENSITY: "intensity", // генерация ресурсоемкости задачи
+} as const;
 
 export const G_Status = {
     // статусы генерации отправлемые сервером
@@ -31,31 +35,43 @@ export const G_Status = {
     NOTSET: "task_not_set", // попытка произвести операцию до того, как был предоставлен объект задачи
     ADDED: "task_added", // задача была успешно добавлена
 
-    UNKNOWN: "unknown" // полученное сообщение не понято
-} as const
+    UNKNOWN: "unknown", // полученное сообщение не понято
+} as const;
 
 export type TypeGenMotive = {
-    isGen: boolean
-    fixed: string
-}
+    isGen: boolean;
+    fixed: string;
+};
 
 export type TypeGenSteps = {
-    isGen: boolean
-    fixed: TypeTasks_SubTask[]
-}
+    isGen: boolean;
+    fixed: TypeTasks_SubTask[];
+};
+
+export type TypeGenIntensity = {
+    isGen: boolean;
+    fixed: {
+        physical?: TypeTasks_RI;
+        intellectual?: TypeTasks_RI;
+        emotional?: TypeTasks_RI;
+        social?: TypeTasks_RI;
+        financial?: TypeTasks_RI;
+        temporal?: TypeTasks_RI;
+    };
+};
 
 export type TypeGenRisk__Fixed = {
-    risk: TypeTasks_RI
-    risk_proposals: string
-    risk_explanation: string
-}
+    risk: TypeTasks_RI;
+    risk_proposals: string;
+    risk_explanation: string;
+};
 
 export type TypeGenRisk = {
-    isGen: boolean
-    fixed: null | TypeGenRisk__Fixed
-}
+    isGen: boolean;
+    fixed: null | TypeGenRisk__Fixed;
+};
 
 export type TypeGenFilters = {
-    isGen: boolean
-    fixed: TypeTasks_Filter[]
-}
+    isGen: boolean;
+    fixed: TypeTasks_Filter[];
+};

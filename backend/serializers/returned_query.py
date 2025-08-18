@@ -25,7 +25,7 @@ def serialize_query(query):
         "donerule": query.donerule,
         "failrule": query.failrule,
         "statusrule": query.statusrule.split(","),
-        
+
         "inrisk": get_risk_impact(query.inrisk),
         "exrisk": get_risk_impact(query.exrisk),
 

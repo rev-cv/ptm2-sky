@@ -3,13 +3,12 @@
     max-width: 400px !important;
     min-width: 300px !important;
     height: 80vh !important;
-    transition: 
-        width 300ms ease-in-out, 
+    transition:
+        width 300ms ease-in-out,
         max-width 300ms ease-in-out,
         height 300ms ease-in-out,
         opacity 300ms ease-in-out,
-        transform 300ms ease-in-out
-    !important;
+        transform 300ms ease-in-out !important;
 
     .custom-button-transparent {
         display: none;
@@ -31,33 +30,33 @@
     display: grid;
     grid-template-columns: 1fr 0fr;
     grid-template-rows: 1fr;
-    
+
     transition: grid-template-columns 300ms ease-in-out;
     height: 100%;
 
     &__list {
         background-color: var(--color-bg-primary);
         position: relative;
-        padding: .5em 0 .2em 1em;
+        padding: 0.5em 0 0.2em 1em;
         overflow: hidden;
         display: flex;
         flex-direction: column;
 
         &-continer {
             overflow-y: scroll;
-            padding: .5em .7em 1em 0;
+            padding: 0.5em 0.7em 1em 0;
             display: flex;
             flex-direction: column;
-            gap: .1em;
+            gap: 0.1em;
 
             > span {
-                min-height: .3em;
+                min-height: 0.3em;
                 height: 0.8em;
                 display: flex;
                 align-items: center;
 
                 &::after {
-                    content: '';
+                    content: "";
                     display: block;
                     height: 1px;
                     background-color: var(--color-button-transparent-hover);
@@ -71,10 +70,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: .3em 0;
+            padding: 0.3em 0;
             margin-right: 1em;
             border-bottom: 1px solid var(--color-button-transparent-hover);
-            gap: .6em;
+            gap: 0.6em;
 
             .toggle {
                 flex-grow: 1;
@@ -85,7 +84,7 @@
     &__item {
         display: flex;
         transition: grid-template-columns 900ms ease-in-out;
-        gap: .3em;
+        gap: 0.3em;
         max-width: 100%;
         overflow: hidden;
         position: relative;
@@ -130,7 +129,7 @@
         }
 
         &:hover .query-editor__item-edit-btn {
-            opacity: .5;
+            opacity: 0.5;
 
             &:hover {
                 opacity: 1;
@@ -141,10 +140,9 @@
     &__editor {
         background-color: var(--color-bg-primary);
         opacity: 0;
-        transition: 
+        transition:
             opacity 300ms ease-in-out,
-            padding 300ms ease-in-out
-        ;
+            padding 300ms ease-in-out;
 
         overflow: hidden;
         padding: 0;
@@ -178,31 +176,31 @@
     }
 
     &__title {
-        opacity: .5;
-        
+        opacity: 0.5;
+
         &:first-child {
-            font-size: .4em;
+            font-size: 0.4em;
             user-select: none;
         }
-        
+
         &:not(:first-child) {
             border-top: 1px solid var(--color-button-transparent-hover);
             margin-top: 1em;
-            padding-top: .7em;
-            margin-bottom: .3em;
-            
-            font-size: .6em;
+            padding-top: 0.7em;
+            margin-bottom: 0.3em;
+
+            font-size: 0.6em;
             font-weight: 700;
         }
     }
 
     &__name > textarea {
-        font-size: 1.4em; 
+        font-size: 1.4em;
         font-weight: 700;
-        padding-top: .7em;
+        padding-top: 0.7em;
 
         border-bottom: 1px solid var(--color-error);
-        margin-bottom: .3em;
+        margin-bottom: 0.3em;
 
         &:not(:empty) {
             background-color: transparent;
@@ -210,25 +208,25 @@
         }
 
         &:focus {
-            background-color: rgba($color: #000000, $alpha: .3) !important;
+            background-color: rgba($color: #000000, $alpha: 0.3) !important;
         }
     }
 
     &__descr > textarea {
-        font-size: .7em;
+        font-size: 0.7em;
         line-height: 1.2em !important;
         border-left: 1px solid var(--color-button-default);
         padding-left: 1em;
-        opacity: .8;
+        opacity: 0.8;
         flex-shrink: 0;
         // margin-bottom: 1em;
     }
 
     &__search > textarea {
-        font-size: .9em;
+        font-size: 0.9em;
         line-height: 1.2em !important;
         border-left: 1px solid var(--color-button-default);
-        padding-left: .7em;
+        padding-left: 0.7em;
         flex-shrink: 0;
 
         font-family: "Source Code Pro" !important;
@@ -237,10 +235,10 @@
 
     &__period {
         display: flex;
-        gap: .5em;
+        gap: 0.5em;
 
         span {
-            opacity: .6;
+            opacity: 0.6;
             user-select: none;
         }
     }
@@ -248,9 +246,9 @@
     &__ri {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: .3em;
+        gap: 0.3em;
         border: 1px solid var(--color-border-inactive);
-        padding: .16em;
+        padding: 0.16em;
         border-radius: 1em;
 
         button {
@@ -260,7 +258,7 @@
 
     &__sort-control {
         border: 1px solid var(--color-border-inactive);
-        padding: .5em;
+        padding: 0.5em;
         border-radius: 1em;
         align-self: flex-start;
     }
@@ -270,5 +268,23 @@
         display: flex;
         justify-content: center;
         gap: 1em;
+    }
+
+    &__presets {
+        padding-top: 1em;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5em;
+        font-size: 0.7em;
+
+        button {
+            border: 0.5px solid var(--color-border-inactive);
+            line-height: 1em;
+            padding: 0.2em 1em;
+        }
+
+        * {
+            color: var(--color-text-primary) !important;
+        }
     }
 }

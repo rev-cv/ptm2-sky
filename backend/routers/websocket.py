@@ -19,22 +19,22 @@ async def websocket_connection(websocket: WebSocket, ws_token: Optional[str] = Q
     if not ws_token:
         await websocket.close(code=4001, reason="No access token")
         return
-    
+
     user_id = unpack_token(ws_token, "a", True)
 
     if not user_id:
         await websocket.close(code=4001, reason="Invalid or expired token")
         return
-    
+
     # соединение принимается
     await websocket.accept()
-    
+
     clients[websocket] = {
         "user_id": user_id,
         "task_obj": None,
         "process": None,
     }
-    
+
     """
     Открытое соединение всегда принимает json состоящий из двух полей
     - command - что делать
@@ -51,7 +51,7 @@ async def websocket_connection(websocket: WebSocket, ws_token: Optional[str] = Q
                 if not isinstance(message, dict) or "command" not in message:
                     await send_error(websocket, "validation", "Invalid message format. Expected: {\"command\": \"...\", \"message\": \"...\"}")
                     continue
-                    
+
                 command = message["command"]
                 payload = message.get("message", None)
 
@@ -75,13 +75,20 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
         case Commands.SET:
             clients[websocket]["task_obj"] = task_object_data_encapsulation(payload)
             await send_response(websocket, Commands.SET, "The task object was loaded successfully.", G_Status.ADDED)
-        case Commands.GEN | Commands.GEN_MOTIVE | Commands.GEN_STEPS | Commands.GEN_RISK | Commands.GEN_THEME | Commands.GEN_ACTION:
+        case cmd if cmd in {
+            Commands.GEN,
+            Commands.GEN_STEPS,
+            Commands.GEN_RISK,
+            Commands.GEN_THEME,
+            Commands.GEN_ACTION,
+            Commands.GEN_INTENSITY,
+        }:
             # проверка, есть ли уже запущенный процесс
             if clients[websocket]["process"] is not None:
                 await send_error(
                     websocket,
                     command=command,
-                    error_message="Generation already in progress. Use 'cancel' to stop it.", 
+                    error_message="Generation already in progress. Use 'cancel' to stop it.",
                     status=G_Status.PROGRESS
                 )
                 return
@@ -94,7 +101,7 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
                     status=G_Status.NOTSET
                 )
                 return
-            
+
             # запуск генерации в фоне
             clients[websocket]["process"] = asyncio.create_task(
                 ai_task_generator(websocket, clients, command, user_id)
@@ -104,4 +111,3 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
         #     await forced_stop_of_generation(clients, websocket)
         case _:
             await send_error(websocket, command, f"Unknown command: {command}", G_Status.UNKNOWN)
-

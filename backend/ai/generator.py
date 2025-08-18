@@ -9,9 +9,9 @@ from database.sqlalchemy_tables import Filter
 async def ai_task_generator (websocket: WebSocket, clients: dict, command, user_id):
     try:
         await send_response(
-            websocket, 
-            command=command, 
-            message="Started generating the task.", 
+            websocket,
+            command=command,
+            message="Started generating the task.",
             status=G_Status.STARTED
         )
 
@@ -23,7 +23,7 @@ async def ai_task_generator (websocket: WebSocket, clients: dict, command, user_
 
         if promt is None:
             await send_error(
-                websocket, 
+                websocket,
                 command=command,
                 message="Error generating prompt.",
                 status=G_Status.ERROR,
@@ -42,8 +42,14 @@ async def ai_task_generator (websocket: WebSocket, clients: dict, command, user_
                     response = None
             case Commands.GEN_RISK:
                 response = check_risk(response)
-            case Commands.GEN_THEME | Commands.GEN_ACTION:
+            case Commands.GEN_THEME:
                 response = check_theme(response)
+            case Commands.GEN_ACTION:
+                response = check_theme(response, True)
+            case Commands.GEN_INTENSITY:
+                response = check_intensity(response)
+
+        print("check: " + str(response))
 
         if response is None:
             send_error(
@@ -53,22 +59,22 @@ async def ai_task_generator (websocket: WebSocket, clients: dict, command, user_
             )
 
         clients[websocket]["process"] = None
-        
+
         await send_response(
-            websocket, 
+            websocket,
             command=command,
             message="Finished generating the task.",
             status=G_Status.COMPLETED,
             data=response
         )
-        
+
     except asyncio.CancelledError:
         del clients[websocket]
         raise
 
 
 def check_steps(response):
-    
+
     subtasks = response.get("subtasks")
 
     if not subtasks:
@@ -92,7 +98,7 @@ def check_steps(response):
             "motivation": s.get("motivation", ""),
             "order": s.get("order", 0),
         })
-    
+
     return {"subtasks": checked_result}
 
 
@@ -101,24 +107,24 @@ def check_risk(response):
     risk = response.get("risk", 0)
     risk_explanation = response.get("risk_explanation", "")
     risk_proposals = response.get("risk_proposals", "")
-    
+
     return {
         "risk": risk,
         "risk_explanation": risk_explanation,
         "risk_proposals": risk_proposals,
     }
-    
 
-def check_theme(response):
+
+def check_theme(response, isAction=False):
     result = []
     filters = response.get("filters", None)
 
     if type(filters) is not list:
         return None
-    
+
     try:
         db = next(get_db())
-        
+
         for x in filters:
             idf = x.get("id", None)
             name = x.get("name", None)
@@ -135,9 +141,9 @@ def check_theme(response):
                     'description': description,
                 })
                 continue
-            
+
             filt = db.get(Filter, idf)
-            
+
             if not filt:
                 continue # фильтр бракованный
 
@@ -155,7 +161,17 @@ def check_theme(response):
     if len(result) == 0:
         return None
 
-    return {
-        "themes": result
-    }
+    if not isAction:
+        return {
+            "themes": result
+        }
+    else:
+        return {
+            "actions": result
+        }
 
+
+def check_intensity(response):
+    fields = {"physical", "intellectual", "emotional", "social", "financial", "temporal"}
+    result = {k: v for k, v in response.items() if k in fields and 0 <= v <= 3}
+    return result or None

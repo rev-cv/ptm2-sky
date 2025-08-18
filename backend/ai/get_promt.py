@@ -22,6 +22,9 @@ with open("./ai/promts/step-actions.md", "r") as f:
     actions_json = json.dumps(actions, ensure_ascii=False)
     temp_actions = f.read().replace('%%%ACTION-TYPES%%%', actions_json)
 
+with open("./ai/promts/step-intensity.md", "r") as f:
+    temp_intensity = f.read()
+
 def get_prompt(task, command, user_id):
     try:
         task_json = json.dumps(task, ensure_ascii=False)
@@ -40,9 +43,10 @@ def get_prompt(task, command, user_id):
                 temp += temp_theme.replace('%%%STEP%%%', str(2)).replace('%%%USER-THEMES%%%', themes_json)
             case Commands.GEN_ACTION:
                 temp += temp_actions.replace('%%%STEP%%%', str(2))
+            case Commands.GEN_INTENSITY:
+                temp += temp_intensity.replace('%%%STEP%%%', str(2))
 
         return temp
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Ошибка: {str(e)}")
         return None
-

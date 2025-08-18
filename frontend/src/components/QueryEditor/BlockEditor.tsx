@@ -1,375 +1,647 @@
-import { useState, useEffect } from 'react'
-import { TypeQuery, ruleDoneFailList } from '@mytype/typeQueries'
-import { TypeTasks_RI } from '@mytype/typeTask'
-import { TypeFilterNew } from '@mytype/typeFilters'
-import { TypeRuleStatus } from '@mytype/typeQueries'
+import { useState, useEffect } from "react";
+import { TypeQuery, ruleDoneFailList } from "@mytype/typeQueries";
+import { TypeTasks_RI } from "@mytype/typeTask";
+import { TypeFilterNew } from "@mytype/typeFilters";
+import { TypeRuleStatus } from "@mytype/typeQueries";
 
-import ci_values from '@api/valuesForComponents.json'
+import ci_values from "@api/valuesForComponents.json";
 
-import { createQuery } from '@api/createQuery'
-import { removeQuery } from '@api/removeQuery'
-import { updateQuery } from '@api/updateQuery'
+import { createQuery } from "@api/createQuery";
+import { removeQuery } from "@api/removeQuery";
+import { updateQuery } from "@api/updateQuery";
 
-import TextArea from '@comps/TextArea/TextArea'
-import ButtonRangeCalendar from '@comps/ButtonCalendar/ButtonRangeCalendar'
-import Toggle from '@comps/Toggles/Toggle'
-import CheckBox from '@comps/CheckBox/CheckBox'
-import SortControl from '@comps/SortControl/SortControl'
-import FilterSelector from '@comps/FilterSelector/FilterSelector'
-import Button from '@comps/Button/Button'
+import TextArea from "@comps/TextArea/TextArea";
+import ButtonRangeCalendar from "@comps/ButtonCalendar/ButtonRangeCalendar";
+import Toggle from "@comps/Toggles/Toggle";
+import CheckBox from "@comps/CheckBox/CheckBox";
+import SortControl from "@comps/SortControl/SortControl";
+import FilterSelector from "@comps/FilterSelector/FilterSelector";
+import Button from "@comps/Button/Button";
 
-import IcoDelete from '@asset/delete.svg'
-import IcoUpdate from '@asset/save.svg'
+import IcoDelete from "@asset/delete.svg";
+import IcoUpdate from "@asset/save.svg";
 
 type TypeProps = {
-    title: string
-    editable: TypeQuery
-    updateEditable: (query: TypeQuery) => void
-    setEditableQuery: (value:TypeQuery|TypeFilterNew|null) => void
-}
+    title: string;
+    editable: TypeQuery;
+    updateEditable: (query: TypeQuery) => void;
+    setEditableQuery: (value: TypeQuery | TypeFilterNew | null) => void;
+};
 
-function BlockEditor({title, editable, updateEditable, setEditableQuery}:TypeProps) {
-
-    const [show, setShow] = useState(false)
+function BlockEditor({
+    title,
+    editable,
+    updateEditable,
+    setEditableQuery,
+}: TypeProps) {
+    const [show, setShow] = useState(false);
     useEffect(() => {
-        const timer = setTimeout(() => setShow(true), 290)
-        return () => clearTimeout(timer)
-    }, [])
+        const timer = setTimeout(() => setShow(true), 290);
+        return () => clearTimeout(timer);
+    }, []);
 
-    if (!show) return 
+    if (!show) return;
 
-    return <div className='query-block-editor__block'>
-        <div className='query-block-editor__title'>{title}</div>
+    return (
+        <div className="query-block-editor__block">
+            <div className="query-block-editor__title">{title}</div>
 
-        <TextArea 
-            value={editable.name}
-            placeholder="Task title"
-            className='query-block-editor__name'
-            onChange={e => updateEditable({...editable, name: e.target.value})}
-            isBanOnEnter={true}
-        />
+            <TextArea
+                value={editable.name}
+                placeholder="Task title"
+                className="query-block-editor__name"
+                onChange={(e) =>
+                    updateEditable({ ...editable, name: e.target.value })
+                }
+                isBanOnEnter={true}
+            />
 
-        <TextArea
-            value={editable.descr}
-            label='Description'
-            className='query-block-editor__descr'
-            onChange={e => updateEditable({...editable, descr: e.target.value})}
-        />
+            <TextArea
+                value={editable.descr}
+                label="Description"
+                className="query-block-editor__descr"
+                onChange={(e) =>
+                    updateEditable({ ...editable, descr: e.target.value })
+                }
+            />
 
-        <div className='query-block-editor__title'>Поиск по заголовкам и описанию</div>
+            <div className="query-block-editor__title">
+                Поиск по заголовкам и описанию
+            </div>
 
-        <TextArea 
-            value={editable.q}
-            placeholder="Search text"
-            className='query-block-editor__search'
-            onChange={e => updateEditable({...editable, q: e.target.value})}
-        />
+            <TextArea
+                value={editable.q}
+                placeholder="Search text"
+                className="query-block-editor__search"
+                onChange={(e) =>
+                    updateEditable({ ...editable, q: e.target.value })
+                }
+            />
 
-        <div className='query-block-editor__title'>Поиск по статусу задач</div>
-        <div className="query-block-editor__ri">
-            {ci_values?.status.map((elem, index) => (
-                <CheckBox
-                    title={elem.label}
-                    state={
-                        editable.statusrule.includes(elem.code as TypeRuleStatus) || 
-                        (editable.statusrule.length === 0 && elem.code === "")
-                    }
-                    key={`query_editor > query > block_editor > inrisk-${index}`}
-                    onChangeStatus={(newrule) => {
-                        if (newrule && elem.code === "") {
-                            updateEditable({...editable, statusrule: []})
-                        } else if (newrule) {
-                            updateEditable({
-                                ...editable, 
-                                statusrule: [...editable.statusrule.filter(v => v !== ""), elem.code as TypeRuleStatus],
-                            })
-                        } else {
-                            updateEditable({
-                                ...editable, 
-                                statusrule: editable.statusrule.filter(v => v !== elem.code as TypeRuleStatus)
-                            })
+            <div className="query-block-editor__title">
+                Поиск по статусу задач
+            </div>
+            <div className="query-block-editor__ri">
+                {ci_values?.status.map((elem, index) => (
+                    <CheckBox
+                        title={elem.label}
+                        state={
+                            editable.statusrule.includes(
+                                elem.code as TypeRuleStatus,
+                            ) ||
+                            (editable.statusrule.length === 0 &&
+                                elem.code === "")
                         }
-                    }}
-                />
-            ))}
-        </div>
-
-        <FilterSelector 
-            type_filter='theme'
-
-            intitle='Поиск по темам'
-            extitle='Исключать задачи с темами'
-
-            infilt={editable.infilt}
-            exfilt={editable.exfilt}
-
-            titleClass='query-block-editor__title'
-
-            updateFilters={(infilt, exfilt) => updateEditable(
-                {...editable, infilt, exfilt}
-            )}
-        />
-
-        <FilterSelector 
-            type_filter='action'
-
-            intitle='Поиск по типу деятельности'
-            extitle='Исключать задачи с типами действий'
-
-            infilt={editable.infilt}
-            exfilt={editable.exfilt}
-
-            titleClass='query-block-editor__title'
-
-            updateFilters={(infilt, exfilt) => updateEditable(
-                {...editable, infilt, exfilt}
-            )}
-        />
-
-        <div className='query-block-editor__title'>Поиск по вхождению даты создания в период</div>
-
-        <div className='query-block-editor__period'>
-            <ButtonRangeCalendar 
-                date={editable.crange[0]}
-                onClickDay={value => updateEditable({...editable, crange: [value, editable.crange[1]]})}
-                noDate='ignore'
-            />
-            <span>-</span>
-            <ButtonRangeCalendar 
-                date={editable.crange[1]}
-                onClickDay={value => updateEditable({...editable, crange: [editable.crange[0], value]})}
-                noDate='ignore'
-            />
-        </div>
-
-        <div className='query-block-editor__title'>Поиск по вхождению даты активации в период</div>
-
-        <div className='query-block-editor__period'>
-            <ButtonRangeCalendar 
-                date={editable.arange[0]}
-                onClickDay={value => updateEditable({...editable, arange: [value, editable.arange[1]]})}
-                noDate='ignore'
-            />
-            <span>-</span>
-            <ButtonRangeCalendar 
-                date={editable.arange[1]}
-                onClickDay={value => updateEditable({...editable, arange: [editable.arange[0], value]})}
-                noDate='ignore'
-            />
-        </div>
-
-        <div className='query-block-editor__title'>Поиск по вхождению дат проверок в период</div>
-
-        <div className='query-block-editor__period'>
-            <ButtonRangeCalendar 
-                date={editable.irange[0]}
-                onClickDay={value => updateEditable({...editable, irange: [value, editable.irange[1]]})}
-                noDate='ignore'
-            />
-            <span>-</span>
-            <ButtonRangeCalendar 
-                date={editable.irange[1]}
-                onClickDay={value => updateEditable({...editable, irange: [editable.irange[0], value]})}
-                noDate='ignore'
-            />
-        </div>
-
-        <div className='query-block-editor__title'>Поиск по вхождению даты дедлайна в период</div>
-
-        <div className='query-block-editor__period'>
-            <ButtonRangeCalendar 
-                date={editable.drange[0]}
-                onClickDay={value => updateEditable({...editable, drange: [value, editable.drange[1]]})}
-                noDate='ignore'
-            />
-            <span>-</span>
-            <ButtonRangeCalendar 
-                date={editable.drange[1]}
-                onClickDay={value => updateEditable({...editable, drange: [editable.drange[0], value]})}
-                noDate='ignore'
-            />
-        </div>
-
-        <div className='query-block-editor__title'>Поиск по вхождению даты успешного завершения задачи в период</div>
-
-        <div className='query-block-editor__period'>
-            <ButtonRangeCalendar 
-                date={editable.frange[0]}
-                onClickDay={value => updateEditable({...editable, frange: [value, editable.frange[1]]})}
-                noDate='ignore'
-            />
-            <span>-</span>
-            <ButtonRangeCalendar 
-                date={editable.frange[1]}
-                onClickDay={value => updateEditable({...editable, frange: [editable.frange[0], value]})}
-                noDate='ignore'
-            />
-        </div>
-
-        <div className='query-block-editor__title'>Как поступать с выполненными задачами?</div>
-
-        <Toggle
-            elements={[
-                {label: "показывать", value: 0},
-                {label: "скрывать", value: 1},
-                {label: "в начало", value: 2},
-                {label: "в конец", value: 3},
-            ]}
-            activeValue={ruleDoneFailList.indexOf(editable.donerule) === -1 ? 0 : ruleDoneFailList.indexOf(editable.donerule)}
-            onChange={v => updateEditable({...editable, donerule: ruleDoneFailList[v]})}
-        />
-
-        <div className='query-block-editor__title'>Как поступать с проваленными задачами?</div>
-        <Toggle
-            elements={[
-                {label: "показывать", value: 0},
-                {label: "скрывать", value: 1},
-                {label: "в начало", value: 2},
-                {label: "в конец", value: 3},
-            ]}
-            activeValue={ruleDoneFailList.indexOf(editable.failrule) === -1 ? 0 : ruleDoneFailList.indexOf(editable.failrule)}
-            onChange={v => updateEditable({...editable, failrule: ruleDoneFailList[v]})}
-        />
-
-        <div className='query-block-editor__title'>Поиск по рискам невыполнения</div>
-        <div className="query-block-editor__ri">
-            {ci_values.risk.map((elem, index) => (
-                <CheckBox
-                    title={elem.label}
-                    state={editable.inrisk.includes(elem.value as TypeTasks_RI)}
-                    key={`query_editor > query > block_editor > inrisk-${index}`}
-                    onChangeStatus={(newstatus) => {
-                        if (newstatus) {
-                            updateEditable({
-                                ...editable, 
-                                inrisk: [...editable.inrisk, elem.value as TypeTasks_RI],
-                                exrisk: editable.exrisk.filter(v => v !== elem.value as TypeTasks_RI)
-                            })
-                        } else {
-                            updateEditable({
-                                ...editable, 
-                                inrisk: editable.inrisk.filter(v => v !== elem.value as TypeTasks_RI)
-                            })
-                        }
-                    }}
-                />
-            ))}
-        </div>
-        
-        <div className='query-block-editor__title'>Исключать из поиска риски невыполнения</div>
-        <div className="query-block-editor__ri">
-            {ci_values?.risk.map((elem, index) => (
-                <CheckBox
-                    title={elem.label}
-                    state={editable.exrisk.includes(elem.value as TypeTasks_RI)}
-                    key={`query_editor > query > block_editor > inrisk-${index}`}
-                    onChangeStatus={(newstatus) => {
-                        if (newstatus) {
-                            updateEditable({
-                                ...editable, 
-                                inrisk: editable.inrisk.filter(v => v !== elem.value as TypeTasks_RI),
-                                exrisk: [...editable.exrisk, elem.value as TypeTasks_RI]
-                            })
-                        } else {
-                            updateEditable({
-                                ...editable, 
-                                exrisk: editable.exrisk.filter(v => v !== elem.value as TypeTasks_RI)
-                            })
-                        }
-                    }}
-                />
-            ))}
-        </div>
-
-        <div className='query-block-editor__title'>Поиск по последствиям невыполнения</div>
-        <div className="query-block-editor__ri">
-            {ci_values?.impact.map((elem, index) => (
-                <CheckBox
-                    title={elem.label}
-                    state={editable.inimpact.includes(elem.value as TypeTasks_RI)}
-                    key={`query_editor > query > block_editor > inimpact-${index}`}
-                    onChangeStatus={(newstatus) => {
-                        if (newstatus) {
-                            updateEditable({
-                                ...editable,
-                                inimpact: [...editable.inimpact, elem.value as TypeTasks_RI],
-                                eximpact: editable.eximpact.filter(v => v !== elem.value as TypeTasks_RI)
-                            })
-                        } else {
-                            updateEditable({
-                                ...editable, 
-                                inimpact: editable.inimpact.filter(v => v !== elem.value as TypeTasks_RI)
-                            })
-                        }
-                    }}
-                />
-            ))}
-        </div>
-
-        <div className='query-block-editor__title'>Исключать из поиска последствия невыполнения</div>
-        <div className="query-block-editor__ri">
-            {ci_values?.impact.map((elem, index) => (
-                <CheckBox
-                    title={elem.label}
-                    state={editable.eximpact.includes(elem.value as TypeTasks_RI)}
-                    key={`query_editor > query > block_editor > inrisk-${index}`}
-                    onChangeStatus={(newstatus) => {
-                        if (newstatus) {
-                            updateEditable({
-                                ...editable, 
-                                inimpact: editable.inimpact.filter(v => v !== elem.value as TypeTasks_RI),
-                                eximpact: [...editable.eximpact, elem.value as TypeTasks_RI]
-                            })
-                        } else {
-                            updateEditable({
-                                ...editable, 
-                                eximpact: editable.eximpact.filter(v => v !== elem.value as TypeTasks_RI)
-                            })
-                        }
-                    }}
-                />
-            ))}
-        </div>
-
-        <div className='query-block-editor__title'>Задать сортировку полученных результатов</div>
-        <div className="query-block-editor__sort-control">
-            <SortControl 
-                list={editable.order_by}
-                onChange={(newSort) => updateEditable({...editable, order_by: newSort})}
-            />
-        </div>
-
-        <div className='query-block-editor__bottom'>
-            {editable.id < 0 ?
-                <Button 
-                    text="create"
-                    icon={IcoUpdate}
-                    onClick={() => {
-                        createQuery(editable)
-                        setEditableQuery(null)
-                    }}
-                /> : <>
-                    <Button 
-                        text="delete"
-                        icon={IcoDelete}
-                        variant='remove'
-                        onClick={() => {
-                            removeQuery(editable.id)
-                            setEditableQuery(null)
+                        key={`query_editor > query > block_editor > inrisk-${index}`}
+                        onChangeStatus={(newrule) => {
+                            if (newrule && elem.code === "") {
+                                updateEditable({ ...editable, statusrule: [] });
+                            } else if (newrule) {
+                                updateEditable({
+                                    ...editable,
+                                    statusrule: [
+                                        ...editable.statusrule.filter(
+                                            (v) => v !== "",
+                                        ),
+                                        elem.code as TypeRuleStatus,
+                                    ],
+                                });
+                            } else {
+                                updateEditable({
+                                    ...editable,
+                                    statusrule: editable.statusrule.filter(
+                                        (v) =>
+                                            v !== (elem.code as TypeRuleStatus),
+                                    ),
+                                });
+                            }
                         }}
                     />
-                    <Button 
-                        text="update"
+                ))}
+            </div>
+
+            <FilterSelector
+                type_filter="theme"
+                intitle="Поиск по темам"
+                extitle="Исключать задачи с темами"
+                infilt={editable.infilt}
+                exfilt={editable.exfilt}
+                titleClass="query-block-editor__title"
+                updateFilters={(infilt, exfilt) =>
+                    updateEditable({ ...editable, infilt, exfilt })
+                }
+            />
+
+            <FilterSelector
+                type_filter="action"
+                intitle="Поиск по типу деятельности"
+                extitle="Исключать задачи с типами действий"
+                infilt={editable.infilt}
+                exfilt={editable.exfilt}
+                titleClass="query-block-editor__title"
+                updateFilters={(infilt, exfilt) =>
+                    updateEditable({ ...editable, infilt, exfilt })
+                }
+            />
+
+            <div className="query-block-editor__title">
+                Поиск по вхождению даты создания в период
+            </div>
+
+            <div className="query-block-editor__period">
+                <ButtonRangeCalendar
+                    date={editable.crange[0]}
+                    onClickDay={(value) =>
+                        updateEditable({
+                            ...editable,
+                            crange: [value, editable.crange[1]],
+                        })
+                    }
+                    noDate="ignore"
+                />
+                <span>-</span>
+                <ButtonRangeCalendar
+                    date={editable.crange[1]}
+                    onClickDay={(value) =>
+                        updateEditable({
+                            ...editable,
+                            crange: [editable.crange[0], value],
+                        })
+                    }
+                    noDate="ignore"
+                />
+            </div>
+
+            <div className="query-block-editor__title">
+                Поиск по вхождению даты активации в период
+            </div>
+
+            <div className="query-block-editor__period">
+                <ButtonRangeCalendar
+                    date={editable.arange[0]}
+                    onClickDay={(value) =>
+                        updateEditable({
+                            ...editable,
+                            arange: [value, editable.arange[1]],
+                        })
+                    }
+                    noDate="ignore"
+                />
+                <span>-</span>
+                <ButtonRangeCalendar
+                    date={editable.arange[1]}
+                    onClickDay={(value) =>
+                        updateEditable({
+                            ...editable,
+                            arange: [editable.arange[0], value],
+                        })
+                    }
+                    noDate="ignore"
+                />
+            </div>
+
+            <div className="query-block-editor__title">
+                Поиск по вхождению дат проверок в период
+            </div>
+
+            <div className="query-block-editor__period">
+                <ButtonRangeCalendar
+                    date={editable.irange[0]}
+                    onClickDay={(value) =>
+                        updateEditable({
+                            ...editable,
+                            irange: [value, editable.irange[1]],
+                        })
+                    }
+                    noDate="ignore"
+                />
+                <span>-</span>
+                <ButtonRangeCalendar
+                    date={editable.irange[1]}
+                    onClickDay={(value) =>
+                        updateEditable({
+                            ...editable,
+                            irange: [editable.irange[0], value],
+                        })
+                    }
+                    noDate="ignore"
+                />
+            </div>
+
+            <div className="query-block-editor__title">
+                Поиск по вхождению даты дедлайна в период
+            </div>
+
+            <div className="query-block-editor__period">
+                <ButtonRangeCalendar
+                    date={editable.drange[0]}
+                    onClickDay={(value) =>
+                        updateEditable({
+                            ...editable,
+                            drange: [value, editable.drange[1]],
+                        })
+                    }
+                    noDate="ignore"
+                />
+                <span>-</span>
+                <ButtonRangeCalendar
+                    date={editable.drange[1]}
+                    onClickDay={(value) => {
+                        console.log(value);
+                        updateEditable({
+                            ...editable,
+                            drange: [editable.drange[0], value],
+                        });
+                    }}
+                    noDate="ignore"
+                />
+            </div>
+            <div className="query-block-editor__presets">
+                <Button
+                    text="clear"
+                    variant="second"
+                    onClick={() =>
+                        updateEditable({
+                            ...editable,
+                            drange: ["", ""],
+                        })
+                    }
+                />
+                <Button
+                    text="today"
+                    variant="second"
+                    onClick={() =>
+                        updateEditable({
+                            ...editable,
+                            drange: ["after 0 days", "after 0 days"],
+                        })
+                    }
+                />
+                <Button
+                    text="tomorrow"
+                    variant="second"
+                    onClick={() =>
+                        updateEditable({
+                            ...editable,
+                            drange: ["after 1 days", "after 1 days"],
+                        })
+                    }
+                />
+                <Button
+                    text="next 3 days"
+                    variant="second"
+                    onClick={() =>
+                        updateEditable({
+                            ...editable,
+                            drange: ["after 0 days", "after 2 days"],
+                        })
+                    }
+                />
+                <Button
+                    text="next week"
+                    variant="second"
+                    onClick={() =>
+                        updateEditable({
+                            ...editable,
+                            drange: ["after 0 days", "after 7 days"],
+                        })
+                    }
+                />
+                <Button
+                    text="next month"
+                    variant="second"
+                    onClick={() =>
+                        updateEditable({
+                            ...editable,
+                            drange: ["after 0 days", "after 30 days"],
+                        })
+                    }
+                />
+                <Button
+                    text="next 12 months"
+                    variant="second"
+                    onClick={() =>
+                        updateEditable({
+                            ...editable,
+                            drange: ["after 0 days", "after 365 days"],
+                        })
+                    }
+                />
+                <Button
+                    text="this year"
+                    variant="second"
+                    onClick={() => {
+                        const firstDay = new Date(
+                            new Date().getFullYear(),
+                            0,
+                            1,
+                        ).toISOString();
+                        const lastDay = new Date(
+                            new Date().getFullYear(),
+                            11,
+                            31,
+                        ).toISOString();
+                        updateEditable({
+                            ...editable,
+                            drange: [firstDay, lastDay],
+                        });
+                    }}
+                />
+                <Button
+                    text="next year"
+                    variant="second"
+                    onClick={() => {
+                        const firstDay = new Date(
+                            new Date().getFullYear() + 1,
+                            0,
+                            1,
+                        ).toISOString();
+                        const lastDay = new Date(
+                            new Date().getFullYear() + 1,
+                            11,
+                            31,
+                        ).toISOString();
+                        updateEditable({
+                            ...editable,
+                            drange: [firstDay, lastDay],
+                        });
+                    }}
+                />
+            </div>
+
+            <div className="query-block-editor__title">
+                Поиск по вхождению даты успешного завершения задачи в период
+            </div>
+
+            <div className="query-block-editor__period">
+                <ButtonRangeCalendar
+                    date={editable.frange[0]}
+                    onClickDay={(value) =>
+                        updateEditable({
+                            ...editable,
+                            frange: [value, editable.frange[1]],
+                        })
+                    }
+                    noDate="ignore"
+                />
+                <span>{"-"}</span>
+                <ButtonRangeCalendar
+                    date={editable.frange[1]}
+                    onClickDay={(value) =>
+                        updateEditable({
+                            ...editable,
+                            frange: [editable.frange[0], value],
+                        })
+                    }
+                    noDate="ignore"
+                />
+            </div>
+
+            <div className="query-block-editor__title">
+                Как поступать с выполненными задачами?
+            </div>
+
+            <Toggle
+                elements={[
+                    { label: "показывать", value: 0 },
+                    { label: "скрывать", value: 1 },
+                    { label: "в начало", value: 2 },
+                    { label: "в конец", value: 3 },
+                ]}
+                activeValue={
+                    ruleDoneFailList.indexOf(editable.donerule) === -1
+                        ? 0
+                        : ruleDoneFailList.indexOf(editable.donerule)
+                }
+                onChange={(v) =>
+                    updateEditable({
+                        ...editable,
+                        donerule: ruleDoneFailList[v],
+                    })
+                }
+            />
+
+            <div className="query-block-editor__title">
+                Как поступать с проваленными задачами?
+            </div>
+            <Toggle
+                elements={[
+                    { label: "показывать", value: 0 },
+                    { label: "скрывать", value: 1 },
+                    { label: "в начало", value: 2 },
+                    { label: "в конец", value: 3 },
+                ]}
+                activeValue={
+                    ruleDoneFailList.indexOf(editable.failrule) === -1
+                        ? 0
+                        : ruleDoneFailList.indexOf(editable.failrule)
+                }
+                onChange={(v) =>
+                    updateEditable({
+                        ...editable,
+                        failrule: ruleDoneFailList[v],
+                    })
+                }
+            />
+
+            <div className="query-block-editor__title">
+                Поиск по рискам невыполнения
+            </div>
+            <div className="query-block-editor__ri">
+                {ci_values.risk.map((elem, index) => (
+                    <CheckBox
+                        title={elem.label}
+                        state={editable.inrisk.includes(
+                            elem.value as TypeTasks_RI,
+                        )}
+                        key={`query_editor > query > block_editor > inrisk-${index}`}
+                        onChangeStatus={(newstatus) => {
+                            if (newstatus) {
+                                updateEditable({
+                                    ...editable,
+                                    inrisk: [
+                                        ...editable.inrisk,
+                                        elem.value as TypeTasks_RI,
+                                    ],
+                                    exrisk: editable.exrisk.filter(
+                                        (v) =>
+                                            v !== (elem.value as TypeTasks_RI),
+                                    ),
+                                });
+                            } else {
+                                updateEditable({
+                                    ...editable,
+                                    inrisk: editable.inrisk.filter(
+                                        (v) =>
+                                            v !== (elem.value as TypeTasks_RI),
+                                    ),
+                                });
+                            }
+                        }}
+                    />
+                ))}
+            </div>
+
+            <div className="query-block-editor__title">
+                Исключать из поиска риски невыполнения
+            </div>
+            <div className="query-block-editor__ri">
+                {ci_values?.risk.map((elem, index) => (
+                    <CheckBox
+                        title={elem.label}
+                        state={editable.exrisk.includes(
+                            elem.value as TypeTasks_RI,
+                        )}
+                        key={`query_editor > query > block_editor > inrisk-${index}`}
+                        onChangeStatus={(newstatus) => {
+                            if (newstatus) {
+                                updateEditable({
+                                    ...editable,
+                                    inrisk: editable.inrisk.filter(
+                                        (v) =>
+                                            v !== (elem.value as TypeTasks_RI),
+                                    ),
+                                    exrisk: [
+                                        ...editable.exrisk,
+                                        elem.value as TypeTasks_RI,
+                                    ],
+                                });
+                            } else {
+                                updateEditable({
+                                    ...editable,
+                                    exrisk: editable.exrisk.filter(
+                                        (v) =>
+                                            v !== (elem.value as TypeTasks_RI),
+                                    ),
+                                });
+                            }
+                        }}
+                    />
+                ))}
+            </div>
+
+            <div className="query-block-editor__title">
+                Поиск по последствиям невыполнения
+            </div>
+            <div className="query-block-editor__ri">
+                {ci_values?.impact.map((elem, index) => (
+                    <CheckBox
+                        title={elem.label}
+                        state={editable.inimpact.includes(
+                            elem.value as TypeTasks_RI,
+                        )}
+                        key={`query_editor > query > block_editor > inimpact-${index}`}
+                        onChangeStatus={(newstatus) => {
+                            if (newstatus) {
+                                updateEditable({
+                                    ...editable,
+                                    inimpact: [
+                                        ...editable.inimpact,
+                                        elem.value as TypeTasks_RI,
+                                    ],
+                                    eximpact: editable.eximpact.filter(
+                                        (v) =>
+                                            v !== (elem.value as TypeTasks_RI),
+                                    ),
+                                });
+                            } else {
+                                updateEditable({
+                                    ...editable,
+                                    inimpact: editable.inimpact.filter(
+                                        (v) =>
+                                            v !== (elem.value as TypeTasks_RI),
+                                    ),
+                                });
+                            }
+                        }}
+                    />
+                ))}
+            </div>
+
+            <div className="query-block-editor__title">
+                Исключать из поиска последствия невыполнения
+            </div>
+            <div className="query-block-editor__ri">
+                {ci_values?.impact.map((elem, index) => (
+                    <CheckBox
+                        title={elem.label}
+                        state={editable.eximpact.includes(
+                            elem.value as TypeTasks_RI,
+                        )}
+                        key={`query_editor > query > block_editor > inrisk-${index}`}
+                        onChangeStatus={(newstatus) => {
+                            if (newstatus) {
+                                updateEditable({
+                                    ...editable,
+                                    inimpact: editable.inimpact.filter(
+                                        (v) =>
+                                            v !== (elem.value as TypeTasks_RI),
+                                    ),
+                                    eximpact: [
+                                        ...editable.eximpact,
+                                        elem.value as TypeTasks_RI,
+                                    ],
+                                });
+                            } else {
+                                updateEditable({
+                                    ...editable,
+                                    eximpact: editable.eximpact.filter(
+                                        (v) =>
+                                            v !== (elem.value as TypeTasks_RI),
+                                    ),
+                                });
+                            }
+                        }}
+                    />
+                ))}
+            </div>
+
+            <div className="query-block-editor__title">
+                Задать сортировку полученных результатов
+            </div>
+            <div className="query-block-editor__sort-control">
+                <SortControl
+                    list={editable.order_by}
+                    onChange={(newSort) =>
+                        updateEditable({ ...editable, order_by: newSort })
+                    }
+                />
+            </div>
+
+            <div className="query-block-editor__bottom">
+                {editable.id < 0 ? (
+                    <Button
+                        text="create"
                         icon={IcoUpdate}
                         onClick={() => {
-                            updateQuery(editable)
-                            setEditableQuery(null)
+                            createQuery(editable);
+                            setEditableQuery(null);
                         }}
                     />
-                </>
-            }
+                ) : (
+                    <>
+                        <Button
+                            text="delete"
+                            icon={IcoDelete}
+                            variant="remove"
+                            onClick={() => {
+                                removeQuery(editable.id);
+                                setEditableQuery(null);
+                            }}
+                        />
+                        <Button
+                            text="update"
+                            icon={IcoUpdate}
+                            onClick={() => {
+                                updateQuery(editable);
+                                setEditableQuery(null);
+                            }}
+                        />
+                    </>
+                )}
+            </div>
         </div>
-    </div>
+    );
 }
 
-export default BlockEditor
+export default BlockEditor;

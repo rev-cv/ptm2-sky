@@ -16,7 +16,7 @@ def serialize_task(task):
 
     for assoc in task.filters:
         filter_obj = {
-            "id": assoc.id, 
+            "id": assoc.id,
             "idf": assoc.filter.id, # фильтр с которым связана ассоциация
             "reason": assoc.reason,
             "name": assoc.filter.name if assoc.filter else None,
@@ -67,7 +67,7 @@ def serialize_task_new(task):
 
     for assoc in task.filters:
         filter_obj = {
-            "id": assoc.id, 
+            "id": assoc.id,
             "idf": assoc.filter.id, # фильтр с которым связана ассоциация
             "reason": assoc.reason,
             "name": assoc.filter.name if assoc.filter else "",
@@ -75,7 +75,7 @@ def serialize_task_new(task):
         }
 
         filter_type = assoc.filter.filter_type if assoc.filter else "unknown"
-        
+
         if filter_type == "theme":
             themes.append(filter_obj)
         elif filter_type == "action_type":
@@ -108,7 +108,7 @@ def serialize_task_new(task):
         "comfort":  task.comfort,
         "automaticity":  task.automaticity,
         "significance":  task.significance,
-        
+
         "physical":  task.physical,
         "intellectual":  task.intellectual,
         "motivational":  task.motivational,
@@ -117,4 +117,3 @@ def serialize_task_new(task):
         "temporal":  task.temporal,
         "social": task.social
     }
-

@@ -1,33 +1,39 @@
-
-import { atom } from 'jotai'
-import * as t from '@mytype/typesGen'
-import { TypeViewTask } from '@mytype/typeTask'
+import { atom } from "jotai";
+import * as t from "@mytype/typesGen";
+import { TypeViewTask } from "@mytype/typeTask";
 
 /* старт → генерация → ок или отменить результат */
 
 export const atomGenMotive = atom<t.TypeGenMotive>({
     isGen: false,
-    fixed: ""
-})
+    fixed: "",
+});
 
 export const atomGenSteps = atom<t.TypeGenSteps>({
     isGen: false,
-    fixed: []
-})
+    fixed: [],
+});
 
 export const atomGenRisk = atom<t.TypeGenRisk>({
     isGen: false,
-    fixed: null
-})
+    fixed: null,
+});
 
 export const atomGenTheme = atom<t.TypeGenFilters>({
     isGen: false,
-    fixed: []
-})
+    fixed: [],
+});
 
 export const atomGenAction = atom<t.TypeGenFilters>({
     isGen: false,
-    fixed: []
-})
+    fixed: [],
+});
 
-export const atomGenTaskBuffer = atom<Record<number, Partial<TypeViewTask>>>({})
+export const atomGenIntensity = atom<t.TypeGenIntensity>({
+    isGen: false,
+    fixed: {},
+});
+
+export const atomGenTaskBuffer = atom<Record<number, Partial<TypeViewTask>>>(
+    {},
+);
