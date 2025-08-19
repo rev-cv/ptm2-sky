@@ -1,12 +1,16 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine, Column, ForeignKey, Table
 from sqlalchemy import Integer, String, Text, DateTime, Boolean, Float
-from sqlalchemy.orm import relationship, sessionmaker, validates
+from sqlalchemy.orm import relationship, sessionmaker
 import datetime
+
+import os
+from dotenv import load_dotenv
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 Base = declarative_base()
 
-DATABASE_URL = "sqlite:///example.db"
 engine = create_engine(DATABASE_URL)  # echo=True для отладки
 
 # --- фабрика сессий ---
@@ -41,7 +45,7 @@ class Filter(Base):
     name = Column(String, default="")
     user_id = Column(Integer, ForeignKey("users.id"))
     user = relationship("User", back_populates="custom_filters")
-    filter_type = Column(String, nullable=False)  # theme, state__physical, state__intellectual, stress, energy_level и т.д.
+    filter_type = Column(String, nullable=False)  # theme, 
     description = Column(Text, default="")
 
 class Association(Base):

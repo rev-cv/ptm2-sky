@@ -17,6 +17,7 @@ import CheckBox from "@comps/CheckBox/CheckBox";
 import SortControl from "@comps/SortControl/SortControl";
 import FilterSelector from "@comps/FilterSelector/FilterSelector";
 import Button from "@comps/Button/Button";
+import BlockDatePreset from "./BlockDatePreset";
 
 import IcoDelete from "@asset/delete.svg";
 import IcoUpdate from "@asset/save.svg";
@@ -171,6 +172,92 @@ function BlockEditor({
                     noDate="ignore"
                 />
             </div>
+            <BlockDatePreset
+                presets={[
+                    [
+                        "clear",
+                        () => updateEditable({ ...editable, crange: ["", ""] }),
+                    ],
+                    [
+                        "last 30 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                crange: ["before 30 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "last 7 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                crange: ["before 7 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "last 3 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                crange: ["before 3 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "yesterday",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                crange: ["before 1 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "today",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                crange: ["after 0 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "this year",
+                        () => {
+                            const firstDay = new Date(
+                                new Date().getFullYear(),
+                                0,
+                                1,
+                            ).toISOString();
+                            const lastDay = new Date(
+                                new Date().getFullYear(),
+                                11,
+                                31,
+                            ).toISOString();
+                            updateEditable({
+                                ...editable,
+                                crange: [firstDay, lastDay],
+                            });
+                        },
+                    ],
+                    [
+                        "last year",
+                        () => {
+                            const firstDay = new Date(
+                                new Date().getFullYear() - 1,
+                                0,
+                                1,
+                            ).toISOString();
+                            const lastDay = new Date(
+                                new Date().getFullYear() - 1,
+                                11,
+                                31,
+                            ).toISOString();
+                            updateEditable({
+                                ...editable,
+                                crange: [firstDay, lastDay],
+                            });
+                        },
+                    ],
+                ]}
+            />
 
             <div className="query-block-editor__title">
                 Поиск по вхождению даты активации в период
@@ -199,9 +286,89 @@ function BlockEditor({
                     noDate="ignore"
                 />
             </div>
+            <BlockDatePreset
+                presets={[
+                    [
+                        "clear",
+                        () => updateEditable({ ...editable, arange: ["", ""] }),
+                    ],
+                    [
+                        "last 30 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                arange: ["before 30 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "last 7 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                arange: ["before 7 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "last 3 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                arange: ["before 3 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "yesterday",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                arange: ["before 1 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "today",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                arange: ["after 0 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "tomorrow",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                arange: ["after 1 days", "after 1 days"],
+                            }),
+                    ],
+                    [
+                        "next 3 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                arange: ["after 0 days", "after 2 days"],
+                            }),
+                    ],
+                    [
+                        "next 7 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                arange: ["after 0 days", "after 7 days"],
+                            }),
+                    ],
+                    [
+                        "next 30 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                arange: ["after 0 days", "after 30 days"],
+                            }),
+                    ],
+                ]}
+            />
 
             <div className="query-block-editor__title">
-                Поиск по вхождению дат проверок в период
+                Поиск по вхождению в период дат напоминаний
             </div>
 
             <div className="query-block-editor__period">
@@ -227,9 +394,65 @@ function BlockEditor({
                     noDate="ignore"
                 />
             </div>
+            <BlockDatePreset
+                presets={[
+                    [
+                        "clear",
+                        () => updateEditable({ ...editable, irange: ["", ""] }),
+                    ],
+                    [
+                        "yesterday",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                irange: ["before 1 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "today",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                irange: ["after 0 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "tomorrow",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                irange: ["after 1 days", "after 1 days"],
+                            }),
+                    ],
+                    [
+                        "next 3 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                irange: ["after 0 days", "after 2 days"],
+                            }),
+                    ],
+                    [
+                        "next 7 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                irange: ["after 0 days", "after 7 days"],
+                            }),
+                    ],
+                    [
+                        "next 30 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                irange: ["after 0 days", "after 30 days"],
+                            }),
+                    ],
+                ]}
+            />
 
             <div className="query-block-editor__title">
-                Поиск по вхождению даты дедлайна в период
+                Поиск по вхождению в период даты дедлайна
             </div>
 
             <div className="query-block-editor__period">
@@ -256,118 +479,108 @@ function BlockEditor({
                     noDate="ignore"
                 />
             </div>
-            <div className="query-block-editor__presets">
-                <Button
-                    text="clear"
-                    variant="second"
-                    onClick={() =>
-                        updateEditable({
-                            ...editable,
-                            drange: ["", ""],
-                        })
-                    }
-                />
-                <Button
-                    text="today"
-                    variant="second"
-                    onClick={() =>
-                        updateEditable({
-                            ...editable,
-                            drange: ["after 0 days", "after 0 days"],
-                        })
-                    }
-                />
-                <Button
-                    text="tomorrow"
-                    variant="second"
-                    onClick={() =>
-                        updateEditable({
-                            ...editable,
-                            drange: ["after 1 days", "after 1 days"],
-                        })
-                    }
-                />
-                <Button
-                    text="next 3 days"
-                    variant="second"
-                    onClick={() =>
-                        updateEditable({
-                            ...editable,
-                            drange: ["after 0 days", "after 2 days"],
-                        })
-                    }
-                />
-                <Button
-                    text="next week"
-                    variant="second"
-                    onClick={() =>
-                        updateEditable({
-                            ...editable,
-                            drange: ["after 0 days", "after 7 days"],
-                        })
-                    }
-                />
-                <Button
-                    text="next month"
-                    variant="second"
-                    onClick={() =>
-                        updateEditable({
-                            ...editable,
-                            drange: ["after 0 days", "after 30 days"],
-                        })
-                    }
-                />
-                <Button
-                    text="next 12 months"
-                    variant="second"
-                    onClick={() =>
-                        updateEditable({
-                            ...editable,
-                            drange: ["after 0 days", "after 365 days"],
-                        })
-                    }
-                />
-                <Button
-                    text="this year"
-                    variant="second"
-                    onClick={() => {
-                        const firstDay = new Date(
-                            new Date().getFullYear(),
-                            0,
-                            1,
-                        ).toISOString();
-                        const lastDay = new Date(
-                            new Date().getFullYear(),
-                            11,
-                            31,
-                        ).toISOString();
-                        updateEditable({
-                            ...editable,
-                            drange: [firstDay, lastDay],
-                        });
-                    }}
-                />
-                <Button
-                    text="next year"
-                    variant="second"
-                    onClick={() => {
-                        const firstDay = new Date(
-                            new Date().getFullYear() + 1,
-                            0,
-                            1,
-                        ).toISOString();
-                        const lastDay = new Date(
-                            new Date().getFullYear() + 1,
-                            11,
-                            31,
-                        ).toISOString();
-                        updateEditable({
-                            ...editable,
-                            drange: [firstDay, lastDay],
-                        });
-                    }}
-                />
-            </div>
+            <BlockDatePreset
+                presets={[
+                    [
+                        "clear",
+                        () => updateEditable({ ...editable, drange: ["", ""] }),
+                    ],
+                    [
+                        "yesterday",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                drange: ["before 1 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "today",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                drange: ["after 0 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "tomorrow",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                drange: ["after 1 days", "after 1 days"],
+                            }),
+                    ],
+                    [
+                        "next 3 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                drange: ["after 0 days", "after 2 days"],
+                            }),
+                    ],
+                    [
+                        "next 7 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                drange: ["after 0 days", "after 7 days"],
+                            }),
+                    ],
+                    [
+                        "next 30 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                drange: ["after 0 days", "after 30 days"],
+                            }),
+                    ],
+                    [
+                        "next 365 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                drange: ["after 0 days", "after 365 days"],
+                            }),
+                    ],
+                    [
+                        "this year",
+                        () => {
+                            const firstDay = new Date(
+                                new Date().getFullYear(),
+                                0,
+                                1,
+                            ).toISOString();
+                            const lastDay = new Date(
+                                new Date().getFullYear(),
+                                11,
+                                31,
+                            ).toISOString();
+                            updateEditable({
+                                ...editable,
+                                drange: [firstDay, lastDay],
+                            });
+                        },
+                    ],
+                    [
+                        "next year",
+                        () => {
+                            const firstDay = new Date(
+                                new Date().getFullYear() + 1,
+                                0,
+                                1,
+                            ).toISOString();
+                            const lastDay = new Date(
+                                new Date().getFullYear() + 1,
+                                11,
+                                31,
+                            ).toISOString();
+                            updateEditable({
+                                ...editable,
+                                drange: [firstDay, lastDay],
+                            });
+                        },
+                    ],
+                ]}
+            />
 
             <div className="query-block-editor__title">
                 Поиск по вхождению даты успешного завершения задачи в период
@@ -396,6 +609,92 @@ function BlockEditor({
                     noDate="ignore"
                 />
             </div>
+            <BlockDatePreset
+                presets={[
+                    [
+                        "clear",
+                        () => updateEditable({ ...editable, frange: ["", ""] }),
+                    ],
+                    [
+                        "last 30 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                frange: ["before 30 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "last 7 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                frange: ["before 7 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "last 3 days",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                frange: ["before 3 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "yesterday",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                frange: ["before 1 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "today",
+                        () =>
+                            updateEditable({
+                                ...editable,
+                                frange: ["after 0 days", "after 0 days"],
+                            }),
+                    ],
+                    [
+                        "this year",
+                        () => {
+                            const firstDay = new Date(
+                                new Date().getFullYear(),
+                                0,
+                                1,
+                            ).toISOString();
+                            const lastDay = new Date(
+                                new Date().getFullYear(),
+                                11,
+                                31,
+                            ).toISOString();
+                            updateEditable({
+                                ...editable,
+                                frange: [firstDay, lastDay],
+                            });
+                        },
+                    ],
+                    [
+                        "last year",
+                        () => {
+                            const firstDay = new Date(
+                                new Date().getFullYear() - 1,
+                                0,
+                                1,
+                            ).toISOString();
+                            const lastDay = new Date(
+                                new Date().getFullYear() - 1,
+                                11,
+                                31,
+                            ).toISOString();
+                            updateEditable({
+                                ...editable,
+                                frange: [firstDay, lastDay],
+                            });
+                        },
+                    ],
+                ]}
+            />
 
             <div className="query-block-editor__title">
                 Как поступать с выполненными задачами?
