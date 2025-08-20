@@ -1,0 +1,32 @@
+# docker-compose.dev.yml
+version: '3.8'
+
+services:
+    backend:
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "3000:3000"
+        environment:
+            - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+        env_file:
+            - .env
+        depends_on:
+            - db
+        volumes:
+            - ./backend:/app  # для hot reload в разработке
+
+    db:
+        image: postgres:13
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+volumes:
+    postgres_data:

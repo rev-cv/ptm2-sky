@@ -31,7 +31,6 @@ class Commands(str, Enum):
     GEN_MOTIVE = "gen_motive"
     GEN_RISK = "gen_risk"
     GEN_THEME = "gen_theme"
-    GEN_STATE = "gen_state"
     GEN_ACTION = "gen_action"
     GEN_INTENSITY = "intensity" # генерация ресурсоемкости задачи
 

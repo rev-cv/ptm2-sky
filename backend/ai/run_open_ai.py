@@ -1,14 +1,8 @@
-from dotenv import load_dotenv
 from openai import OpenAI
-import os
 import re
 import json
 from routers.websocket_utils import *
-
-load_dotenv()
-
-APIKEY = os.getenv("OPENROUTER_AI_KEY")
-APIURL = os.getenv("OPENROUTER_AI_URL")
+from config import APIKEY, APIURL, OPENROUTER_AI_MODEL
 
 json_pattern = re.compile(r'```json\s*(.*?)\s*```', re.DOTALL)
 json_obj_pattern = re.compile(r'\{.*\}', re.DOTALL)
@@ -19,8 +13,7 @@ async def run_open_ai(message, websocket, clients, command):
     try:
         client = OpenAI(api_key=APIKEY, base_url=APIURL)
         stream = client.chat.completions.create(
-            # model="google/gemma-3-27b-it:free",
-            model="deepseek/deepseek-r1-0528:free",
+            model=OPENROUTER_AI_MODEL,
             messages=[
                 # {"role": "system", "content": system_prompt},
                 {"role": "user", "content": message},

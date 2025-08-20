@@ -6,29 +6,17 @@ from database.sqlalchemy_tables import get_db, User, UserProfile, Role
 from datetime import datetime, timedelta, timezone
 from jose import jwt, JWTError
 from passlib.context import CryptContext
-from typing import Optional
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
+from config import JWT_SECRET_KEY, JWT_ALGORITHM, JWT_ACCESS_TOKEN_EXPIRE_MINUTES, JWT_REFRESH_TOKEN_EXPIRE_DAYS
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 router = APIRouter()
-
-
-SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-ALGORITHM = os.getenv("JWT_ALGORITHM")
-
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES"))
-REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("JWT_REFRESH_TOKEN_EXPIRE_DAYS"))
-
 
 # === Генерация токенов ===
 def create_token(data: dict, expires_delta: timedelta) -> str:
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
 
 
 # === Валидация и распаковка токена ===
@@ -39,7 +27,7 @@ def unpack_token(token, type_token="a", is_return_id=False):
         raise HTTPException(status_code=401, detail=f"Отсутствует {tt} Token")
     
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
     except JWTError:
         raise HTTPException(status_code=401, detail=f"Недействительный {tt} Token")
     
@@ -90,8 +78,8 @@ async def login(user: UserLogin, response: Response, db: Session = Depends(get_d
 
 # === Установка токенов в куки ===
 def set_tokens_in_response(response: Response, user: User):
-    access_token = create_token({"sub": user.email, "id": user.id}, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
-    refresh_token = create_token({"sub": user.email, "id": user.id}, timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS))
+    access_token = create_token({"sub": user.email, "id": user.id}, timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES))
+    refresh_token = create_token({"sub": user.email, "id": user.id}, timedelta(days=JWT_REFRESH_TOKEN_EXPIRE_DAYS))
 
     response.set_cookie(
         key="access_token",
@@ -99,7 +87,7 @@ def set_tokens_in_response(response: Response, user: User):
         httponly=True,
         secure=False,  # 🔒 True в проде
         samesite="lax",
-        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        max_age=JWT_ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         path="/"
     )
     response.set_cookie(
@@ -108,7 +96,7 @@ def set_tokens_in_response(response: Response, user: User):
         httponly=True,
         secure=False,
         samesite="lax",
-        max_age=REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        max_age=JWT_REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
         path="/api/refresh"  # refresh_token отправляется только на этот url
     )
 
@@ -134,7 +122,7 @@ async def refresh_token(request: Request, response: Response):
     payload = unpack_token(token,"r")
     email = payload.get("sub")
     user_id = payload.get("id")
-    new_access_token = create_token({"sub": email, "id": user_id}, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    new_access_token = create_token({"sub": email, "id": user_id}, timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES))
     response.set_cookie(
         key="access_token",
         value=new_access_token,

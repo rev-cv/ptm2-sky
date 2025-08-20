@@ -79,6 +79,7 @@ async def connection_processing(websocket: WebSocket, command:str, payload:str|N
             Commands.GEN,
             Commands.GEN_STEPS,
             Commands.GEN_RISK,
+            Commands.GEN_MOTIVE,
             Commands.GEN_THEME,
             Commands.GEN_ACTION,
             Commands.GEN_INTENSITY,

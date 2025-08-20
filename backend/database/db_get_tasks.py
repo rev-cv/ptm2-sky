@@ -4,12 +4,10 @@ from sqlalchemy.sql import case
 from database.sqlalchemy_tables import Task, Association, TaskCheck
 from datetime import datetime, timezone, timedelta
 from serializers.returned_task import serialize_task_new
-import os, re
+import re
 from schemas.types_queries import TypeQuery
-from dotenv import load_dotenv
 from sqlalchemy.orm import Session
-
-TASKS_PAGE_SIZE = int(os.getenv("TASKS_PAGE_SIZE"))
+from config import TASKS_PAGE_SIZE
 
 pattern = re.compile(r'\d{1,3}')
 

@@ -1,33 +1,49 @@
-# Node.js
-node_modules/
-npm-debug.log
-yarn-error.log
-yarn.lock
-package-lock.json
-dist/
-build/
+# ========================
+# 🛡️ ЗАЩИТА СЕКРЕТОВ И КЛЮЧЕЙ
+# ========================
+# ↓ файлы окружения
 .env
-coverage/
+.env.*
+.env.local
+.env.production
+.env.development
+# ↓ директория с секретами
+secrets/
+# ↓ ключи, сертификаты, токены
+*.key
+*.pem
+*.cert
+*.token
+# ↓ файлы учетных данных
+credentials.json 
 
-# Python
+# ========================
+# 🐍 PYTHON
+# ========================
+# ↓ кэш интерпретатора
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
+
+# ↓ виртуальные окружения
 env/
 venv/
 ENV/
+.venv/
+virtualenv/
+
+# ↓ пакеты и зависимости
 *.egg-info/
+.eggs/
 pip-log.txt
 pip-delete-this-directory.txt
+
+# ↓ тестирование и анализ
 .tox/
 .coverage
 coverage.xml
 *.cover
-*.log
-*.pid
-*.swp
 .pytest_cache/
 .mypy_cache/
 .dmypy.json
@@ -35,26 +51,123 @@ dmypy.json
 .hypothesis/
 .pyre/
 
-# Общие файлы и директории
+# ========================
+# ⚛️ NODE.JS
+# ========================
+# ↓ зависимости
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+package-lock.json
+
+# ↓ cборка проекта
+dist/
+build/
+.out/
+.next/
+.nuxt/
+
+# ↓ тестирование
+coverage/
+.nyc_output/
+
+# ========================
+# 🗄️ БАЗЫ ДАННЫХ
+# ========================
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.mdb
+*.frm
+*.myd
+*.myi
+mongod.lock
+redis.conf
+
+# ========================
+# 🎯 МОДЕЛИ И ДАННЫЕ AI
+# ========================
+# ↓ GGUF модели
+gguf/
+*.gguf        
+*.bin
+# ↓ веса моделей
+*.safetensors
+# ↓ PyTorch модели
+*.pt           
+*.pth
+*.h5
+*.index
+*.data
+
+# ========================
+# 💻 СИСТЕМНЫЕ ФАЙЛЫ
+# ========================
+# ↓ файлы операционных систем
 *.DS_Store
 Thumbs.db
+desktop.ini
+.Directory
+.directory
+
+# ↓ временные файлы
 *.bak
 *.tmp
+*.temp
 *.swp
 *.swo
 *.swn
 *.log
 *.cache
-*.idea/
-*.vscode/
-*.sublime-project
-*.sublime-workspace
-.directory
+*.pid
+*.lock
 
-*gguf
+# ========================
+# 🛠️ СРЕДЫ РАЗРАБОТКИ
+# ========================
+# IDE и редакторы кода
+# .idea/
+# .vscode/
+# .sublime-project
+# .sublime-workspace
+# *.code-workspace
+# .project
+# .classpath
+# .settings/
 
-APIKEY
-APIURL
+# ========================
+# 📦 СБОРКА И ДЕПЛОЙ
+# ========================
+# ↓ Docker
+docker-compose.override.yml
 
-*.db
+# ↓ CI/CD
+.circleci/
+.travis.yml
+.gitlab-ci.yml
+.github/workflows/*.yml
 
+# ↓ пакеты
+*.deb
+*.rpm
+*.tar.gz
+*.zip
+*.7z
+
+# ========================
+# 📊 ДОКУМЕНТАЦИЯ И ЛОГИ
+# ========================
+# ↓ документация
+_site/
+.sass-cache/
+.jekyll-cache/
+
+# ↓ логи и отчеты
+logs/
+*.log
+log/
+var/log/
+*.rpt
+*.report

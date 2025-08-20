@@ -4,20 +4,16 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from database.sqlalchemy_tables import init_db
 
-from routers.websocket import router as api_websocket
-from routers.filter_router import router as filter_router
-from routers.task_router import router as task_router
-from routers.query_router import router as query_router
-from routers.auth_router import router as auth_router
-from routers.parser_metadata_router import router as metadata_router
 import logging
+
 
 logging.basicConfig(level=logging.INFO)
 
-init_db()
-
 
 app = FastAPI()
+
+# инициализация бд после инициализации app, но до импорта routers
+init_db()
 
 
 # Настройка CORS
@@ -40,6 +36,13 @@ app.add_middleware(
     allow_methods=["*"],  # Разрешить все методы (GET, POST, OPTIONS и т.д.)
     allow_headers=["*"],  # Разрешить все заголовки
 )
+
+from routers.websocket import router as api_websocket
+from routers.filter_router import router as filter_router
+from routers.task_router import router as task_router
+from routers.query_router import router as query_router
+from routers.auth_router import router as auth_router
+from routers.parser_metadata_router import router as metadata_router
 
 
 api_routers = APIRouter(prefix="/api", tags=["api"])

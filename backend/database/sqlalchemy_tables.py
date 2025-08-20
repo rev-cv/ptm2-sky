@@ -3,11 +3,7 @@ from sqlalchemy import create_engine, Column, ForeignKey, Table
 from sqlalchemy import Integer, String, Text, DateTime, Boolean, Float
 from sqlalchemy.orm import relationship, sessionmaker
 import datetime
-
-import os
-from dotenv import load_dotenv
-load_dotenv()
-DATABASE_URL = os.getenv("DATABASE_URL")
+from config import DATABASE_URL
 
 Base = declarative_base()
 
