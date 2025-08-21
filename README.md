@@ -12,17 +12,34 @@ sudo docker build -t ptm:0.1.8 .
 
 ## Запустить сервер в режиме DEV
 
-Проще запустить без docker:
+### Вариант 1: Запуск сервера через UV:
+
+1. Запустить postgres
+```sh
+sudo docker run -d \
+  --name postgres_db \
+  -e POSTGRES_DB=myapp_dev \
+  -e POSTGRES_USER=user \
+  -e POSTGRES_PASSWORD=password \
+  -p 5432:5432 \
+  postgres:13
+```
+
+2. Запустить сервер из `backemd/`:
 ```
 uv run launch.py
 ```
 
-Можно запустить в docker:
+3. Запустить frontend на vite в режиме разработки из `frontend/`:
 ```sh
-sudo docker run -p 3000:3000 ptm:0.1.8
+npm run dev
 ```
+Запросы проксируются с 5173 на 3000.
 
-Запустить frontend на vite в режиме разработки
+Сборка frontend производится в статические файлы бекенда (backend/dist)
+```sh
+npm run build
+```Запустить frontend на vite в режиме разработки из `frontend/`:
 ```sh
 npm run dev
 ```
@@ -33,6 +50,17 @@ npm run dev
 npm run build
 ```
 
+### Вариант 2. Запустить сервер в docker из корня проекта:
+```sh
+sudo docker run -p 3000:3000 ptm:0.1.8
+```
+
+### Вариант 3.
+По прежнему доступен старый вариант запуска:
+```sh
+uv run uvicorn main:app --host 0.0.0.0 --port 3000 --ssl-keyfile localhost+2-key.pem --ssl-certfile localhost+2.pem
+```
+
 ---
 ## Запустить сервер в режиме PROD
 ```sh
@@ -40,7 +68,7 @@ sudo docker run -p 3000:3000 -e IS_PRODACTION=true ptm:0.1.8
 ```
 
 ---
-## Запуст в docker-compose
+## Запуск в docker-compose
 ```sh
 sudo docker-compose build --no-cache backend
 ```
@@ -78,3 +106,42 @@ sudo docker-compose up
 - `SSL_CERT_FILE=localhost+2.pem`
 - `SSL_KEY_FILE=localhost+2-key.pem`
 - `SSL_ENABLED=true` true или false
+
+---
+## Деплой
+
+1. перенести файлы проекта
+2. в корне проекта создать `.env`и заполнить его
+3. в корне проекта создать самоподписанные ключи ssl
+```sh
+mkdir -p project/certs
+```
+```sh
+openssl req -x509 -newkey rsa:4096 -keyout certs/privkey.pem -out certs/fullchain.pem -days 365 -nodes -subj "/CN=localhost"
+```
+или получить бесплатные сертификаты 
+```sh
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d your_domain.com
+``` 
+и смонтировать путь к ним в файле `docker-compose.yml`
+```yml
+nginx:
+  volumes:
+    - /etc/letsencrypt/live/your_domain.com/fullchain.pem:/etc/nginx/certs/fullchain.pem:ro
+    - /etc/letsencrypt/live/your_domain.com/privkey.pem:/etc/nginx/certs/privkey.pem:ro
+```
+4. Закоментировать `5432:5432`, т.к. на PROD доступ к базе нужен только внутри Docker-сети
+```yml
+ports:
+  - "5432:5432"
+```
+5. в `nginx/nginx.conf` заменить `server_name localhost` на `server_name your_domain.com`
+6. настроить DNS-запись (A или CNAME), чтобы она указывала на IP-адрес сервера
+7. запуск контейнера
+```sh
+sudo docker-compose build --no-cache
+```
+```sh
+sudo docker-compose up -d
+```

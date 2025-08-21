@@ -3,6 +3,7 @@ from fastapi import WebSocket
 import time
 import json
 import asyncio
+from starlette.websockets import WebSocketState
 
 # === СТАТУСЫ ===
 
@@ -65,7 +66,7 @@ async def forced_stop_of_generation(clients, websocket):
     except asyncio.CancelledError:
         print(f"Задача для {websocket} завершена по требованию пользователя.")
         # закрыть соединение
-        if websocket.client_is_connected:
+        if websocket.client_state == WebSocketState.CONNECTED:
             await websocket.close(code=1000)
         clients.pop(websocket, None)
 

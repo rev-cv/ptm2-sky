@@ -14,16 +14,13 @@ def load_environment():
     for env_path in possible_paths:
         if env_path.exists():
             load_dotenv(dotenv_path=env_path)
-            print(f"INFO:     ✅ Loaded .env from: {env_path}", flush=True)
+            # print(f"INFO:     ✅ Loaded .env from: {env_path}", flush=True)
             return
         
     print(f"INFO:     ⚠️ .env file not found, using environment variables", flush=True)
 
 # загрузка переменных из корневого .env
 load_environment()
-# BASE_DIR = Path(__file__).resolve().parent.parent
-# env_path = BASE_DIR / '.env'
-# load_dotenv(dotenv_path=env_path)
 
 IS_PRODACTION = True if os.getenv("IS_PRODACTION") == "true" else False
 

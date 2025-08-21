@@ -1,4 +1,5 @@
-from openai import OpenAI
+import requests
+import time
 import re
 import json
 from routers.websocket_utils import *
@@ -9,45 +10,76 @@ json_obj_pattern = re.compile(r'\{.*\}', re.DOTALL)
 
 async def run_open_ai(message, websocket, clients, command):
     await send_response(websocket, command=command, message="starting", status=G_Status.STREAM)
+    
+    headers = {
+        "Authorization": f"Bearer {APIKEY}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost",
+        "X-Title": "Web Application"
+    }
+    
+    data = {
+        "model": OPENROUTER_AI_MODEL,
+        "messages": [{"role": "user", "content": message}],
+        "stream": True
+    }
+    
+    full_response = ""
+    token_count = 0
+    start_time = time.time()
+    last_update_time = start_time
 
     try:
-        client = OpenAI(api_key=APIKEY, base_url=APIURL)
-        stream = client.chat.completions.create(
-            model=OPENROUTER_AI_MODEL,
-            messages=[
-                # {"role": "system", "content": system_prompt},
-                {"role": "user", "content": message},
-            ],
-            stream=True
+        print(f"Sending request to OpenRouter: {APIURL}/chat/completions")
+        
+        response = requests.post(
+            f"{APIURL}/chat/completions",
+            headers=headers,
+            json=data,
+            stream=True,
+            timeout=30
         )
+        
+        if response.status_code != 200:
+            error_msg = f"API Error: {response.status_code} - {response.text}"
+            print(error_msg)
+            await send_error(websocket, command=command, error_message=error_msg)
+            await forced_stop_of_generation(clients, websocket)
+            return None
+        
+        print("Stream started successfully")
 
-        full_response = ""
-        token_count = 0
-        start_time = time.time()
-        last_update_time = start_time
-
-        for chunk in stream:
+        for line in response.iter_lines():
             current_time = time.time()
             
-            # проверка, есть ли контент в чанке
-            if chunk.choices[0].delta.content is not None:
-                content = chunk.choices[0].delta.content
-                full_response += content
-                token_count += 1
-                
-                # каждые 2 секунды отправка прогресса
-                if current_time - last_update_time > 2:
-                    await send_response(
-                        websocket, 
-                        command=command,
-                        message=str(token_count),
-                        status=G_Status.STREAM
-                    )
-                    last_update_time = current_time
-            
-            # проверка завершения
-            if chunk.choices[0].finish_reason is not None:
-                break
+            if line:
+                line_text = line.decode('utf-8')
+                if line_text.startswith('data: '):
+                    data_str = line_text[6:]  # Remove "data: " prefix
+                    
+                    if data_str == '[DONE]':
+                        break
+                    
+                    try:
+                        chunk = json.loads(data_str)
+                        if 'choices' in chunk and chunk['choices']:
+                            content = chunk['choices'][0].get('delta', {}).get('content', '')
+                            if content:
+                                full_response += content
+                                token_count += 1
+                                
+                                # каждые 2 секунды отправка прогресса
+                                if current_time - last_update_time > 2:
+                                    await send_response(
+                                        websocket, 
+                                        command=command,
+                                        message=str(token_count),
+                                        status=G_Status.STREAM
+                                    )
+                                    last_update_time = current_time
+                    
+                    except json.JSONDecodeError:
+                        continue
 
     except Exception as e:
         print(f"Error in run_open_ai: {e}")
@@ -60,10 +92,11 @@ async def run_open_ai(message, websocket, clients, command):
         # очистка от markdown
         cleaned = clean_json_response(full_response)
         response = json.loads(cleaned)
-        print(response)
+        print(f"Parsed response: {response}")
         return response
     except json.JSONDecodeError as e:
         print(f"JSON parsing error: {e}")
+        print(f"Raw response: {full_response}")
         await send_error(websocket, command=command, message=f"JSON parsing error: {e}")
         await forced_stop_of_generation(clients, websocket)
         return None

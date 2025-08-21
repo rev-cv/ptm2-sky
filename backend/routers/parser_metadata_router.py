@@ -7,7 +7,6 @@ import logging
 import hashlib
 from datetime import datetime, timedelta
 
-logger = logging.getLogger(__name__)
 router = APIRouter()
 parser = MetadataParser()
 # простой in-memory кэш (в продакшене - Redis)

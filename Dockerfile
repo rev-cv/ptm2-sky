@@ -21,8 +21,7 @@ RUN apt-get update && apt-get install -y \
 COPY backend/pyproject.toml .
 COPY backend/uv.lock .
 
-# Используем --python-preference only-system чтобы uv использовал уже установленный Python
-RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -e .
+RUN pip install --no-cache-dir .
 
 COPY .env .
 COPY backend/ .

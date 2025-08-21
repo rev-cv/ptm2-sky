@@ -32,6 +32,10 @@ async def ai_task_generator (websocket: WebSocket, clients: dict, command, user_
 
         response = await run_open_ai(promt, websocket, clients, command)
 
+        if response is None:
+            print(" 🚨 run_open_ai returned None")
+            return
+
         match command:
             case Commands.GEN_STEPS:
                 checked_result = check_steps(response)

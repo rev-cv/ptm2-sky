@@ -9,12 +9,15 @@ dependencies = [
     "bs4>=0.0.2",
     "fastapi>=0.115.12",
     "httpx[http2]>=0.28.1",
-    "openai>=1.77.0",
     "passlib>=1.7.4",
     "psycopg2-binary>=2.9.10",
     "python-dotenv>=1.1.1",
     "python-jose>=3.5.0",
+    "requests>=2.32.5",
     "sqlalchemy>=2.0.41",
     "uvicorn>=0.34.2",
     "websockets>=15.0.1",
 ]
+
+[dependency-groups]
+dev = []
