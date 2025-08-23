@@ -4,13 +4,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from database.sqlalchemy_tables import init_db
 
-from routers.websocket import router as api_websocket
-from routers.filter_router import router as filter_router
-from routers.task_router import router as task_router
-from routers.query_router import router as query_router
-from routers.auth_router import router as auth_router
-from routers.parser_metadata_router import router as metadata_router
-
 
 app = FastAPI()
 
@@ -44,6 +37,14 @@ app.add_middleware(
 )
 
 
+from routers.websocket import router as api_websocket
+from routers.filter_router import router as filter_router
+from routers.task_router import router as task_router
+from routers.query_router import router as query_router
+from routers.auth_router import router as auth_router
+from routers.parser_metadata_router import router as metadata_router
+
+
 api_routers = APIRouter(prefix="/api", tags=["api"])
 api_routers.include_router(auth_router)
 api_routers.include_router(filter_router)
@@ -64,4 +65,3 @@ async def spa_root():
 
 
 app.mount("/", StaticFiles(directory="dist"), name="dist")
-

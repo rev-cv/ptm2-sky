@@ -5,15 +5,15 @@ WORKDIR /app
 ENV SSL_CERT_FILE=""
 ENV PYTHONHTTPSVERIFY=0
 
-# RUN apt-get update && apt-get install -y \
-#     build-essential \
-#     cmake \
-#     gcc \
-#     g++ \
-#     make \
-#     git \
-#     libopenblas-dev \
-#     && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    gcc \
+    g++ \
+    make \
+    git \
+    libopenblas-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY backend/pyproject.toml .
 COPY backend/uv.lock .

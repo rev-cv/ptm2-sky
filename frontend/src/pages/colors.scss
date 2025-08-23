@@ -1,43 +1,48 @@
 :root {
-    --color-bg-primary: #fff;
-    --color-bg-secondary: #dbdbdb;
+    --color-bg-primary: #efefef;
+    --color-bg-secondary: #fff;
 
     --color-text-primary: #555555;
-    --color-text-secondary: #7B7B7B;
+    --color-text-secondary: #7b7b7b;
 
-    --color-curtain: #{rgba(#5c5c5c, .3)};
+    --color-curtain: #{rgba(#5c5c5c, 0.3)};
 
-    --color-border-active: #3c76f1;
+    --color-border-active: #649cf6;
     --color-border-inactive: #afafaf;
 
-    --color-button-default: #3c76f1;
-    --color-button-text: #fff;
-    --color-button-icon: #{rgba(#fff, .8)};
-    --color-button-hover: #2f5ac0;
-    --color-button-active: #1a3a8a;
+    --color-button-default: #649cf6;
+    --color-button-text: #eff5ff;
+    --color-button-icon: #{rgba(#eff5ff, 0.8)};
+    --color-button-hover: #3c76f1;
+    --color-button-active: #223aab;
     --color-button-disabled: #d8e4fc;
 
-    --color-button-transparent-hover: #{rgba(#333, .05)};
-    --color-button-transparent-active: #{rgba(#333, .08)};
-    --color-button-transparent-disabled: #{rgba(#333, .02)};
+    --color-button-transparent-hover: #{rgba(#333, 0.05)};
+    --color-button-transparent-active: #{rgba(#333, 0.08)};
+    --color-button-transparent-disabled: #{rgba(#333, 0.02)};
 
-    --color-scrollbar-thumb: #{rgba(#333, .1)};
+    --color-scrollbar-thumb: #{rgba(#333, 0.1)};
 
     --color-text-selection: #333;
     --color-text-selection-bg: lightblue;
 
-    --color-button-default: #3c76f1;
+    --color-bg-textarea: rgba(255, 255, 255, 0.6);
+    --color-bg-textarea-hover: rgba(255, 255, 255, 0.9);
+
+    --color-bg-md-block: rgba(255, 255, 255, 0.9);
+
+    --color-button-default: #649cf6;
     --color-done: #00c853;
     --color-error: #f44336;
     --color-warning: #ff9800;
     --color-prevention: #ffe644;
 
-    --color-button-delete: rgba(244, 67, 54, 0.12);
-    --color-button-delete-hover: rgba(244, 67, 54, 0.22);
-    --color-button-delete-active: rgba(244, 67, 54, 0.32);
-    --color-button-delete-text: #f44336;
+    --color-button-delete: rgba(244, 67, 54, 0.6);
+    --color-button-delete-hover: rgba(244, 67, 54, 0.8);
+    --color-button-delete-active: rgba(244, 67, 54, 1);
+    --color-button-delete-text: #fff;
 
-    --box-shadow: 0 0 32px 0 rgba(0,0,0,0.14);
+    --box-shadow: 0 0 32px 0 rgba(0, 0, 0, 0.14);
 }
 
 :root.dark-theme {
@@ -54,16 +59,26 @@
 
     --color-button-default: #4a8cff;
     --color-button-text: #d8e4fc;
-    --color-button-icon: #{rgba(#d8e4fc, .8)};
+    --color-button-icon: #{rgba(#d8e4fc, 0.8)};
     --color-button-hover: #3b6fd6;
     --color-button-active: #2a4f9e;
     --color-button-disabled: #4a4a4a;
 
-    --color-button-transparent-hover: #{rgba(#d1d1d1, .1)};
-    --color-button-transparent-active: #{rgba(#d1d1d1, .15)};
-    --color-button-transparent-disabled: #{rgba(#d1d1d1, .05)};
+    --color-button-transparent-hover: #{rgba(#d1d1d1, 0.1)};
+    --color-button-transparent-active: #{rgba(#d1d1d1, 0.15)};
+    --color-button-transparent-disabled: #{rgba(#d1d1d1, 0.05)};
 
-    --color-scrollbar-thumb: #{rgba(#d1d1d1, .1)};
+    --color-button-delete: rgba(244, 67, 54, 0.12);
+    --color-button-delete-hover: rgba(244, 67, 54, 0.22);
+    --color-button-delete-active: rgba(244, 67, 54, 0.32);
+    --color-button-delete-text: #f44336;
 
-    --box-shadow: 0 0 32px 0 rgba(0,0,0,0.25);
+    --color-bg-textarea: rgba(0, 0, 0, 0.15);
+    --color-bg-textarea-hover: rgba(0, 0, 0, 0.3);
+
+    --color-bg-md-block: rgba(0, 0, 0, 0.1);
+
+    --color-scrollbar-thumb: #{rgba(#d1d1d1, 0.1)};
+
+    --box-shadow: 0 0 32px 0 rgba(0, 0, 0, 0.25);
 }

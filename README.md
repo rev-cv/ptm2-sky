@@ -81,10 +81,10 @@ sudo docker-compose up
 
 Расположен в корне проекта и содержит следующие поля
 
-- `VITE_API_URL=` - пустое поле (наследство)
-- `VITE_WS_URL=wss://localhost:3000`
+- `VITE_API_URL=""` - пустое поле (наследство)
+- `VITE_WS_URL=wss://localhost:3000` - локал
 
-- `IS_PRODACTION=false` - true или false. Если false, то запускает в режиме realad 
+- `IS_PRODACTION=false` - true или false. Если false, то запускает в режиме realad
 
 - `DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/DBNAME"`
 - `POSTGRES_DB=DBNAME`
@@ -111,7 +111,8 @@ sudo docker-compose up
 ## Деплой
 
 1. перенести файлы проекта
-2. в корне проекта создать `.env`и заполнить его
+2. в корне проекта создать `.env`и заполнить его. Заменить в VITE_WS_URL localhost на domen или ip сервера на котором работает приложение
+3. в `backend/main.py:origin` добавить адрес сервера на котором работает приложение
 3. в корне проекта создать самоподписанные ключи ssl
 ```sh
 mkdir -p project/certs
@@ -119,11 +120,11 @@ mkdir -p project/certs
 ```sh
 openssl req -x509 -newkey rsa:4096 -keyout certs/privkey.pem -out certs/fullchain.pem -days 365 -nodes -subj "/CN=localhost"
 ```
-или получить бесплатные сертификаты 
+или получить бесплатные сертификаты
 ```sh
 sudo apt install certbot python3-certbot-nginx
 sudo certbot --nginx -d your_domain.com
-``` 
+```
 и смонтировать путь к ним в файле `docker-compose.yml`
 ```yml
 nginx:

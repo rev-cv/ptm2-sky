@@ -1,4 +1,3 @@
-
 .text-area2 {
     display: flex;
     flex-direction: column;
@@ -11,19 +10,18 @@
         overflow: hidden;
         resize: none;
         position: relative;
-        background-color: rgba($color: #000000, $alpha: .15);
-        transition: 
+        background-color: var(--color-bg-textarea);
+        transition:
             background-color 300ms ease-in-out,
-            padding-top 300ms ease-in-out
-        ;
-        padding: .4em .4em .4em .7em;
+            padding-top 300ms ease-in-out;
+        padding: 0.4em 0.4em 0.4em 0.7em;
 
         &:hover {
             cursor: text;
         }
 
         &:focus {
-            background-color: rgba($color: #000000, $alpha: .3);
+            background-color: var(--color-bg-textarea-hover);
         }
     }
 
@@ -35,8 +33,8 @@
         justify-content: end;
 
         position: absolute;
-        right: .4em;
-        bottom: .4em;
+        right: 0.4em;
+        bottom: 0.4em;
     }
 
     &__label {
@@ -44,7 +42,7 @@
         pointer-events: none;
         left: 1em;
         top: 50%;
-        font-size: .7em; 
+        font-size: 0.7em;
         transform: translateY(-50%);
         z-index: 1;
         padding-left: 4px;
@@ -52,13 +50,12 @@
         border-radius: 2px;
         background-color: transparent;
         color: var(--color-text-secondary);
-        transition: 
+        transition:
             top 300ms ease-in-out,
             transform 300ms ease-in-out,
             font-size 300ms ease-in-out,
             color 300ms ease-in-out,
-            padding-bottom 300ms ease-in-out
-        ;
+            padding-bottom 300ms ease-in-out;
     }
 }
 
@@ -67,7 +64,8 @@
 }
 
 .text-area2:has(.text-area2__label) > .text-area2__input {
-    &:not(:empty), &:focus {
+    &:not(:empty),
+    &:focus {
         padding-top: 1.2em;
     }
 }
@@ -75,7 +73,7 @@
 .text-area2__input:focus ~ .text-area2__label,
 .text-area2__input:not(:placeholder-shown) ~ .text-area2__label {
     top: 1px;
-    font-size: .5em;
+    font-size: 0.5em;
     color: var(--color-text-secondary);
     padding-bottom: 0 !important;
     transform: none;
