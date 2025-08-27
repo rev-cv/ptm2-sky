@@ -23,6 +23,11 @@
         &:focus {
             background-color: var(--color-bg-textarea-hover);
         }
+
+        &:disabled {
+            user-select: none;
+            cursor: default;
+        }
     }
 
     &__gen-btn {

@@ -57,6 +57,10 @@
 .custom-button-transparent {
     background-color: var(--color-bg-primary);
 
+    span {
+        color: var(--color-text-primary) !important;
+    }
+
     &:hover {
         background-color: var(--color-button-transparent-hover);
     }

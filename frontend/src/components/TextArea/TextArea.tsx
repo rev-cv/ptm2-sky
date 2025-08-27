@@ -11,6 +11,7 @@ type TypeTextArea = {
     onGenerate?: () => void;
     icoGen?: React.FunctionComponent<any> | React.ComponentType<any> | string;
     isBanOnEnter?: boolean;
+    isBlockInput?: boolean;
 };
 
 function AutoResizeTextarea({
@@ -22,6 +23,7 @@ function AutoResizeTextarea({
     onGenerate,
     icoGen,
     isBanOnEnter = false,
+    isBlockInput = false,
 }: TypeTextArea) {
     const IcoGen = icoGen;
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -148,6 +150,7 @@ function AutoResizeTextarea({
                 rows={1}
                 placeholder={!placeholder ? " " : placeholder}
                 onClick={(e) => e.stopPropagation()}
+                disabled={isBlockInput}
             />
 
             {!label ? null : (

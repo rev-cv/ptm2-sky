@@ -197,34 +197,47 @@ class User(Base):
     custom_filters = relationship("Filter", back_populates="user")
     tasks = relationship("Task", back_populates="user")
     queries = relationship("Queries", back_populates="user")
+    apikeys = relationship("APIKeysByAI", back_populates="user")
 
 class UserProfile(Base):
     __tablename__ = "user_profiles"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), unique=True)
     full_name = Column(String, nullable=True)
+    avatar_url = Column(String, nullable=True)
     phone = Column(String, nullable=True)
     address = Column(String, nullable=True)
     date_of_birth = Column(String, nullable=True)
+    gender = Column(String, nullable=True)
     user = relationship("User", back_populates="profile")
+    backup_email = Column(String, nullable=True)
 
+# === кол-во доступны запросов для юзера ===
 class TokenTransaction(Base):
     __tablename__ = "token_transactions"
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     amount = Column(Integer)  # положительное для начисления, отрицательное для списания
-    balance = Column(Integer)  # баланс после транзакции
+    balance = Column(Integer, default=0)  # баланс после транзакции
     description = Column(String, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
     user = relationship("User", back_populates="transactions")
 
-# --- инициализация базы данных ---
+# === API ключи для внешних AI сервисов ===
+class APIKeysByAI(Base):
+    __tablename__ = "api_keys_by_ai"
+    id = Column(Integer, primary_key=True, index=True)
+    created_at = Column(DateTime, default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    mask_key = Column(String, nullable=False, default="")
+    key=Column(String, nullable=False, default="")
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user = relationship("User", back_populates="apikeys")
 
+# === инициализация базы данных ===
 def init_db():
     Base.metadata.create_all(bind=engine)
 
-    # --- инициализация фильтров ---
-
+    # === инициализация фильтров ===
     from database.initial__db import initialize_filters_from_json
     with SessionLocal() as db:
         initialize_filters_from_json(db)
@@ -260,8 +273,7 @@ def init_db():
         db.commit()
 
 
-# --- функция получения сессии (для dependency injection) ---
-
+# === функция получения сессии (для dependency injection) ===
 def get_db():
     '''
     get_db — это dependency, которая подключается к каждому endpoint через Depends.

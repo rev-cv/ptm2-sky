@@ -2,7 +2,6 @@ body {
     display: flex;
 }
 
-
 #root {
     flex-grow: 1;
     position: relative;
@@ -24,7 +23,8 @@ body {
         }
     }
 
-    .frame-right, .frame-setting {
+    .frame-right,
+    .frame-setting {
         right: 0;
 
         &.hide {
@@ -32,7 +32,9 @@ body {
         }
     }
 
-    .frame-right, .frame-left, .frame-setting {
+    .frame-right,
+    .frame-left,
+    .frame-setting {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -42,12 +44,10 @@ body {
         z-index: 10;
         transition:
             transform 300ms ease-in-out,
-            opacity 300ms ease-in-out
-        ;
+            opacity 300ms ease-in-out;
         overflow: hidden;
     }
 }
-
 
 .frame-left {
     font-size: 1rem;
@@ -69,9 +69,7 @@ body {
     }
 }
 
-
 .frame-central {
-
     &__page {
         max-width: 1200px;
         margin: 0 auto;
@@ -82,7 +80,6 @@ body {
         flex-direction: column;
     }
 }
-
 
 .frame-right {
     font-size: 1rem;
@@ -104,13 +101,12 @@ body {
     }
 }
 
-
 .frame-setting {
     font-size: 1rem;
     padding: 1em;
     display: flex;
     flex-direction: column;
-    gap: .5em;
+    gap: 0.5em;
 
     &__h2 {
         font-size: 1.5em;
@@ -118,9 +114,9 @@ body {
     }
 
     &__h3 {
-        font-size: .9em;
+        font-size: 0.9em;
         font-weight: 600;
         color: var(--color-text-secondary);
-        padding-top: .5em;
+        padding-top: 0.5em;
     }
 }

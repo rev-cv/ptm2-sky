@@ -1,57 +1,71 @@
-import { useEffect, useState } from 'react'
-import { useAtomValue, useSetAtom, isOpenNewTaskEditor, atomQuerySelect, atomIsOpenSidePanel, atomViewTasksAllCount } from '@utils/jotai.store'
+import "./style.scss";
+import { useEffect, useState } from "react";
+import {
+    useAtomValue,
+    useSetAtom,
+    isOpenNewTaskEditor,
+    atomQuerySelect,
+    atomIsOpenSidePanel,
+    atomViewTasksAllCount,
+} from "@utils/jotai.store";
 
-import { loadTasks } from '@api/loadTasks2'
+import { loadTasks } from "@api/loadTasks2";
 
-import './style.scss'
+import QueryEditor from "@comps/QueryEditor/QueryEditor";
+import Button from "@comps/Button/Button";
 
-import QueryEditor from '@comps/QueryEditor/QueryEditor'
-import Button from '@comps/Button/Button'
+import IcoAdd from "@asset/add.svg";
+// import IcoSetting from "@asset/setting.svg";
+import IcoAvatar from "@asset/avatar.svg";
+import IcoReload from "@asset/reload.svg";
 
-import IcoAdd from '@asset/add.svg'
-import IcoSetting from '@asset/setting.svg'
-import IcoReload from '@asset/reload.svg'
+function QueryPanel() {
+    const setPanel = useSetAtom(atomIsOpenSidePanel);
+    const setStatusNewTaskEditor = useSetAtom(isOpenNewTaskEditor);
+    const querySelect = useAtomValue(atomQuerySelect);
+    const taskCount = useAtomValue(atomViewTasksAllCount);
+    const [isOpenFilterList, setFilterListStatus] = useState(false);
 
-function QueryPanel () {
-    const setPanel = useSetAtom(atomIsOpenSidePanel)
-    const setStatusNewTaskEditor = useSetAtom(isOpenNewTaskEditor)
-    const querySelect = useAtomValue(atomQuerySelect)
-    const taskCount = useAtomValue(atomViewTasksAllCount)
-    const [isOpenFilterList, setFilterListStatus] = useState(false)
+    useEffect(() => {
+        loadTasks(true);
+    }, [querySelect]);
 
-    useEffect(() => {loadTasks(true)}, [querySelect])
+    return (
+        <>
+            <div className="query-panel">
+                <Button
+                    icon={IcoAdd}
+                    onClick={() => setStatusNewTaskEditor(true)}
+                />
+                <div className="query-panel__query">
+                    <button
+                        onClick={() => setFilterListStatus(true)}
+                        className="query-panel__query-viewer"
+                    >
+                        {querySelect
+                            ? querySelect.name
+                            : "Request not specified!"}
+                        <span>{taskCount}</span>
+                    </button>
+                    <Button
+                        className="query-panel__query-reload"
+                        onClick={() => loadTasks(true)}
+                        icon={IcoReload}
+                        variant="transparent"
+                    />
+                </div>
+                <Button
+                    onClick={() => setPanel("setting")}
+                    icon={IcoAvatar}
+                    variant="transparent"
+                />
+            </div>
 
-    return <>
-    <div className="query-panel">
-        <Button 
-            icon={IcoAdd}
-            onClick={() => setStatusNewTaskEditor(true)}
-        />
-        <div className="query-panel__query">
-            <button
-                onClick={() => setFilterListStatus(true)}
-                className="query-panel__query-viewer"
-                >{querySelect ? querySelect.name : "Request not specified!"}
-                    <span>{taskCount}</span>
-            </button>
-            <Button
-                className='query-panel__query-reload'
-                onClick={() => loadTasks(true)}
-                icon={IcoReload}
-                variant='transparent'
-            />
-        </div>
-        <Button
-            onClick={() => setPanel("setting")}
-            icon={IcoSetting}
-            variant='transparent'
-        />
-    </div>
-
-    { isOpenFilterList &&
-        <QueryEditor onExit={() => setFilterListStatus(false)}/>
-    }
-    </>
+            {isOpenFilterList && (
+                <QueryEditor onExit={() => setFilterListStatus(false)} />
+            )}
+        </>
+    );
 }
 
 export default QueryPanel;

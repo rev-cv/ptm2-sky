@@ -6,7 +6,7 @@ import IcoClose from '@asset/close.svg'
 type TypeModal = {
     visible: boolean;
     onRequestClose: () => void // запрос на закрытие
-    onExited: () => void // сообщить родителю, что анимация завершена
+    onExited?: () => void // сообщить родителю, что анимация завершена
     children?: ReactNode;
     className?: string;
 }
@@ -43,7 +43,7 @@ function Modal ({visible, onRequestClose, onExited, children, className}:TypeMod
             setIsClosing(true)
             const timeout = setTimeout(() => {
                 setIsClosing(false)
-                onExited()
+                onExited && onExited()
             }, 300)
             return () => clearTimeout(timeout)
         }

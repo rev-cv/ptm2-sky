@@ -40,7 +40,7 @@ services:
         volumes:
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - ./backend/dist:/usr/share/nginx/html  # Монтируем dist непосредственно в корень
-            - ./certs:/etc/nginx/certs  # SSL-сертификаты
+            - /etc/letsencrypt:/etc/letsencrypt:ro  # SSL-сертификаты
         depends_on:
             - backend
         restart: always
